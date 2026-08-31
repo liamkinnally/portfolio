@@ -58,9 +58,9 @@
   --chart-value: #a9b7c9;
   --chart-value-strong: #b9ceff;
 
-  --particle-dot: rgba(145, 173, 255, 0.34);
+  --particle-dot: rgba(145, 173, 255, 0.36);
   --particle-line-rgb: 129, 159, 255;
-  --particle-line-strength: 0.085;
+  --particle-line-strength: 0.09;
 }
 
 html[data-theme='light'] {
