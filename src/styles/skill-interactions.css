@@ -61,6 +61,10 @@ html[data-theme='light'] {
     box-shadow 190ms ease;
 }
 
+.project-page .system-step-link {
+  cursor: pointer;
+}
+
 @media (hover: hover) and (pointer: fine) {
   #work .kbd-tag:hover,
   #skills .kbd-tag:hover,
@@ -78,6 +82,10 @@ html[data-theme='light'] {
     transform: scale(1.018);
   }
 
+  .project-page .interactive-pill:hover {
+    transform: none;
+  }
+
   #work .metric-card:hover,
   .project-page .metric-card:hover,
   .project-page .stationary-highlight:hover {
@@ -85,4 +93,11 @@ html[data-theme='light'] {
     background: var(--metric-hover-bg);
     box-shadow: var(--metric-hover-shadow);
   }
+}
+
+.project-page .system-step-link:focus-visible {
+  outline: none;
+  border-color: var(--metric-hover-border);
+  background: var(--metric-hover-bg);
+  box-shadow: var(--metric-hover-shadow);
 }
