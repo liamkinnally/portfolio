@@ -46,7 +46,7 @@
     align-items: center;
     gap: 0.45rem;
     min-width: 4.8rem;
-    color: #b7c2d0;
+    color: var(--muted-soft);
     font-size: 0.76rem;
     font-weight: 620;
     letter-spacing: -0.01em;
@@ -63,26 +63,22 @@
     width: 0.42rem;
     height: 0.42rem;
     border-radius: 999px;
-    background: #667180;
+    background: #7d8796;
     box-shadow: 0 0 0 3px rgba(102, 113, 128, 0.08);
   }
 
   .presence-indicator[data-state="online"] .presence-dot {
-    background: #78d6a3;
-    box-shadow: 0 0 0 3px rgba(120, 214, 163, 0.08), 0 0 14px rgba(120, 214, 163, 0.22);
+    background: #63c990;
+    box-shadow: 0 0 0 3px rgba(99, 201, 144, 0.09), 0 0 14px rgba(99, 201, 144, 0.20);
   }
 
   .presence-indicator[data-state="away"] .presence-dot {
-    background: #e1ba73;
-    box-shadow: 0 0 0 3px rgba(225, 186, 115, 0.08);
+    background: #d7a956;
+    box-shadow: 0 0 0 3px rgba(215, 169, 86, 0.09);
   }
 
   .presence-indicator[data-state="busy"] .presence-dot {
-    background: #e68b9b;
-    box-shadow: 0 0 0 3px rgba(230, 139, 155, 0.08);
-  }
-
-  .presence-indicator[data-state="offline"] .presence-dot {
-    background: #667180;
+    background: #db788c;
+    box-shadow: 0 0 0 3px rgba(219, 120, 140, 0.09);
   }
 </style>
