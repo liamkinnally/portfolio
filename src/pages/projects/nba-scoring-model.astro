@@ -66,7 +66,7 @@ import PermutationImportanceChart from '../../components/PermutationImportanceCh
       <div class="glass-card rounded-2xl p-6 sm:p-8">
         <div class="grid gap-3 md:grid-cols-5">
           {['ESPN JSON', 'Validation + SQLite', 'Feature Engineering', 'Model Training', 'Evaluation + Reports'].map((step, i) => (
-            <div class="relative rounded-xl border border-white/[0.08] bg-white/[0.025] p-4">
+            <div class="stationary-highlight relative rounded-xl border border-white/[0.08] bg-white/[0.025] p-4">
               <div class="text-xs font-bold text-blue-200">0{i + 1}</div>
               <div class="mt-3 text-sm font-semibold text-slate-200">{step}</div>
             </div>
@@ -161,10 +161,10 @@ import PermutationImportanceChart from '../../components/PermutationImportanceCh
         data-shine-text="Engineering, not just modeling"
       >Engineering, not just modeling</h2>
       <div class="grid gap-4 sm:grid-cols-2">
-        <div class="glass-card rounded-xl p-5"><h3 class="font-semibold">Reproducible artifacts</h3><p class="mt-2 leading-7 text-slate-300">Serialized model pipelines include evaluation-window metadata so reported metrics can be reproduced later.</p></div>
-        <div class="glass-card rounded-xl p-5"><h3 class="font-semibold">Automated testing</h3><p class="mt-2 leading-7 text-slate-300">A pytest suite runs in GitHub Actions CI to catch regressions in the data and modeling pipeline.</p></div>
-        <div class="glass-card rounded-xl p-5"><h3 class="font-semibold">CLI workflow</h3><p class="mt-2 leading-7 text-slate-300">Evaluation reports are regenerated from saved models in one command instead of relying on a notebook-only workflow.</p></div>
-        <div class="glass-card rounded-xl p-5"><h3 class="font-semibold">Database-backed pipeline</h3><p class="mt-2 leading-7 text-slate-300">SQLAlchemy and SQLite provide a structured persistence layer for game and player-level records.</p></div>
+        <div class="stationary-highlight glass-card rounded-xl p-5"><h3 class="font-semibold">Reproducible artifacts</h3><p class="mt-2 leading-7 text-slate-300">Serialized model pipelines include evaluation-window metadata so reported metrics can be reproduced later.</p></div>
+        <div class="stationary-highlight glass-card rounded-xl p-5"><h3 class="font-semibold">Automated testing</h3><p class="mt-2 leading-7 text-slate-300">A pytest suite runs in GitHub Actions CI to catch regressions in the data and modeling pipeline.</p></div>
+        <div class="stationary-highlight glass-card rounded-xl p-5"><h3 class="font-semibold">CLI workflow</h3><p class="mt-2 leading-7 text-slate-300">Evaluation reports are regenerated from saved models in one command instead of relying on a notebook-only workflow.</p></div>
+        <div class="stationary-highlight glass-card rounded-xl p-5"><h3 class="font-semibold">Database-backed pipeline</h3><p class="mt-2 leading-7 text-slate-300">SQLAlchemy and SQLite provide a structured persistence layer for game and player-level records.</p></div>
       </div>
     </section>
 
