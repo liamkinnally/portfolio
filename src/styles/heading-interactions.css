@@ -1,0 +1,75 @@
+:root {
+  --heading-shine: rgba(214, 229, 255, 0.48);
+}
+
+html[data-theme='light'] {
+  --heading-shine: rgba(72, 108, 194, 0.34);
+}
+
+.scroll-heading-shine {
+  position: relative;
+}
+
+.scroll-heading-shine::after {
+  content: attr(data-shine-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: transparent;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 40%,
+    var(--heading-shine) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  background-position: 135% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0;
+}
+
+.scroll-heading-shine.is-visible {
+  animation: heading-settle 620ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.scroll-heading-shine.is-visible::after {
+  animation: heading-shine-sweep 980ms cubic-bezier(0.2, 0.7, 0.2, 1) 180ms both;
+}
+
+@keyframes heading-settle {
+  from {
+    opacity: 0.78;
+    transform: translate3d(-9px, 4px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heading-shine-sweep {
+  0% {
+    opacity: 0;
+    background-position: 135% 0;
+  }
+  24% {
+    opacity: 0.72;
+  }
+  72% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0;
+    background-position: -35% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-heading-shine,
+  .scroll-heading-shine::after {
+    animation: none !important;
+  }
+}
