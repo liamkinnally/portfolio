@@ -78,8 +78,8 @@ const maxActual = Math.max(...points.map((point) => point.actual));
       <desc id="quality-desc">All points-model holdout observations are aggregated into two-point density cells. The model shows useful predictive signal but compresses extreme scoring outcomes toward more typical values.</desc>
       <defs>
         <linearGradient id="density-fill" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stop-color="#78a7ff" />
-          <stop offset="100%" stop-color="#ac92ff" />
+          <stop offset="0%" stop-color="#6895ef" />
+          <stop offset="100%" stop-color="#987be6" />
         </linearGradient>
         <filter id="density-glow" x="-25%" y="-25%" width="150%" height="150%">
           <feGaussianBlur stdDeviation="3" result="blur" />
@@ -87,14 +87,14 @@ const maxActual = Math.max(...points.map((point) => point.actual));
         </filter>
       </defs>
 
-      <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="rgba(255,255,255,0.012)" />
+      <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="var(--chart-plot-bg)" />
 
       {ticks.map((tick) => (
         <g>
-          <line x1={x(tick)} x2={x(tick)} y1={margin.top} y2={margin.top + plotHeight} stroke="rgba(255,255,255,0.055)" stroke-width="1" />
-          <line x1={margin.left} x2={margin.left + plotWidth} y1={y(tick)} y2={y(tick)} stroke="rgba(255,255,255,0.055)" stroke-width="1" />
-          <text x={x(tick)} y={margin.top + plotHeight + 27} text-anchor="middle" fill="#8f9daf" font-size="11" font-weight="600">{tick}</text>
-          <text x={margin.left - 12} y={y(tick) + 4} text-anchor="end" fill="#8f9daf" font-size="11" font-weight="600">{tick}</text>
+          <line x1={x(tick)} x2={x(tick)} y1={margin.top} y2={margin.top + plotHeight} stroke="var(--chart-grid)" stroke-width="1" />
+          <line x1={margin.left} x2={margin.left + plotWidth} y1={y(tick)} y2={y(tick)} stroke="var(--chart-grid)" stroke-width="1" />
+          <text x={x(tick)} y={margin.top + plotHeight + 27} text-anchor="middle" fill="var(--chart-label)" font-size="11" font-weight="600">{tick}</text>
+          <text x={margin.left - 12} y={y(tick) + 4} text-anchor="end" fill="var(--chart-label)" font-size="11" font-weight="600">{tick}</text>
         </g>
       ))}
 
@@ -115,10 +115,10 @@ const maxActual = Math.max(...points.map((point) => point.actual));
         );
       })}
 
-      <line x1={x(0)} y1={y(0)} x2={x(axisMax)} y2={y(axisMax)} stroke="#b8c3d2" stroke-width="1.6" stroke-dasharray="7 7" opacity="0.62" />
+      <line x1={x(0)} y1={y(0)} x2={x(axisMax)} y2={y(axisMax)} stroke="var(--chart-reference)" stroke-width="1.6" stroke-dasharray="7 7" opacity="0.70" />
 
-      <text x={margin.left + plotWidth / 2} y={height - 8} text-anchor="middle" fill="#7f8c9e" font-size="10.5" font-weight="600">Actual points</text>
-      <text x="15" y={margin.top + plotHeight / 2} text-anchor="middle" fill="#7f8c9e" font-size="10.5" font-weight="600" transform={`rotate(-90 15 ${margin.top + plotHeight / 2})`}>Predicted points</text>
+      <text x={margin.left + plotWidth / 2} y={height - 8} text-anchor="middle" fill="var(--chart-axis)" font-size="10.5" font-weight="600">Actual points</text>
+      <text x="15" y={margin.top + plotHeight / 2} text-anchor="middle" fill="var(--chart-axis)" font-size="10.5" font-weight="600" transform={`rotate(-90 15 ${margin.top + plotHeight / 2})`}>Predicted points</text>
     </svg>
   </div>
 
@@ -131,12 +131,10 @@ const maxActual = Math.max(...points.map((point) => point.actual));
 <style>
   .chart-shell {
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    border: 1px solid var(--border);
     border-radius: 1rem;
-    background:
-      radial-gradient(circle at 73% 5%, rgba(90, 129, 255, 0.12), transparent 43%),
-      linear-gradient(145deg, rgba(14, 19, 29, 0.92), rgba(7, 10, 16, 0.92));
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    background: var(--chart-shell-bg);
+    box-shadow: var(--chart-shadow);
   }
 
   .density-cell {
