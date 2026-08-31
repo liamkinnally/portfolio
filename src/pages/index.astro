@@ -8,7 +8,11 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
   <section class="container-shell flex min-h-[92vh] items-center pt-28 pb-20">
     <div class="fade-up max-w-4xl">
       <div class="eyebrow">UCF · B.S. in Information Technology · CECS</div>
-      <h1 class="gradient-text mt-7 text-6xl font-[790] leading-[0.94] tracking-[-0.06em] sm:text-7xl md:text-8xl lg:text-[6.4rem]">
+      <h1
+        class="scroll-heading-shine gradient-text mt-7 text-6xl font-[790] leading-[0.94] tracking-[-0.06em] sm:text-7xl md:text-8xl lg:text-[6.4rem]"
+        data-scroll-heading
+        data-shine-text="Liam Kinnally"
+      >
         Liam Kinnally
       </h1>
       <p class="mt-6 text-lg font-semibold tracking-[-0.015em] text-blue-200 sm:text-xl">
@@ -32,7 +36,11 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
     <div class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <div class="eyebrow">Featured project</div>
-        <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl">NBA Player Stat Prediction</h2>
+        <h2
+          class="scroll-heading-shine mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl"
+          data-scroll-heading
+          data-shine-text="NBA Player Stat Prediction"
+        >NBA Player Stat Prediction</h2>
       </div>
       <div class="flex gap-5 text-sm font-semibold">
         <a href="/projects/nba-scoring-model" class="text-blue-200 transition hover:text-white">Explore project →</a>
@@ -85,7 +93,11 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
   <section id="skills" class="container-shell scroll-mt-24 py-24">
     <div class="max-w-2xl">
       <div class="eyebrow">Skills</div>
-      <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl">What I work with.</h2>
+      <h2
+        class="scroll-heading-shine mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl"
+        data-scroll-heading
+        data-shine-text="What I work with."
+      >What I work with.</h2>
       <p class="mt-4 text-[1.02rem] leading-8 text-slate-300">
         My strongest work is in Python and software/data tooling, with growing frontend experience through this portfolio and other projects.
       </p>
@@ -130,7 +142,11 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
     <div class="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
       <div>
         <div class="eyebrow">Education</div>
-        <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em]">University of Central Florida</h2>
+        <h2
+          class="scroll-heading-shine mt-4 text-3xl font-bold tracking-[-0.035em]"
+          data-scroll-heading
+          data-shine-text="University of Central Florida"
+        >University of Central Florida</h2>
       </div>
       <div class="glass-card rounded-2xl p-6 sm:p-8">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -164,7 +180,11 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
     <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
       <div>
         <div class="eyebrow">About</div>
-        <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em]">I like software that can prove it works.</h2>
+        <h2
+          class="scroll-heading-shine mt-4 text-3xl font-bold tracking-[-0.035em]"
+          data-scroll-heading
+          data-shine-text="I like software that can prove it works."
+        >I like software that can prove it works.</h2>
       </div>
       <div class="max-w-2xl space-y-5 text-[1.05rem] leading-8 text-slate-300">
         <p>
@@ -182,7 +202,11 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
       <div class="eyebrow">Contact</div>
       <div class="mt-5 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
         <div class="max-w-2xl">
-          <h2 class="text-3xl font-bold tracking-[-0.04em] sm:text-4xl">Let’s build something.</h2>
+          <h2
+            class="scroll-heading-shine text-3xl font-bold tracking-[-0.04em] sm:text-4xl"
+            data-scroll-heading
+            data-shine-text="Let’s build something."
+          >Let’s build something.</h2>
           <p class="mt-4 text-[1.02rem] leading-8 text-slate-300">
             I’m currently pursuing software engineering, software testing/QA, and related internship opportunities.
           </p>
@@ -202,4 +226,29 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
       <span>Built with Astro · TypeScript · Tailwind CSS · Canvas · Vercel</span>
     </div>
   </footer>
+
+  <script>
+    const headings = document.querySelectorAll<HTMLElement>('[data-scroll-heading]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      headings.forEach((heading) => heading.classList.add('is-visible'));
+    } else {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        },
+        {
+          threshold: 0.45,
+          rootMargin: '0px 0px -8% 0px',
+        },
+      );
+
+      headings.forEach((heading) => observer.observe(heading));
+    }
+  </script>
 </BaseLayout>
