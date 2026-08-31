@@ -2,11 +2,13 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetricCard from '../../components/MetricCard.astro';
 import RollingMaeChart from '../../components/RollingMaeChart.astro';
+import PredictionQualityChart from '../../components/PredictionQualityChart.astro';
+import PermutationImportanceChart from '../../components/PermutationImportanceChart.astro';
 ---
 
 <BaseLayout
   title="NBA Player Stat Prediction — Liam Kinnally"
-  description="Case study for Liam Kinnally's NBA player-stat prediction pipeline built with Python, scikit-learn, SQLAlchemy, pytest, and GitHub Actions."
+  description="Technical project page for Liam Kinnally's NBA player-stat prediction pipeline built with Python, scikit-learn, SQLAlchemy, pytest, and GitHub Actions."
 >
   <article class="container-shell pt-32 pb-24">
     <a href="/" class="text-sm font-semibold text-slate-300 transition hover:text-white">← Back home</a>
@@ -73,26 +75,58 @@ import RollingMaeChart from '../../components/RollingMaeChart.astro';
       </div>
     </section>
 
-    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
-      <h2 class="text-2xl font-bold tracking-[-0.03em]">Evaluation</h2>
-      <div class="space-y-5 text-lg leading-8 text-slate-300">
-        <p>
-          The project compares tuned gradient boosting regressors with a 10-game rolling-average baseline on identical chronological holdout rows. For points, the model reached 4.85 MAE and outperformed the baseline in 23 of 28 trailing seven-day windows; the assists model won 22 of 28.
-        </p>
-        <p>
-          A one-command evaluation workflow regenerates residual diagnostics, parity plots, permutation importance, partial dependence, and player-tier error analysis without retraining the models.
-        </p>
+    <section class="mt-24">
+      <div class="mb-9 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+        <h2 class="text-2xl font-bold tracking-[-0.03em]">Evaluation</h2>
+        <div class="space-y-5 text-lg leading-8 text-slate-300">
+          <p>
+            The project compares tuned gradient boosting regressors with a 10-game rolling-average baseline on identical chronological holdout rows. For points, the model reached 4.85 MAE and outperformed the baseline in 23 of 28 trailing seven-day windows; the assists model won 22 of 28.
+          </p>
+          <p>
+            The visualizations below are rebuilt natively for this portfolio from the project's reporting data rather than embedded as exported chart images.
+          </p>
+        </div>
       </div>
-    </section>
-
-    <section class="mt-12">
       <RollingMaeChart />
-      <p class="mt-4 text-sm leading-6 text-slate-400">
-        This portfolio visualization is rendered directly from the project’s complete rolling-MAE evaluation data rather than from an exported chart image.
-      </p>
     </section>
 
-    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+    <section class="mt-28">
+      <div class="mb-9 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+        <div>
+          <div class="eyebrow">Prediction quality</div>
+          <h2 class="mt-4 text-2xl font-bold tracking-[-0.03em]">Useful signal, with a visible ceiling.</h2>
+        </div>
+        <div class="space-y-5 text-lg leading-8 text-slate-300">
+          <p>
+            The chronological holdout contains 5,645 player-game observations. The model tracks typical scoring outcomes reasonably well, but predictions compress toward the middle instead of following extreme performances all the way up.
+          </p>
+          <p>
+            That limitation is especially clear on ceiling games: every one of the 188 holdout performances of 30+ points was underpredicted, with an average underprediction of 13.9 points.
+          </p>
+        </div>
+      </div>
+      <PredictionQualityChart />
+    </section>
+
+    <section class="mt-28">
+      <div class="mb-9 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+        <div>
+          <div class="eyebrow">Model interpretability</div>
+          <h2 class="mt-4 text-2xl font-bold tracking-[-0.03em]">Recent scoring drives the model.</h2>
+        </div>
+        <div class="space-y-5 text-lg leading-8 text-slate-300">
+          <p>
+            Holdout permutation importance measures how much prediction error increases when one feature is shuffled while the others stay intact. The player's 10-game scoring average dominates the points model, with recent minutes the strongest secondary signal.
+          </p>
+          <p>
+            Because several rolling features are correlated, these values describe the contribution of each feature given the others rather than a complete measure of the underlying basketball concept's importance.
+          </p>
+        </div>
+      </div>
+      <PermutationImportanceChart />
+    </section>
+
+    <section class="mt-28 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
       <h2 class="text-2xl font-bold tracking-[-0.03em]">Engineering, not just modeling</h2>
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="glass-card rounded-xl p-5"><h3 class="font-semibold">Reproducible artifacts</h3><p class="mt-2 leading-7 text-slate-300">Serialized model pipelines include evaluation-window metadata so reported metrics can be reproduced later.</p></div>
