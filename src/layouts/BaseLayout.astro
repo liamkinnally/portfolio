@@ -90,40 +90,71 @@ const {
         );
         initiallyHighlighted.forEach((target) => {
           target.dataset.mobileRevealTriggered = 'true';
-          target.classList.add('mobile-scroll-active');
         });
 
+        const activeTargets = new Set<HTMLElement>();
+        let releaseFrame = 0;
+
+        const releasePassedHighlights = () => {
+          releaseFrame = 0;
+          const releaseLine = window.innerHeight * 0.20;
+
+          for (const target of activeTargets) {
+            const rect = target.getBoundingClientRect();
+            const center = rect.top + rect.height / 2;
+
+            if (center > releaseLine) continue;
+
+            target.classList.remove('mobile-scroll-active');
+            activeTargets.delete(target);
+          }
+        };
+
+        const scheduleReleaseCheck = () => {
+          if (releaseFrame) return;
+          releaseFrame = window.requestAnimationFrame(releasePassedHighlights);
+        };
+
         const startObserver = () => {
+          initiallyHighlighted.forEach((target) => {
+            target.classList.add('mobile-scroll-active');
+            activeTargets.add(target);
+          });
+
+          document
+            .querySelectorAll<HTMLElement>('.mobile-initial-highlight')
+            .forEach((target) => target.classList.remove('mobile-initial-highlight'));
+          document
+            .querySelectorAll<HTMLElement>('.mobile-initial-highlight-group')
+            .forEach((target) => target.classList.remove('mobile-initial-highlight-group'));
+
           const observer = new IntersectionObserver(
             (entries) => {
               for (const entry of entries) {
+                if (!entry.isIntersecting || entry.intersectionRatio < 0.48) continue;
+
                 const target = entry.target as HTMLElement;
-                const hasTriggered = target.dataset.mobileRevealTriggered === 'true';
+                if (target.dataset.mobileRevealTriggered === 'true') continue;
 
-                if (!hasTriggered && entry.isIntersecting && entry.intersectionRatio >= 0.48) {
-                  target.dataset.mobileRevealTriggered = 'true';
-                  target.classList.add('mobile-scroll-active');
-                  continue;
-                }
-
-                if (
-                  hasTriggered &&
-                  target.classList.contains('mobile-scroll-active') &&
-                  entry.intersectionRatio <= 0.20 &&
-                  entry.boundingClientRect.top < 0
-                ) {
-                  target.classList.remove('mobile-scroll-active');
-                  observer.unobserve(target);
-                }
+                target.dataset.mobileRevealTriggered = 'true';
+                target.classList.add('mobile-scroll-active');
+                activeTargets.add(target);
+                observer.unobserve(target);
+                scheduleReleaseCheck();
               }
             },
             {
-              threshold: [0, 0.20, 0.48],
+              threshold: [0.48],
               rootMargin: '0px 0px -8% 0px',
             },
           );
 
-          targets.forEach((target) => observer.observe(target));
+          targets.forEach((target) => {
+            if (target.dataset.mobileRevealTriggered !== 'true') observer.observe(target);
+          });
+
+          window.addEventListener('scroll', scheduleReleaseCheck, { passive: true });
+          scheduleReleaseCheck();
         };
 
         window.addEventListener('scroll', startObserver, { once: true, passive: true });
