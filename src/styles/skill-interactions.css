@@ -7,6 +7,14 @@
   --skill-hover-shadow:
     0 8px 24px rgba(78, 124, 255, 0.13),
     0 0 0 1px rgba(120, 167, 255, 0.04) inset;
+
+  --metric-hover-border: rgba(120, 167, 255, 0.30);
+  --metric-hover-bg:
+    linear-gradient(135deg, rgba(120, 167, 255, 0.075), rgba(154, 124, 255, 0.045)),
+    rgba(255, 255, 255, 0.028);
+  --metric-hover-shadow:
+    0 10px 34px rgba(78, 124, 255, 0.08),
+    0 0 0 1px rgba(120, 167, 255, 0.035) inset;
 }
 
 html[data-theme='light'] {
@@ -18,6 +26,14 @@ html[data-theme='light'] {
   --skill-hover-shadow:
     0 8px 22px rgba(54, 79, 122, 0.10),
     0 0 0 1px rgba(85, 127, 230, 0.035) inset;
+
+  --metric-hover-border: rgba(73, 108, 190, 0.24);
+  --metric-hover-bg:
+    linear-gradient(135deg, rgba(85, 127, 230, 0.07), rgba(118, 103, 220, 0.045)),
+    rgba(255, 255, 255, 0.72);
+  --metric-hover-shadow:
+    0 10px 30px rgba(54, 79, 122, 0.075),
+    0 0 0 1px rgba(85, 127, 230, 0.03) inset;
 }
 
 #work .kbd-tag,
@@ -35,6 +51,14 @@ html[data-theme='light'] {
     box-shadow 180ms ease;
 }
 
+#work .metric-card {
+  cursor: default;
+  transition:
+    border-color 190ms ease,
+    background 190ms ease,
+    box-shadow 190ms ease;
+}
+
 @media (hover: hover) and (pointer: fine) {
   #work .kbd-tag:hover,
   #skills .kbd-tag:hover,
@@ -50,5 +74,11 @@ html[data-theme='light'] {
 
   .availability-pill.interactive-pill:hover {
     transform: scale(1.018);
+  }
+
+  #work .metric-card:hover {
+    border-color: var(--metric-hover-border);
+    background: var(--metric-hover-bg);
+    box-shadow: var(--metric-hover-shadow);
   }
 }
