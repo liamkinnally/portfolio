@@ -82,6 +82,7 @@ html[data-theme='light'] {
     transform: scale(1.018);
   }
 
+  .chart-shell--compact .interactive-pill:hover,
   .project-page .interactive-pill:hover {
     transform: none;
   }
