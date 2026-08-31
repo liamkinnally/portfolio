@@ -5,7 +5,8 @@
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (canvas && !reducedMotion) {
-    const ctx = canvas.getContext('2d');
+    const target = canvas;
+    const ctx = target.getContext('2d');
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -16,13 +17,13 @@
 
     const particleCount = () => Math.min(72, Math.max(28, Math.floor(width / 24)));
 
-    function resize() {
+    const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      target.width = width * dpr;
+      target.height = height * dpr;
+      target.style.width = `${width}px`;
+      target.style.height = `${height}px`;
       ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
       particles = Array.from({ length: particleCount() }, () => ({
         x: Math.random() * width,
@@ -31,9 +32,9 @@
         vy: (Math.random() - 0.5) * 0.16,
         r: Math.random() * 1.2 + 0.45,
       }));
-    }
+    };
 
-    function draw() {
+    const draw = () => {
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
@@ -71,7 +72,7 @@
       }
 
       animationFrame = requestAnimationFrame(draw);
-    }
+    };
 
     resize();
     draw();
