@@ -1,9 +1,10 @@
 ---
 import PresenceIndicator from './PresenceIndicator.astro';
+import ThemeToggle from './ThemeToggle.astro';
 ---
 
-<header class="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-[#07090d]/78 backdrop-blur-xl">
-  <div class="container-shell flex h-16 items-center justify-between">
+<header class="site-header fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl">
+  <div class="container-shell flex h-16 items-center justify-between gap-3">
     <div class="flex items-center gap-5">
       <a href="/" class="group" aria-label="Home">
         <span class="text-sm font-semibold tracking-[-0.015em] text-slate-100 transition group-hover:text-white">Home</span>
@@ -11,11 +12,14 @@ import PresenceIndicator from './PresenceIndicator.astro';
       <PresenceIndicator />
     </div>
 
-    <nav class="flex items-center gap-0.5 text-[0.82rem] text-slate-300 sm:gap-1 sm:text-sm" aria-label="Primary navigation">
-      <a href="/#work" class="rounded-lg px-2.5 py-2 transition hover:bg-white/[0.04] hover:text-white sm:px-3">Projects</a>
-      <a href="/#skills" class="rounded-lg px-2.5 py-2 transition hover:bg-white/[0.04] hover:text-white sm:px-3">Skills</a>
-      <a href="/#about" class="rounded-lg px-2.5 py-2 transition hover:bg-white/[0.04] hover:text-white sm:px-3">About</a>
-      <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="rounded-lg px-2.5 py-2 transition hover:bg-white/[0.04] hover:text-white sm:px-3">GitHub</a>
-    </nav>
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <nav class="flex items-center gap-0.5 text-[0.78rem] text-slate-300 sm:gap-1 sm:text-sm" aria-label="Primary navigation">
+        <a href="/#work" class="nav-link">Projects</a>
+        <a href="/#skills" class="nav-link">Skills</a>
+        <a href="/#about" class="nav-link">About</a>
+        <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="nav-link hidden sm:block">GitHub</a>
+      </nav>
+      <ThemeToggle />
+    </div>
   </div>
 </header>
