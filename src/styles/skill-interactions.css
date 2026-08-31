@@ -47,4 +47,8 @@ html[data-theme='light'] {
     color: var(--skill-hover-text);
     box-shadow: var(--skill-hover-shadow);
   }
+
+  .availability-pill.interactive-pill:hover {
+    transform: scale(1.018);
+  }
 }
