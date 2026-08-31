@@ -15,6 +15,8 @@
   --metric-hover-shadow:
     0 10px 34px rgba(78, 124, 255, 0.08),
     0 0 0 1px rgba(120, 167, 255, 0.035) inset;
+
+  --mobile-pill-border: rgba(132, 174, 255, 0.58);
 }
 
 html[data-theme='light'] {
@@ -34,6 +36,8 @@ html[data-theme='light'] {
   --metric-hover-shadow:
     0 10px 30px rgba(54, 79, 122, 0.075),
     0 0 0 1px rgba(85, 127, 230, 0.03) inset;
+
+  --mobile-pill-border: rgba(70, 105, 190, 0.44);
 }
 
 #work .kbd-tag,
@@ -104,10 +108,10 @@ html[data-theme='light'] {
 @media (hover: none) and (pointer: coarse) {
   .mobile-scroll-focus {
     transition:
-      border-color 240ms ease,
-      background 240ms ease,
-      color 240ms ease,
-      box-shadow 240ms ease;
+      border-color 320ms ease,
+      background 320ms ease,
+      color 320ms ease,
+      box-shadow 320ms ease;
   }
 
   .mobile-scroll-focus.mobile-scroll-active {
@@ -118,7 +122,7 @@ html[data-theme='light'] {
 
   .interactive-pill.mobile-scroll-focus.mobile-scroll-active {
     transform: none;
-    border-color: var(--skill-hover-border);
+    border-color: var(--mobile-pill-border);
     background: var(--skill-hover-bg);
     color: var(--skill-hover-text);
     box-shadow: var(--skill-hover-shadow);
