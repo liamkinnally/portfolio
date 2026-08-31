@@ -15,10 +15,19 @@ const {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <script is:inline>
+      (() => {
+        let theme = 'dark';
+        try {
+          if (localStorage.getItem('theme') === 'light') theme = 'light';
+        } catch {}
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#07090d" />
     <meta name="robots" content="index, follow" />
@@ -31,6 +40,14 @@ const {
     <meta name="twitter:description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta && document.documentElement.dataset.theme === 'light') {
+          meta.setAttribute('content', '#f7f9fd');
+        }
+      })();
+    </script>
   </head>
   <body>
     <ParticleCanvas />
