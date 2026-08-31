@@ -79,12 +79,23 @@ const {
         const observer = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
-              entry.target.classList.toggle('mobile-scroll-active', entry.isIntersecting);
+              if (!entry.isIntersecting || entry.intersectionRatio < 0.55) continue;
+
+              const target = entry.target as HTMLElement;
+              observer.unobserve(target);
+
+              window.setTimeout(() => {
+                target.classList.add('mobile-scroll-active');
+
+                window.setTimeout(() => {
+                  target.classList.remove('mobile-scroll-active');
+                }, 620);
+              }, 80);
             }
           },
           {
-            threshold: 0,
-            rootMargin: '-38% 0px -38% 0px',
+            threshold: [0.55],
+            rootMargin: '0px 0px -12% 0px',
           },
         );
 
