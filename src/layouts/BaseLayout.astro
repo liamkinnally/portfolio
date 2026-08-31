@@ -75,8 +75,23 @@ const {
           '.project-page .interactive-pill',
         ];
 
-        const targets = document.querySelectorAll<HTMLElement>(selectors.join(','));
+        const initiallyHighlightedSelectors = [
+          '.availability-pill.interactive-pill',
+          '.project-page header .kbd-tag',
+        ];
+
+        const targets = document.querySelectorAll<HTMLElement>(
+          [...selectors, ...initiallyHighlightedSelectors].join(','),
+        );
         targets.forEach((target) => target.classList.add('mobile-scroll-focus'));
+
+        const initiallyHighlighted = document.querySelectorAll<HTMLElement>(
+          initiallyHighlightedSelectors.join(','),
+        );
+        initiallyHighlighted.forEach((target) => {
+          target.dataset.mobileRevealTriggered = 'true';
+          target.classList.add('mobile-scroll-active');
+        });
 
         const startObserver = () => {
           const observer = new IntersectionObserver(
