@@ -1,0 +1,153 @@
+---
+const sourceUrl = 'https://raw.githubusercontent.com/liamkinnally/nba-scoring-model/main/reports/data/holdout_predictions.csv';
+const response = await fetch(sourceUrl);
+if (!response.ok) {
+  throw new Error(`Could not load holdout prediction data (${response.status})`);
+}
+
+const csv = await response.text();
+const lines = csv.trim().split(/\r?\n/);
+const header = lines[0].split(',');
+const targetIndex = header.indexOf('target');
+const actualIndex = header.indexOf('actual');
+const predictionIndex = header.indexOf('model_pred');
+
+if ([targetIndex, actualIndex, predictionIndex].some((index) => index < 0)) {
+  throw new Error('Holdout prediction CSV is missing expected columns.');
+}
+
+const points = lines.slice(1).flatMap((line) => {
+  const cells = line.split(',');
+  if (cells[targetIndex] !== 'points') return [];
+  const actual = Number(cells[actualIndex]);
+  const predicted = Number(cells[predictionIndex]);
+  if (!Number.isFinite(actual) || !Number.isFinite(predicted)) return [];
+  return [{ actual, predicted }];
+});
+
+const width = 760;
+const height = 470;
+const margin = { top: 30, right: 30, bottom: 58, left: 58 };
+const plotWidth = width - margin.left - margin.right;
+const plotHeight = height - margin.top - margin.bottom;
+const observedMax = Math.max(...points.flatMap((point) => [point.actual, point.predicted]));
+const axisMax = Math.max(60, Math.ceil(observedMax / 10) * 10);
+const ticks = Array.from({ length: axisMax / 10 + 1 }, (_, index) => index * 10);
+const binCount = Math.round(axisMax / 2);
+const cellWidth = plotWidth / binCount;
+const cellHeight = plotHeight / binCount;
+const bins = new Map<string, { x: number; y: number; count: number }>();
+
+for (const point of points) {
+  const bx = Math.min(binCount - 1, Math.max(0, Math.floor((point.actual / axisMax) * binCount)));
+  const by = Math.min(binCount - 1, Math.max(0, Math.floor((point.predicted / axisMax) * binCount)));
+  const key = `${bx}:${by}`;
+  const existing = bins.get(key);
+  if (existing) existing.count += 1;
+  else bins.set(key, { x: bx, y: by, count: 1 });
+}
+
+const density = [...bins.values()];
+const maxCount = Math.max(...density.map((bin) => bin.count));
+const x = (value: number) => margin.left + (value / axisMax) * plotWidth;
+const y = (value: number) => margin.top + plotHeight - (value / axisMax) * plotHeight;
+const maxPrediction = Math.max(...points.map((point) => point.predicted));
+const maxActual = Math.max(...points.map((point) => point.actual));
+---
+
+<div class="chart-shell">
+  <div class="flex flex-col gap-4 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6 sm:pt-6">
+    <div>
+      <div class="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-slate-400">Chronological holdout · points</div>
+      <h3 class="mt-2 text-base font-semibold tracking-[-0.015em] text-slate-100 sm:text-lg">Actual vs. predicted</h3>
+    </div>
+    <div class="flex flex-wrap gap-2 self-start">
+      <span class="rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5 text-xs font-semibold text-blue-200">{points.length.toLocaleString()} rows</span>
+      <span class="rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-xs font-semibold text-slate-300">2-point density cells</span>
+    </div>
+  </div>
+
+  <div class="mt-2 flex flex-wrap gap-x-5 gap-y-2 px-5 text-xs text-slate-400 sm:px-6">
+    <span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-[3px] bg-[#82adff] opacity-80"></span>More observations = brighter</span>
+    <span class="inline-flex items-center gap-2"><span class="h-0 w-5 border-t border-dashed border-slate-400"></span>Perfect prediction</span>
+  </div>
+
+  <div class="mt-1 px-2 pb-2 sm:px-3 sm:pb-3">
+    <svg class="block h-auto w-full" viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="quality-title quality-desc">
+      <title id="quality-title">Actual versus predicted points on the chronological holdout</title>
+      <desc id="quality-desc">All points-model holdout observations are aggregated into two-point density cells. The model shows useful predictive signal but compresses extreme scoring outcomes toward more typical values.</desc>
+      <defs>
+        <linearGradient id="density-fill" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0%" stop-color="#78a7ff" />
+          <stop offset="100%" stop-color="#ac92ff" />
+        </linearGradient>
+        <filter id="density-glow" x="-25%" y="-25%" width="150%" height="150%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="rgba(255,255,255,0.012)" />
+
+      {ticks.map((tick) => (
+        <g>
+          <line x1={x(tick)} x2={x(tick)} y1={margin.top} y2={margin.top + plotHeight} stroke="rgba(255,255,255,0.055)" stroke-width="1" />
+          <line x1={margin.left} x2={margin.left + plotWidth} y1={y(tick)} y2={y(tick)} stroke="rgba(255,255,255,0.055)" stroke-width="1" />
+          <text x={x(tick)} y={margin.top + plotHeight + 27} text-anchor="middle" fill="#8f9daf" font-size="11" font-weight="600">{tick}</text>
+          <text x={margin.left - 12} y={y(tick) + 4} text-anchor="end" fill="#8f9daf" font-size="11" font-weight="600">{tick}</text>
+        </g>
+      ))}
+
+      {density.map((bin) => {
+        const intensity = Math.sqrt(bin.count / maxCount);
+        return (
+          <rect
+            class="density-cell"
+            x={margin.left + bin.x * cellWidth + 0.7}
+            y={margin.top + plotHeight - (bin.y + 1) * cellHeight + 0.7}
+            width={Math.max(1, cellWidth - 1.4)}
+            height={Math.max(1, cellHeight - 1.4)}
+            rx="1.8"
+            fill="url(#density-fill)"
+            opacity={0.10 + intensity * 0.78}
+            filter={intensity > 0.72 ? 'url(#density-glow)' : undefined}
+          />
+        );
+      })}
+
+      <line x1={x(0)} y1={y(0)} x2={x(axisMax)} y2={y(axisMax)} stroke="#b8c3d2" stroke-width="1.6" stroke-dasharray="7 7" opacity="0.62" />
+
+      <text x={margin.left + plotWidth / 2} y={height - 8} text-anchor="middle" fill="#7f8c9e" font-size="10.5" font-weight="600">Actual points</text>
+      <text x="15" y={margin.top + plotHeight / 2} text-anchor="middle" fill="#7f8c9e" font-size="10.5" font-weight="600" transform={`rotate(-90 15 ${margin.top + plotHeight / 2})`}>Predicted points</text>
+    </svg>
+  </div>
+
+  <div class="mx-5 mb-5 grid gap-3 border-t border-white/[0.07] pt-4 text-sm leading-6 sm:mx-6 sm:mb-6 sm:grid-cols-[1fr_auto] sm:items-center">
+    <span class="text-slate-400">The density follows the parity line for typical outcomes, but high-scoring games sit well below it as predictions compress toward the mean.</span>
+    <span class="shrink-0 font-semibold text-blue-200">Max: {maxPrediction.toFixed(1)} predicted · {maxActual.toFixed(0)} actual</span>
+  </div>
+</div>
+
+<style>
+  .chart-shell {
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1rem;
+    background:
+      radial-gradient(circle at 73% 5%, rgba(90, 129, 255, 0.12), transparent 43%),
+      linear-gradient(145deg, rgba(14, 19, 29, 0.92), rgba(7, 10, 16, 0.92));
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+  }
+
+  .density-cell {
+    animation: density-in 420ms ease both;
+  }
+
+  @keyframes density-in {
+    from { opacity: 0; transform: translateY(3px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .density-cell { animation: none; }
+  }
+</style>
