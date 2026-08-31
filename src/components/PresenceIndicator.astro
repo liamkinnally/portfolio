@@ -1,0 +1,88 @@
+<span
+  id="presence-indicator"
+  class="presence-indicator hidden sm:inline-flex"
+  data-state="loading"
+  aria-live="polite"
+  aria-label="Discord presence"
+>
+  <span class="presence-dot" aria-hidden="true"></span>
+  <span class="presence-label">Status</span>
+</span>
+
+<script>
+  const indicator = document.querySelector<HTMLElement>('#presence-indicator');
+  const label = indicator?.querySelector<HTMLElement>('.presence-label');
+  const labels: Record<string, string> = {
+    online: 'Online',
+    away: 'Away',
+    busy: 'Busy',
+    offline: 'Offline',
+  };
+
+  const refreshPresence = async () => {
+    if (!indicator || !label) return;
+
+    try {
+      const response = await fetch('/api/presence', { cache: 'no-store' });
+      if (!response.ok) throw new Error('presence unavailable');
+
+      const data = await response.json();
+      const status = typeof data?.status === 'string' ? data.status : 'offline';
+
+      indicator.dataset.state = status;
+      label.textContent = labels[status] ?? 'Offline';
+      indicator.classList.remove('presence-hidden');
+    } catch {
+      indicator.classList.add('presence-hidden');
+    }
+  };
+
+  refreshPresence();
+  window.setInterval(refreshPresence, 60_000);
+</script>
+
+<style>
+  .presence-indicator {
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 4.8rem;
+    color: #b7c2d0;
+    font-size: 0.76rem;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+    transition: opacity 160ms ease, color 160ms ease;
+  }
+
+  .presence-indicator[data-state="loading"],
+  .presence-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .presence-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: #667180;
+    box-shadow: 0 0 0 3px rgba(102, 113, 128, 0.08);
+  }
+
+  .presence-indicator[data-state="online"] .presence-dot {
+    background: #78d6a3;
+    box-shadow: 0 0 0 3px rgba(120, 214, 163, 0.08), 0 0 14px rgba(120, 214, 163, 0.22);
+  }
+
+  .presence-indicator[data-state="away"] .presence-dot {
+    background: #e1ba73;
+    box-shadow: 0 0 0 3px rgba(225, 186, 115, 0.08);
+  }
+
+  .presence-indicator[data-state="busy"] .presence-dot {
+    background: #e68b9b;
+    box-shadow: 0 0 0 3px rgba(230, 139, 155, 0.08);
+  }
+
+  .presence-indicator[data-state="offline"] .presence-dot {
+    background: #667180;
+  }
+</style>
