@@ -17,9 +17,13 @@ const formatValue = (value: number) => value >= 0.1 ? value.toFixed(2) : value.t
   <div class="flex flex-col gap-4 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6 sm:pt-6">
     <div>
       <div class="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-slate-400">Model interpretability · points</div>
-      <h3 class="mt-2 text-base font-semibold tracking-[-0.015em] text-slate-100 sm:text-lg">Permutation importance</h3>
+      <h3
+        class="scroll-heading-shine mt-2 text-base font-semibold tracking-[-0.015em] text-slate-100 sm:text-lg"
+        data-scroll-heading
+        data-shine-text="Permutation importance"
+      >Permutation importance</h3>
     </div>
-    <div class="self-start rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5 text-xs font-semibold text-blue-200">
+    <div class="interactive-pill self-start rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5 text-xs font-semibold text-blue-200">
       MAE increase when shuffled
     </div>
   </div>
