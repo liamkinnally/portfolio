@@ -287,6 +287,10 @@ a {
   background: var(--nav-hover);
 }
 
+html:not([data-theme='light']) .featured-project-nav-link:hover {
+  color: #b9a9ff !important;
+}
+
 .metric-card {
   border: 1px solid var(--border);
   background: var(--metric-bg);
