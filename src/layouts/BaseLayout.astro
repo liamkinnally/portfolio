@@ -82,25 +82,28 @@ const {
           const observer = new IntersectionObserver(
             (entries) => {
               for (const entry of entries) {
-                if (!entry.isIntersecting || entry.intersectionRatio < 0.48) continue;
-
                 const target = entry.target as HTMLElement;
-                observer.unobserve(target);
+                const hasTriggered = target.dataset.mobileRevealTriggered === 'true';
 
-                const isPill = target.classList.contains('interactive-pill') || target.classList.contains('kbd-tag');
-                const highlightDuration = isPill ? 950 : 1250;
-
-                window.setTimeout(() => {
+                if (!hasTriggered && entry.isIntersecting && entry.intersectionRatio >= 0.48) {
+                  target.dataset.mobileRevealTriggered = 'true';
                   target.classList.add('mobile-scroll-active');
+                  continue;
+                }
 
-                  window.setTimeout(() => {
-                    target.classList.remove('mobile-scroll-active');
-                  }, highlightDuration);
-                }, 40);
+                if (
+                  hasTriggered &&
+                  target.classList.contains('mobile-scroll-active') &&
+                  entry.intersectionRatio <= 0.08 &&
+                  entry.boundingClientRect.top < 0
+                ) {
+                  target.classList.remove('mobile-scroll-active');
+                  observer.unobserve(target);
+                }
               }
             },
             {
-              threshold: [0.48],
+              threshold: [0, 0.08, 0.48],
               rootMargin: '0px 0px -8% 0px',
             },
           );
