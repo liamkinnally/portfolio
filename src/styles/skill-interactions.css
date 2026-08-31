@@ -1,0 +1,42 @@
+:root {
+  --skill-hover-border: rgba(120, 167, 255, 0.38);
+  --skill-hover-bg:
+    linear-gradient(135deg, rgba(120, 167, 255, 0.12), rgba(154, 124, 255, 0.08)),
+    rgba(255, 255, 255, 0.045);
+  --skill-hover-text: #eef4ff;
+  --skill-hover-shadow:
+    0 8px 24px rgba(78, 124, 255, 0.13),
+    0 0 0 1px rgba(120, 167, 255, 0.04) inset;
+}
+
+html[data-theme='light'] {
+  --skill-hover-border: rgba(73, 108, 190, 0.30);
+  --skill-hover-bg:
+    linear-gradient(135deg, rgba(85, 127, 230, 0.10), rgba(118, 103, 220, 0.07)),
+    rgba(255, 255, 255, 0.82);
+  --skill-hover-text: #28456f;
+  --skill-hover-shadow:
+    0 8px 22px rgba(54, 79, 122, 0.10),
+    0 0 0 1px rgba(85, 127, 230, 0.035) inset;
+}
+
+#skills .kbd-tag {
+  cursor: default;
+  transform: translateZ(0);
+  transition:
+    transform 180ms cubic-bezier(.2, .75, .25, 1),
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #skills .kbd-tag:hover {
+    transform: translateY(-2px) scale(1.018);
+    border-color: var(--skill-hover-border);
+    background: var(--skill-hover-bg);
+    color: var(--skill-hover-text);
+    box-shadow: var(--skill-hover-shadow);
+  }
+}
