@@ -94,7 +94,7 @@ const {
                 if (
                   hasTriggered &&
                   target.classList.contains('mobile-scroll-active') &&
-                  entry.intersectionRatio <= 0.08 &&
+                  entry.intersectionRatio <= 0.20 &&
                   entry.boundingClientRect.top < 0
                 ) {
                   target.classList.remove('mobile-scroll-active');
@@ -103,7 +103,7 @@ const {
               }
             },
             {
-              threshold: [0, 0.08, 0.48],
+              threshold: [0, 0.20, 0.48],
               rootMargin: '0px 0px -8% 0px',
             },
           );
