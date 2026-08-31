@@ -66,6 +66,9 @@ const {
       if (coarsePointer && !reducedMotion && 'IntersectionObserver' in window) {
         const selectors = [
           '#work .metric-card',
+          '#work .kbd-tag',
+          '#skills .kbd-tag',
+          '#education .kbd-tag',
           '.chart-shell--compact .interactive-pill',
           '.project-page .metric-card',
           '.project-page .stationary-highlight',
@@ -84,7 +87,7 @@ const {
                 const target = entry.target as HTMLElement;
                 observer.unobserve(target);
 
-                const isPill = target.classList.contains('interactive-pill');
+                const isPill = target.classList.contains('interactive-pill') || target.classList.contains('kbd-tag');
                 const highlightDuration = isPill ? 950 : 1250;
 
                 window.setTimeout(() => {
