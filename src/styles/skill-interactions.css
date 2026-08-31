@@ -112,10 +112,10 @@ html[data-theme='light'] {
 @media (hover: none) and (pointer: coarse) {
   .mobile-scroll-focus {
     transition:
-      border-color 320ms ease,
-      background 320ms ease,
-      color 320ms ease,
-      box-shadow 320ms ease;
+      border-color 460ms ease,
+      background 460ms ease,
+      color 460ms ease,
+      box-shadow 460ms ease;
   }
 
   .mobile-scroll-focus.mobile-scroll-active {
