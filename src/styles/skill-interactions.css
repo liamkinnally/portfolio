@@ -22,7 +22,9 @@ html[data-theme='light'] {
 
 #work .kbd-tag,
 #skills .kbd-tag,
-#education .kbd-tag {
+#education .kbd-tag,
+.project-page .kbd-tag,
+.interactive-pill {
   cursor: default;
   transform: translateZ(0);
   transition:
@@ -36,7 +38,9 @@ html[data-theme='light'] {
 @media (hover: hover) and (pointer: fine) {
   #work .kbd-tag:hover,
   #skills .kbd-tag:hover,
-  #education .kbd-tag:hover {
+  #education .kbd-tag:hover,
+  .project-page .kbd-tag:hover,
+  .interactive-pill:hover {
     transform: translateY(-2px) scale(1.018);
     border-color: var(--skill-hover-border);
     background: var(--skill-hover-bg);
