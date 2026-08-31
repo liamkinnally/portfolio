@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MetricCard from '../components/MetricCard.astro';
+import RollingMaeChart from '../components/RollingMaeChart.astro';
 ---
 
 <BaseLayout>
@@ -67,17 +68,11 @@ import MetricCard from '../components/MetricCard.astro';
           </div>
         </div>
 
-        <div class="relative flex min-h-[390px] items-center overflow-hidden border-t border-white/[0.07] bg-[#090d15] p-5 sm:p-7 lg:border-t-0 lg:border-l">
-          <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(86,122,255,0.16),transparent_45%)]"></div>
-          <figure class="relative w-full overflow-hidden rounded-xl border border-white/[0.10] bg-white shadow-2xl shadow-black/20">
-            <img
-              src="https://raw.githubusercontent.com/liamkinnally/nba-scoring-model/main/reports/figures/rolling_mae.png"
-              alt="Rolling MAE comparison from the NBA player-stat prediction project"
-              class="block h-auto w-full"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+        <div class="relative flex min-h-[390px] items-center overflow-hidden border-t border-white/[0.07] bg-[#090d15] p-4 sm:p-6 lg:border-t-0 lg:border-l lg:p-7">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(86,122,255,0.13),transparent_48%)]"></div>
+          <div class="relative w-full">
+            <RollingMaeChart compact />
+          </div>
         </div>
       </div>
     </article>
