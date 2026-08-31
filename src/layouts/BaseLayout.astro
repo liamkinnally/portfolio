@@ -58,5 +58,38 @@ const {
     <main class="relative z-10">
       <slot />
     </main>
+
+    <script>
+      const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (coarsePointer && !reducedMotion && 'IntersectionObserver' in window) {
+        const selectors = [
+          '.availability-pill.interactive-pill',
+          '#work .metric-card',
+          '.chart-shell--compact .interactive-pill',
+          '.project-page .metric-card',
+          '.project-page .stationary-highlight',
+          '.project-page .interactive-pill',
+        ];
+
+        const targets = document.querySelectorAll<HTMLElement>(selectors.join(','));
+        targets.forEach((target) => target.classList.add('mobile-scroll-focus'));
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              entry.target.classList.toggle('mobile-scroll-active', entry.isIntersecting);
+            }
+          },
+          {
+            threshold: 0,
+            rootMargin: '-38% 0px -38% 0px',
+          },
+        );
+
+        targets.forEach((target) => observer.observe(target));
+      }
+    </script>
   </body>
 </html>
