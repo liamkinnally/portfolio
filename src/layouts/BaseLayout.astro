@@ -65,7 +65,6 @@ const {
 
       if (coarsePointer && !reducedMotion && 'IntersectionObserver' in window) {
         const selectors = [
-          '.availability-pill.interactive-pill',
           '#work .metric-card',
           '.chart-shell--compact .interactive-pill',
           '.project-page .metric-card',
@@ -76,30 +75,37 @@ const {
         const targets = document.querySelectorAll<HTMLElement>(selectors.join(','));
         targets.forEach((target) => target.classList.add('mobile-scroll-focus'));
 
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (!entry.isIntersecting || entry.intersectionRatio < 0.55) continue;
+        const startObserver = () => {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting || entry.intersectionRatio < 0.48) continue;
 
-              const target = entry.target as HTMLElement;
-              observer.unobserve(target);
+                const target = entry.target as HTMLElement;
+                observer.unobserve(target);
 
-              window.setTimeout(() => {
-                target.classList.add('mobile-scroll-active');
+                const isPill = target.classList.contains('interactive-pill');
+                const highlightDuration = isPill ? 950 : 1250;
 
                 window.setTimeout(() => {
-                  target.classList.remove('mobile-scroll-active');
-                }, 620);
-              }, 80);
-            }
-          },
-          {
-            threshold: [0.55],
-            rootMargin: '0px 0px -12% 0px',
-          },
-        );
+                  target.classList.add('mobile-scroll-active');
 
-        targets.forEach((target) => observer.observe(target));
+                  window.setTimeout(() => {
+                    target.classList.remove('mobile-scroll-active');
+                  }, highlightDuration);
+                }, 40);
+              }
+            },
+            {
+              threshold: [0.48],
+              rootMargin: '0px 0px -8% 0px',
+            },
+          );
+
+          targets.forEach((target) => observer.observe(target));
+        };
+
+        window.addEventListener('scroll', startObserver, { once: true, passive: true });
       }
     </script>
   </body>
