@@ -1,8 +1,15 @@
+---
+import PresenceIndicator from './PresenceIndicator.astro';
+---
+
 <header class="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-[#07090d]/78 backdrop-blur-xl">
   <div class="container-shell flex h-16 items-center justify-between">
-    <a href="/" class="group" aria-label="Home">
-      <span class="text-sm font-semibold tracking-[-0.015em] text-slate-100 transition group-hover:text-white">Home</span>
-    </a>
+    <div class="flex items-center gap-5">
+      <a href="/" class="group" aria-label="Home">
+        <span class="text-sm font-semibold tracking-[-0.015em] text-slate-100 transition group-hover:text-white">Home</span>
+      </a>
+      <PresenceIndicator />
+    </div>
 
     <nav class="flex items-center gap-0.5 text-[0.82rem] text-slate-300 sm:gap-1 sm:text-sm" aria-label="Primary navigation">
       <a href="/#work" class="rounded-lg px-2.5 py-2 transition hover:bg-white/[0.04] hover:text-white sm:px-3">Projects</a>
