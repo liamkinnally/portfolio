@@ -5,21 +5,24 @@ import MetricCard from '../components/MetricCard.astro';
 
 <BaseLayout>
   <section class="container-shell flex min-h-[92vh] items-center pt-28 pb-20">
-    <div class="max-w-4xl">
+    <div class="fade-up max-w-4xl">
       <div class="eyebrow">UCF · Information Technology</div>
-      <h1 class="gradient-text mt-7 max-w-4xl text-5xl font-[780] leading-[0.98] tracking-[-0.055em] sm:text-6xl md:text-7xl lg:text-[5.4rem]">
-        I build software that turns messy data into useful systems.
+      <h1 class="gradient-text mt-7 text-6xl font-[790] leading-[0.94] tracking-[-0.06em] sm:text-7xl md:text-8xl lg:text-[6.4rem]">
+        Liam Kinnally
       </h1>
-      <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl">
-        I’m Liam Kinnally, a senior Information Technology student at the University of Central Florida focused on software engineering, software QA, and AI/ML.
+      <p class="mt-6 text-lg font-semibold tracking-[-0.015em] text-blue-200 sm:text-xl">
+        Software Engineering · Testing / QA · AI / ML
+      </p>
+      <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+        I build reliable software and data-driven systems, with an emphasis on testing, reproducibility, and measurable results.
       </p>
       <div class="mt-9 flex flex-wrap gap-3">
-        <a href="#work" class="button-primary">View my work <span aria-hidden="true">↓</span></a>
+        <a href="#work" class="button-primary">View projects <span aria-hidden="true">↓</span></a>
         <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">LinkedIn ↗</a>
       </div>
-
-      <div class="mt-14 flex flex-wrap gap-x-7 gap-y-3 text-sm text-slate-500">
-        <span>Python</span><span>Java</span><span>C</span><span>SQL</span><span>TypeScript</span><span>GitHub Actions</span>
+      <div class="mt-8">
+        <span class="availability-pill">Open to 2027 internship opportunities</span>
       </div>
     </div>
   </section>
@@ -27,65 +30,134 @@ import MetricCard from '../components/MetricCard.astro';
   <section id="work" class="container-shell scroll-mt-24 py-24">
     <div class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <div class="eyebrow">Featured work</div>
+        <div class="eyebrow">Featured project</div>
         <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl">NBA Player Stat Prediction</h2>
       </div>
-      <a href="/projects/nba-scoring-model" class="text-sm font-semibold text-blue-200 transition hover:text-white">Read case study →</a>
+      <div class="flex gap-5 text-sm font-semibold">
+        <a href="/projects/nba-scoring-model" class="text-blue-200 transition hover:text-white">Case study →</a>
+        <a href="https://github.com/liamkinnally/nba-scoring-model" target="_blank" rel="noreferrer" class="text-slate-300 transition hover:text-white">Source ↗</a>
+      </div>
     </div>
 
-    <a href="/projects/nba-scoring-model" class="group block">
-      <article class="glass-card overflow-hidden rounded-2xl transition duration-300 group-hover:-translate-y-1 group-hover:border-blue-200/20">
-        <div class="grid lg:grid-cols-[1.12fr_0.88fr]">
-          <div class="p-6 sm:p-8 lg:p-10">
-            <div class="flex flex-wrap gap-2">
-              <span class="kbd-tag">Python</span>
-              <span class="kbd-tag">scikit-learn</span>
-              <span class="kbd-tag">SQLAlchemy</span>
-              <span class="kbd-tag">pytest</span>
-              <span class="kbd-tag">GitHub Actions</span>
-            </div>
-
-            <h3 class="mt-7 max-w-xl text-2xl font-bold tracking-[-0.03em] sm:text-3xl">A reproducible ML pipeline for predicting NBA player performance.</h3>
-            <p class="mt-4 max-w-2xl leading-7 text-slate-400">
-              Built an end-to-end data pipeline, leakage-safe feature engineering, chronological model evaluation, serialized artifacts, and automated tests around real NBA player-game data.
-            </p>
-
-            <div class="mt-8 grid gap-3 sm:grid-cols-3">
-              <MetricCard value="26,547" label="Player-games" />
-              <MetricCard value="4.85" label="Points MAE" />
-              <MetricCard value="23 / 28" label="Windows won" detail="vs. 10-game rolling baseline" />
-            </div>
+    <article class="glass-card overflow-hidden rounded-2xl">
+      <div class="grid lg:grid-cols-[1.05fr_0.95fr]">
+        <div class="p-6 sm:p-8 lg:p-10">
+          <div class="flex flex-wrap gap-2">
+            <span class="kbd-tag">Python</span>
+            <span class="kbd-tag">scikit-learn</span>
+            <span class="kbd-tag">SQLAlchemy</span>
+            <span class="kbd-tag">pytest</span>
+            <span class="kbd-tag">GitHub Actions</span>
           </div>
 
-          <div class="relative min-h-[360px] overflow-hidden border-t border-white/[0.07] bg-[#090d15] p-6 lg:border-t-0 lg:border-l lg:p-8">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(86,122,255,0.17),transparent_45%)]"></div>
-            <div class="relative flex h-full flex-col justify-between rounded-xl border border-white/[0.08] bg-black/20 p-5">
-              <div class="flex items-center justify-between text-xs text-slate-500">
-                <span>evaluation / points</span>
-                <span>chronological holdout</span>
-              </div>
-              <svg class="mt-10 w-full" viewBox="0 0 520 240" role="img" aria-label="Stylized model evaluation visualization">
-                <defs>
-                  <linearGradient id="modelLine" x1="0" x2="1">
-                    <stop offset="0%" stop-color="#78a7ff" />
-                    <stop offset="100%" stop-color="#aa8cff" />
-                  </linearGradient>
-                </defs>
-                <g stroke="rgba(255,255,255,0.07)" stroke-width="1">
-                  <line x1="0" y1="40" x2="520" y2="40"/><line x1="0" y1="100" x2="520" y2="100"/><line x1="0" y1="160" x2="520" y2="160"/><line x1="0" y1="220" x2="520" y2="220"/>
-                </g>
-                <path d="M0,159 C44,170 63,142 98,150 C135,158 156,122 194,129 C232,137 249,102 286,111 C326,120 347,87 386,98 C428,110 457,70 520,82" fill="none" stroke="rgba(148,163,184,0.45)" stroke-width="3" stroke-dasharray="7 8" />
-                <path d="M0,142 C39,126 70,141 104,115 C137,91 169,112 204,90 C245,65 267,91 307,69 C344,49 372,72 414,50 C451,31 480,50 520,28" fill="none" stroke="url(#modelLine)" stroke-width="4" stroke-linecap="round" />
-              </svg>
-              <div class="mt-8 flex items-center justify-between text-xs">
-                <span class="text-slate-500">Model</span>
-                <span class="font-semibold text-blue-200">beats baseline in 23/28 windows</span>
-              </div>
-            </div>
+          <h3 class="mt-7 max-w-xl text-2xl font-bold tracking-[-0.03em] sm:text-3xl">A reproducible ML pipeline for predicting NBA player performance.</h3>
+          <p class="mt-4 max-w-2xl text-[1.02rem] leading-8 text-slate-300">
+            Built an end-to-end data pipeline, leakage-safe feature engineering, chronological model evaluation, serialized artifacts, and automated tests around real NBA player-game data.
+          </p>
+
+          <div class="mt-8 grid gap-3 sm:grid-cols-3">
+            <MetricCard value="26,547" label="Player-games" />
+            <MetricCard value="4.85" label="Points MAE" />
+            <MetricCard value="23 / 28" label="Windows won" detail="vs. 10-game rolling baseline" />
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/projects/nba-scoring-model" class="button-primary">Read case study →</a>
+            <a href="https://github.com/liamkinnally/nba-scoring-model" target="_blank" rel="noreferrer" class="button-secondary">View repository ↗</a>
           </div>
         </div>
-      </article>
-    </a>
+
+        <div class="relative flex min-h-[390px] items-center overflow-hidden border-t border-white/[0.07] bg-[#090d15] p-5 sm:p-7 lg:border-t-0 lg:border-l">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(86,122,255,0.16),transparent_45%)]"></div>
+          <figure class="relative w-full overflow-hidden rounded-xl border border-white/[0.10] bg-white shadow-2xl shadow-black/20">
+            <img
+              src="https://raw.githubusercontent.com/liamkinnally/nba-scoring-model/main/reports/figures/rolling_mae.png"
+              alt="Rolling MAE comparison from the NBA player-stat prediction project"
+              class="block h-auto w-full"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="container-shell py-10">
+    <hr class="section-rule" />
+  </section>
+
+  <section id="skills" class="container-shell scroll-mt-24 py-24">
+    <div class="max-w-2xl">
+      <div class="eyebrow">Skills</div>
+      <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-4xl">What I work with.</h2>
+      <p class="mt-4 text-[1.02rem] leading-8 text-slate-300">
+        My strongest work is in Python and software/data tooling, with growing frontend experience through this portfolio and other projects.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="text-sm font-semibold text-blue-200">Languages</div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="kbd-tag">Python</span><span class="kbd-tag">C</span><span class="kbd-tag">Java</span><span class="kbd-tag">SQL</span><span class="kbd-tag">TypeScript</span>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6">
+        <div class="text-sm font-semibold text-blue-200">Testing & development</div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="kbd-tag">pytest</span><span class="kbd-tag">GitHub Actions</span><span class="kbd-tag">Git</span><span class="kbd-tag">CI/CD</span><span class="kbd-tag">Bash</span><span class="kbd-tag">VS Code</span>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6">
+        <div class="text-sm font-semibold text-blue-200">Data & ML</div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="kbd-tag">pandas</span><span class="kbd-tag">NumPy</span><span class="kbd-tag">scikit-learn</span><span class="kbd-tag">SQLAlchemy</span><span class="kbd-tag">SQLite</span><span class="kbd-tag">MySQL</span><span class="kbd-tag">Matplotlib</span>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6">
+        <div class="text-sm font-semibold text-blue-200">Web & deployment</div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="kbd-tag">Astro</span><span class="kbd-tag">Tailwind CSS</span><span class="kbd-tag">HTML / CSS</span><span class="kbd-tag">Vercel</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell py-10">
+    <hr class="section-rule" />
+  </section>
+
+  <section id="education" class="container-shell scroll-mt-24 py-24">
+    <div class="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <div>
+        <div class="eyebrow">Education</div>
+        <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em]">University of Central Florida</h2>
+      </div>
+      <div class="glass-card rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 class="text-xl font-bold tracking-[-0.025em]">B.S. Information Technology</h3>
+            <p class="mt-2 text-slate-300">College of Engineering & Computer Science</p>
+          </div>
+          <div class="text-sm font-semibold text-blue-200">Expected August 2027</div>
+        </div>
+        <p class="mt-6 leading-7 text-slate-300">Dean’s List · President’s Honor Roll</p>
+        <div class="mt-6">
+          <div class="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Relevant coursework</div>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="kbd-tag">Data Structures & Algorithms</span>
+            <span class="kbd-tag">Object-Oriented Programming</span>
+            <span class="kbd-tag">Computer Architecture Concepts</span>
+            <span class="kbd-tag">Database Concepts</span>
+            <span class="kbd-tag">Secure Software Development</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="container-shell py-10">
@@ -96,17 +168,32 @@ import MetricCard from '../components/MetricCard.astro';
     <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
       <div>
         <div class="eyebrow">About</div>
-        <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em]">Software first.<br />Curiosity everywhere.</h2>
+        <h2 class="mt-4 text-3xl font-bold tracking-[-0.035em]">I like software that can prove it works.</h2>
       </div>
-      <div class="max-w-2xl space-y-5 text-[1.05rem] leading-8 text-slate-400">
+      <div class="max-w-2xl space-y-5 text-[1.05rem] leading-8 text-slate-300">
         <p>
-          I like work where software has to be correct, measurable, and useful — whether that means building a data pipeline, testing a system, or turning an idea into a product someone can actually use.
+          I’m an Information Technology student at UCF interested in software engineering, testing, and applied machine learning. I enjoy projects where correctness can be measured — whether that means building a data pipeline, designing tests, or turning raw information into something useful.
         </p>
         <p>
-          Outside of development, I’m usually following the NBA, playing competitive games, or doing something car-related. Those interests tend to become project ideas sooner or later.
+          Outside of software, I’m usually following basketball, playing competitive games, or doing something car-related. Those interests tend to become project ideas sooner or later.
         </p>
-        <div class="pt-3">
-          <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">Explore my GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="container-shell scroll-mt-24 py-24">
+    <div class="rounded-2xl border border-blue-200/10 bg-blue-200/[0.035] p-7 sm:p-10">
+      <div class="eyebrow">Contact</div>
+      <div class="mt-5 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div class="max-w-2xl">
+          <h2 class="text-3xl font-bold tracking-[-0.04em] sm:text-4xl">Let’s build something.</h2>
+          <p class="mt-4 text-[1.02rem] leading-8 text-slate-300">
+            I’m currently pursuing software engineering, software testing/QA, and related internship opportunities.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://www.linkedin.com/in/liamkinnally" target="_blank" rel="noreferrer" class="button-primary">LinkedIn ↗</a>
+          <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">GitHub ↗</a>
         </div>
       </div>
     </div>
@@ -114,9 +201,9 @@ import MetricCard from '../components/MetricCard.astro';
 
   <footer class="container-shell py-10">
     <hr class="section-rule" />
-    <div class="flex flex-col gap-3 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-3 py-8 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
       <span>© 2026 Liam Kinnally</span>
-      <span>Built with Astro + Tailwind CSS</span>
+      <span>Built with Astro · TypeScript · Tailwind CSS · Canvas · Vercel</span>
     </div>
   </footer>
 </BaseLayout>
