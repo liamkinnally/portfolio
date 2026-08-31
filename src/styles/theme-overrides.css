@@ -1,11 +1,11 @@
 html[data-theme='light'] {
-  --particle-dot: rgba(58, 84, 150, 0.34);
+  --particle-dot: rgba(58, 84, 150, 0.36);
   --particle-line-rgb: 58, 84, 148;
-  --particle-line-strength: 0.095;
+  --particle-line-strength: 0.10;
 }
 
 html[data-theme='light'] #particle-canvas {
-  opacity: 0.68;
+  opacity: 0.70;
 }
 
 html[data-theme='light'] [class~="bg-[#090d15]"] {
