@@ -43,7 +43,7 @@ const formatDate = (date: string) => {
         data-shine-text={animateHeading ? 'Trailing 7-day MAE' : undefined}
       >Trailing 7-day MAE</h3>
     </div>
-    <div class:list={['flex items-center gap-2 self-start rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5', interactivePill && 'interactive-pill']}>
+    <div class:list={['flex items-center gap-2 self-start rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5', (interactivePill || compact) && 'interactive-pill']}>
       <span class="text-sm font-bold text-blue-200">{wins}/28</span>
       <span class="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-400">windows won</span>
     </div>
