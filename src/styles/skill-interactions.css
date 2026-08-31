@@ -17,6 +17,8 @@
     0 0 0 1px rgba(120, 167, 255, 0.035) inset;
 
   --mobile-pill-border: rgba(132, 174, 255, 0.58);
+  --mobile-tag-bg: rgba(120, 167, 255, 0.065);
+  --mobile-tag-shadow: 0 0 0 1px rgba(120, 167, 255, 0.035) inset;
 }
 
 html[data-theme='light'] {
@@ -38,6 +40,8 @@ html[data-theme='light'] {
     0 0 0 1px rgba(85, 127, 230, 0.03) inset;
 
   --mobile-pill-border: rgba(70, 105, 190, 0.44);
+  --mobile-tag-bg: rgba(85, 127, 230, 0.055);
+  --mobile-tag-shadow: 0 0 0 1px rgba(70, 105, 190, 0.025) inset;
 }
 
 #work .kbd-tag,
@@ -126,5 +130,13 @@ html[data-theme='light'] {
     background: var(--skill-hover-bg);
     color: var(--skill-hover-text);
     box-shadow: var(--skill-hover-shadow);
+  }
+
+  .kbd-tag.mobile-scroll-focus.mobile-scroll-active {
+    transform: none;
+    border-color: var(--mobile-pill-border);
+    background: var(--mobile-tag-bg);
+    color: var(--skill-hover-text);
+    box-shadow: var(--mobile-tag-shadow);
   }
 }
