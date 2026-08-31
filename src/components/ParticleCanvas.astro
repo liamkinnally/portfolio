@@ -38,6 +38,11 @@
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
+      const rootStyles = getComputedStyle(document.documentElement);
+      const dotColor = rootStyles.getPropertyValue('--particle-dot').trim() || 'rgba(145, 173, 255, 0.34)';
+      const lineRgb = rootStyles.getPropertyValue('--particle-line-rgb').trim() || '129, 159, 255';
+      const lineStrength = Number(rootStyles.getPropertyValue('--particle-line-strength').trim()) || 0.085;
+
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
@@ -48,7 +53,7 @@
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(145, 173, 255, 0.34)';
+        ctx.fillStyle = dotColor;
         ctx.fill();
       }
 
@@ -60,11 +65,11 @@
           const dy = a.y - b.y;
           const dist = Math.hypot(dx, dy);
           if (dist < 118) {
-            const alpha = (1 - dist / 118) * 0.085;
+            const alpha = (1 - dist / 118) * lineStrength;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(129, 159, 255, ${alpha})`;
+            ctx.strokeStyle = `rgba(${lineRgb}, ${alpha})`;
             ctx.lineWidth = 0.7;
             ctx.stroke();
           }
