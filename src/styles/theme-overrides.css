@@ -1,3 +1,9 @@
+html[data-theme='light'] {
+  --particle-dot: rgba(64, 91, 161, 0.26);
+  --particle-line-rgb: 66, 91, 156;
+  --particle-line-strength: 0.07;
+}
+
 html[data-theme='light'] [class~="bg-[#090d15]"] {
   background: var(--feature-visual-bg) !important;
 }
