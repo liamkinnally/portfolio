@@ -3,9 +3,11 @@ import { pointsRollingMae } from '../data/rollingMae';
 
 interface Props {
   compact?: boolean;
+  animateHeading?: boolean;
+  interactivePill?: boolean;
 }
 
-const { compact = false } = Astro.props;
+const { compact = false, animateHeading = false, interactivePill = false } = Astro.props;
 const data = pointsRollingMae;
 const width = 760;
 const height = 360;
@@ -35,9 +37,13 @@ const formatDate = (date: string) => {
   <div class="flex flex-col gap-4 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6 sm:pt-6">
     <div>
       <div class="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-slate-400">Chronological holdout · points</div>
-      <h3 class="mt-2 text-base font-semibold tracking-[-0.015em] text-slate-100 sm:text-lg">Trailing 7-day MAE</h3>
+      <h3
+        class:list={['mt-2 text-base font-semibold tracking-[-0.015em] text-slate-100 sm:text-lg', animateHeading && 'scroll-heading-shine']}
+        data-scroll-heading={animateHeading ? '' : undefined}
+        data-shine-text={animateHeading ? 'Trailing 7-day MAE' : undefined}
+      >Trailing 7-day MAE</h3>
     </div>
-    <div class="flex items-center gap-2 self-start rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5">
+    <div class:list={['flex items-center gap-2 self-start rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5', interactivePill && 'interactive-pill']}>
       <span class="text-sm font-bold text-blue-200">{wins}/28</span>
       <span class="text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-400">windows won</span>
     </div>
