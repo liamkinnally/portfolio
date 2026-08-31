@@ -51,7 +51,9 @@ html[data-theme='light'] {
     box-shadow 180ms ease;
 }
 
-#work .metric-card {
+#work .metric-card,
+.project-page .metric-card,
+.project-page .stationary-highlight {
   cursor: default;
   transition:
     border-color 190ms ease,
@@ -76,7 +78,9 @@ html[data-theme='light'] {
     transform: scale(1.018);
   }
 
-  #work .metric-card:hover {
+  #work .metric-card:hover,
+  .project-page .metric-card:hover,
+  .project-page .stationary-highlight:hover {
     border-color: var(--metric-hover-border);
     background: var(--metric-hover-bg);
     box-shadow: var(--metric-hover-shadow);
