@@ -124,6 +124,7 @@ html[data-theme='light'] {
     box-shadow: var(--metric-hover-shadow);
   }
 
+  .interactive-pill.mobile-initial-highlight,
   .interactive-pill.mobile-scroll-focus.mobile-scroll-active {
     transform: none;
     border-color: var(--mobile-pill-border);
@@ -132,6 +133,7 @@ html[data-theme='light'] {
     box-shadow: var(--skill-hover-shadow);
   }
 
+  .mobile-initial-highlight-group .kbd-tag,
   .kbd-tag.mobile-scroll-focus.mobile-scroll-active {
     transform: none;
     border-color: var(--mobile-pill-border);
