@@ -57,7 +57,9 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <meta name="twitter:image:alt" content={socialImageAlt} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <title>{title}</title>
     <script is:inline>
       (() => {
@@ -114,6 +116,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
 
         let scrollFrame = 0;
         let geometryObserver: ResizeObserver | null = null;
+        let layoutRects = new Map<HTMLElement, DOMRect>();
 
         const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
         const smoothstep = (value: number) => {
@@ -133,16 +136,33 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           };
         };
 
-        // Small controls should feel the same whether their text happens to wrap
-        // or not. Their scroll distance is therefore tied only to the viewport,
-        // not to their current rendered height.
         const getInlineBloomDistance = (viewportHeight: number) =>
           Math.min(108, Math.max(72, viewportHeight * 0.095));
 
-        // System Design steps intentionally use a slightly longer local trace,
-        // but the duration is still stable across text/layout changes.
         const getSystemStepBloomDistance = (viewportHeight: number) =>
           Math.min(122, Math.max(96, viewportHeight * 0.115));
+
+        const getCachedRect = (target: HTMLElement) => {
+          const cached = layoutRects.get(target);
+          if (cached) return cached;
+          const rect = target.getBoundingClientRect();
+          layoutRects.set(target, rect);
+          return rect;
+        };
+
+        const preloadLayoutRects = () => {
+          layoutRects = new Map<HTMLElement, DOMRect>();
+
+          for (const target of targets) {
+            getCachedRect(target);
+
+            if (!target.classList.contains('scroll-frame-focus')) continue;
+
+            target
+              .querySelectorAll<HTMLElement>('.scroll-frame-focus, .interactive-pill')
+              .forEach((child) => getCachedRect(child));
+          }
+        };
 
         const getBloomDistance = (
           viewportHeight: number,
@@ -150,19 +170,15 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           target: HTMLElement,
         ) => {
           if (target.classList.contains('scroll-frame-focus')) {
-            // A frame containing several nested frames is the System Design card.
-            // This is one of the places where actual child positions matter: the
-            // outer trace should still finish just after the final step even if the
-            // steps reflow. Durations of the individual steps remain geometry-free.
             const nestedFrames = Array.from(
               target.querySelectorAll<HTMLElement>('.scroll-frame-focus'),
             );
 
             if (nestedFrames.length >= 5) {
-              const frameRect = target.getBoundingClientRect();
+              const frameRect = getCachedRect(target);
               const lastStepCompletion = Math.max(
                 ...nestedFrames.map((step) => {
-                  const stepRect = step.getBoundingClientRect();
+                  const stepRect = getCachedRect(step);
                   const stepTopOffset = stepRect.top - frameRect.top;
                   return stepTopOffset + getSystemStepBloomDistance(viewportHeight);
                 }),
@@ -178,8 +194,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               );
             }
 
-            // Step cards inside System Design keep their deliberately slower local
-            // trace without depending on how many lines of text are inside them.
             const parentFrame = target.parentElement?.closest<HTMLElement>('.scroll-frame-focus');
             if (
               parentFrame &&
@@ -188,11 +202,8 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               return getSystemStepBloomDistance(viewportHeight);
             }
 
-            // Chart shells are another genuinely geometric sequence: the frame
-            // should complete after the final informational pill. Read the live pill
-            // positions, but use stable viewport-based pill durations.
             if (target.classList.contains('chart-shell')) {
-              const frameRect = target.getBoundingClientRect();
+              const frameRect = getCachedRect(target);
               const pills = Array.from(
                 target.querySelectorAll<HTMLElement>('.interactive-pill'),
               );
@@ -200,7 +211,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               if (pills.length) {
                 const lastPillCompletion = Math.max(
                   ...pills.map((pill) => {
-                    const pillRect = pill.getBoundingClientRect();
+                    const pillRect = getCachedRect(pill);
                     const pillCenterOffset =
                       pillRect.top + pillRect.height / 2 - frameRect.top;
                     return pillCenterOffset + getInlineBloomDistance(viewportHeight);
@@ -218,10 +229,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               }
             }
 
-            // Generic frames should not retune themselves because a sentence wraps
-            // or a pill changes height. Keep their duration semantic: viewport size,
-            // frame type, and number of animated children. The child count is stable
-            // across copy/layout changes, unlike pixel height.
             const animatedChildCount = target.querySelectorAll(
               '.kbd-tag, .metric-card, .interactive-pill',
             ).length;
@@ -276,15 +283,16 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           scrollFrame = 0;
           const { entryLine, releaseLine, viewportHeight } = getViewportMotion();
 
+          // Read every rectangle needed for this frame before touching styles.
+          preloadLayoutRects();
+
           for (const target of targets) {
-            const rect = target.getBoundingClientRect();
+            const rect = getCachedRect(target);
             const center = rect.top + rect.height / 2;
             const isFrame = target.classList.contains('scroll-frame-focus');
             const isChartFrame = isFrame && target.classList.contains('chart-shell');
             const isLeafFrame = isFrame && target.classList.contains('scroll-frame-leaf');
             const entryAnchor = isFrame ? rect.top : center;
-            // Chart frames and small leaf cards release from the top edge so
-            // their border visibly unwinds as the element leaves the viewport.
             const releaseAnchor = isChartFrame || isLeafFrame
               ? rect.top
               : isFrame
@@ -292,8 +300,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
                 : center;
             const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
 
-            // Project-page hero stack pills deliberately begin fully highlighted.
-            // They only participate in the scroll-mapped release at the upper boundary.
             if (initialTargets.has(target)) {
               if (center > releaseLine) {
                 setBloom(target, 1, 'active');
@@ -332,8 +338,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         };
 
         const startTracking = () => {
-          // Establish the scroll-driven visual state before removing the
-          // first-frame project-stack highlight class so there is no visible handoff.
           updateScrollHighlights();
 
           document
@@ -346,10 +350,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           window.visualViewport?.addEventListener('resize', scheduleScrollUpdate, { passive: true });
           window.visualViewport?.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
 
-          // Re-run the mapping whenever layout changes without a scroll event — for
-          // example after fonts settle, copy wraps differently, or a responsive card
-          // changes size. Observing main also catches position shifts caused by an
-          // earlier section changing height.
           if ('ResizeObserver' in window) {
             geometryObserver = new ResizeObserver(() => scheduleScrollUpdate());
             targets.forEach((target) => geometryObserver?.observe(target));
@@ -364,9 +364,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           scheduleScrollUpdate();
         };
 
-        // Start immediately. The project-page initial highlight is preserved by
-        // initialTargets, so there is no reason to wait for the first scroll before
-        // measuring the real layout.
         startTracking();
       }
 
@@ -409,8 +406,13 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           const entryLine = viewportHeight * 0.86;
           const releaseLine = viewportHeight * 0.14;
 
-          for (const target of desktopFrames) {
-            const rect = target.getBoundingClientRect();
+          // Batch all layout reads before the first frame style write.
+          const frameRects = desktopFrames.map((target) => ({
+            target,
+            rect: target.getBoundingClientRect(),
+          }));
+
+          for (const { target, rect } of frameRects) {
             const drawDistance = Math.min(
               260,
               Math.max(
