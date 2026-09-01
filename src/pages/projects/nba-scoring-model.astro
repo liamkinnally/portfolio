@@ -114,20 +114,18 @@ const systemSteps = [
         >Evaluation</h2>
         <div class="space-y-5 text-lg leading-8 text-slate-300">
           <p>
-            A model can look accurate on its own terms and still add nothing, if a much simpler rule does the same job. So the comparison is head-to-head: the tuned gradient boosting models against a 10-game rolling average, which predicts a player's next game from their recent form and nothing else.
+            A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. So the comparison is head-to-head: the tuned gradient boosting models against a 10-game rolling average, which predicts a player's next game from their recent form and nothing else.
           </p>
           <p>
-            Both are scored on the same chronological holdout — 5,645 player-game rows from March 11, 2026 onward, never seen during training. For points, the model's mean absolute error is 4.85, meaning a typical prediction misses by a little under five points, against 4.88 for the rolling average across the 5,612 rows where both methods can predict. Assists: 1.407 against 1.417. Rebounds are effectively a tie.
+            The final test uses that chronological holdout: 5,645 player-game rows from March 11, 2026 onward, none of them used in training. Across that full set, the points model’s mean absolute error is 4.85 — meaning its predictions miss by a little under five points on average. The head-to-head comparison uses the 5,612 rows where the baseline can also predict, since a player with no prior games has no recent form to average from. There, the model averaged 4.841 against 4.883 for the rolling average, and assists 1.407 against 1.417. Rebounds were effectively a tie.
           </p>
           <p>
-            That margin is small, and it should be. A 10-game average is a strong baseline here, because most players are reasonably consistent, so the honest claim isn't that the model is dramatically better — it's that it's reliably a little better. Across 28 trailing seven-day windows it posted the lower error in 23 for points and 22 for assists. The edge also grows with scoring volume: 0.23% for players under 8 points per game, rising to 1.81% for players averaging 22 or more.
-          </p>
-          <p>
-            The visualizations below are rebuilt natively for this page from the project's reporting data rather than embedded as exported chart images.
+            That margin is small, and it should be. A 10-game average is a strong baseline here because most players are reasonably consistent, so the honest claim isn't that the model is dramatically better — it's that it is reliably a little better. Across 28 trailing seven-day windows, it posted the lower error in 23 for points and 22 for assists. The edge also grew with scoring volume: 0.23% for players under 8 points per game, rising to 1.81% for players averaging 22 or more.
           </p>
         </div>
       </div>
       <RollingMaeChart animateHeading interactivePill />
+      <p class="mt-3 text-xs leading-5 text-slate-500">All visualizations on this page are rebuilt natively from the project’s generated reporting data.</p>
     </section>
 
     <section class="mt-28">
