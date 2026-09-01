@@ -79,6 +79,10 @@ const formatDate = (date: string) => {
           <feGaussianBlur stdDeviation="5" result="blur" />
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
+        <filter id="mae-result-glow" x="-80%" y="-300%" width="260%" height="700%">
+          <feGaussianBlur stdDeviation="2.25" result="resultBlur" />
+          <feMerge><feMergeNode in="resultBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
       </defs>
 
       <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="var(--chart-plot-bg)" />
@@ -103,9 +107,18 @@ const formatDate = (date: string) => {
       ))}
 
       <g transform={`translate(${margin.left}, ${margin.top + plotHeight + 42})`}>
-        {data.map((point, index) => (
-          <rect x={(index / data.length) * plotWidth + 1} y="0" width={Math.max(2, plotWidth / data.length - 3)} height="3" rx="1.5" fill={point.model < point.baseline ? '#6f9cf2' : 'var(--chart-result-muted)'} opacity={point.model < point.baseline ? 0.76 : 0.48} />
-        ))}
+        {data.map((point, index) => {
+          const resultX = (index / data.length) * plotWidth + 1;
+          const resultWidth = Math.max(2, plotWidth / data.length - 3);
+          const isWin = point.model < point.baseline;
+
+          return (
+            <g class:list={['window-result', isWin ? 'window-result--win' : 'window-result--loss']}>
+              <rect class="window-result-hit" x={resultX} y="-5" width={resultWidth} height="13" rx="3" fill="transparent" />
+              <rect class="window-result-bar" x={resultX} y="0" width={resultWidth} height="3" rx="1.5" fill={isWin ? '#6f9cf2' : 'var(--chart-result-muted)'} opacity={isWin ? 0.76 : 0.48} />
+            </g>
+          );
+        })}
       </g>
     </svg>
   </div>
@@ -143,6 +156,28 @@ const formatDate = (date: string) => {
     animation: chart-draw 760ms 80ms cubic-bezier(.2,.7,.2,1) forwards;
   }
 
+  .window-result-bar {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .window-result-bar {
+      transition: opacity 160ms ease, filter 180ms ease, transform 180ms ease;
+    }
+
+    .window-result--win:hover .window-result-bar {
+      opacity: 1;
+      filter: url(#mae-result-glow);
+      transform: scaleY(1.35);
+    }
+
+    .window-result--loss:hover .window-result-bar {
+      opacity: 0.68;
+      transform: scaleY(1.15);
+    }
+  }
+
   @keyframes chart-draw {
     to { stroke-dashoffset: 0; }
   }
@@ -152,6 +187,15 @@ const formatDate = (date: string) => {
     .chart-baseline {
       animation: none;
       stroke-dashoffset: 0;
+    }
+
+    .window-result-bar {
+      transition: none;
+    }
+
+    .window-result--win:hover .window-result-bar,
+    .window-result--loss:hover .window-result-bar {
+      transform: none;
     }
   }
 </style>
