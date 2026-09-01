@@ -50,14 +50,14 @@ const systemSteps = [
       <h2
         class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]"
         data-scroll-heading
-        data-shine-text="The problem"
-      >The problem</h2>
+        data-shine-text="The question"
+      >The question</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          Predicting a player's next box-score line sounds simple until time enters the picture. A useful system has to learn only from information that would have actually been available before each game, and it has to be judged against a reasonable baseline rather than against nothing.
+          How well can an NBA player's next game be predicted using only information that was available before it happened? That question started the project. Recent scoring, minutes, rest, opponent history, and other trends can all carry useful signal, but none of them makes the next box score predictable with certainty.
         </p>
         <p>
-          I built the project around that constraint: preserve chronology, avoid feature leakage, and make the evaluation reproducible from stored model artifacts.
+          Answering that question credibly became as much an engineering problem as a modeling one. Every feature had to respect chronology, training and evaluation had to reflect a real future-prediction setting, the model and baseline had to be scored on identical observations, and the results had to remain reproducible from saved artifacts. Those constraints shaped the pipeline from data collection through evaluation.
         </p>
       </div>
     </section>
