@@ -124,7 +124,7 @@ const formatDate = (date: string) => {
         const resultLabel = `${isWin ? 'Win' : 'Loss'} · ${Math.abs(delta).toFixed(2)} ${isWin ? 'lower' : 'higher'}`;
 
         return (
-          <g class="date-hover-group">
+          <g class="date-hover-group" data-window-index={index}>
             <rect class="date-hover-hit" x={bandLeft} y={margin.top} width={bandRight - bandLeft} height={plotHeight} fill="transparent" />
             <line class="date-hover-guide" x1={x(index)} x2={x(index)} y1={margin.top} y2={margin.top + plotHeight} />
             <circle class="date-hover-point date-hover-point--model" cx={x(index)} cy={y(point.model)} r="4.5" />
@@ -149,7 +149,7 @@ const formatDate = (date: string) => {
           const isWin = point.model < point.baseline;
 
           return (
-            <g class:list={['window-result', isWin ? 'window-result--win' : 'window-result--loss']}>
+            <g class:list={['window-result', isWin ? 'window-result--win' : 'window-result--loss']} data-window-index={index}>
               <rect class="window-result-hit" x={resultX} y="-5" width={resultWidth} height="13" rx="3" fill="transparent" />
               <rect class="window-result-bar" x={resultX} y="0" width={resultWidth} height="3" rx="1.5" fill={isWin ? '#6f9cf2' : 'var(--chart-result-muted)'} opacity={isWin ? 0.76 : 0.48} />
             </g>
@@ -166,6 +166,21 @@ const formatDate = (date: string) => {
     </div>
   )}
 </div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.chart-shell:not(.chart-shell--compact)').forEach((chart) => {
+    chart.querySelectorAll<SVGGElement>('.date-hover-group[data-window-index]').forEach((group) => {
+      const index = group.dataset.windowIndex;
+      if (index === undefined) return;
+
+      const result = chart.querySelector<SVGGElement>(`.window-result[data-window-index="${index}"]`);
+      if (!result) return;
+
+      group.addEventListener('pointerenter', () => result.classList.add('is-linked-active'));
+      group.addEventListener('pointerleave', () => result.classList.remove('is-linked-active'));
+    });
+  });
+</script>
 
 <style>
   .chart-shell {
@@ -304,13 +319,15 @@ const formatDate = (date: string) => {
       transition: opacity 160ms ease, filter 180ms ease, transform 180ms ease;
     }
 
-    .window-result--win:hover .window-result-bar {
+    .window-result--win:hover .window-result-bar,
+    .window-result--win.is-linked-active .window-result-bar {
       opacity: 1;
       filter: url(#mae-result-glow);
       transform: scaleY(1.35);
     }
 
-    .window-result--loss:hover .window-result-bar {
+    .window-result--loss:hover .window-result-bar,
+    .window-result--loss.is-linked-active .window-result-bar {
       opacity: 0.68;
       transform: scaleY(1.15);
     }
@@ -336,7 +353,9 @@ const formatDate = (date: string) => {
 
     .date-hover-point,
     .window-result--win:hover .window-result-bar,
-    .window-result--loss:hover .window-result-bar {
+    .window-result--loss:hover .window-result-bar,
+    .window-result--win.is-linked-active .window-result-bar,
+    .window-result--loss.is-linked-active .window-result-bar {
       transform: none;
     }
   }
