@@ -31,9 +31,7 @@
 
     try {
       localStorage.setItem('theme', nextTheme);
-    } catch {
-      // The theme still works for this page load if storage is unavailable.
-    }
+    } catch {}
 
     const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     themeColor?.setAttribute('content', nextTheme === 'light' ? '#f7f9fd' : '#07090d');
