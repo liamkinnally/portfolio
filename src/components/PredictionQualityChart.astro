@@ -105,35 +105,15 @@ const maxActual = Math.max(...points.map((point) => point.actual));
       {density.map((bin) => {
         const intensity = Math.sqrt(bin.count / maxCount);
         const baseOpacity = 0.10 + intensity * 0.78;
-        const hoverGlowOpacity = 0.12 + intensity * 0.30;
-        const hoverGlowAlpha = 0.08 + intensity * 0.36;
-        const hoverGlowBlur = 2.5 + intensity * 3.5;
-        const cellX = margin.left + bin.x * cellWidth + 0.7;
-        const cellY = margin.top + plotHeight - (bin.y + 1) * cellHeight + 0.7;
-        const renderedWidth = Math.max(1, cellWidth - 1.4);
-        const renderedHeight = Math.max(1, cellHeight - 1.4);
 
         return (
-          <g
-            class="density-cell-group"
-            style={`--density-hover-glow-opacity: ${hoverGlowOpacity.toFixed(3)}; --density-glow-alpha: ${hoverGlowAlpha.toFixed(3)}; --density-glow-blur: ${hoverGlowBlur.toFixed(2)}px;`}
-          >
-            <rect
-              class="density-cell-hover-glow"
-              x={cellX}
-              y={cellY}
-              width={renderedWidth}
-              height={renderedHeight}
-              rx="1.8"
-              fill="url(#density-fill)"
-              pointer-events="none"
-            />
+          <g class="density-cell-group">
             <rect
               class="density-cell"
-              x={cellX}
-              y={cellY}
-              width={renderedWidth}
-              height={renderedHeight}
+              x={margin.left + bin.x * cellWidth + 0.7}
+              y={margin.top + plotHeight - (bin.y + 1) * cellHeight + 0.7}
+              width={Math.max(1, cellWidth - 1.4)}
+              height={Math.max(1, cellHeight - 1.4)}
               rx="1.8"
               fill="url(#density-fill)"
               opacity={baseOpacity}
@@ -165,40 +145,21 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     box-shadow: var(--chart-shadow);
   }
 
-  .density-cell,
-  .density-cell-hover-glow {
+  .density-cell {
     transform-box: fill-box;
     transform-origin: center;
-  }
-
-  .density-cell {
     animation: density-in 420ms ease both;
   }
 
-  .density-cell-hover-glow {
-    opacity: 0;
-  }
-
   @media (hover: hover) and (pointer: fine) {
-    .density-cell,
-    .density-cell-hover-glow {
+    .density-cell {
       transition: transform 300ms ease-out;
     }
 
-    .density-cell-hover-glow {
-      transition: opacity 300ms ease-out, filter 320ms ease-out, transform 300ms ease-out;
-    }
-
-    .density-cell-group:hover .density-cell,
-    .density-cell-group:hover .density-cell-hover-glow {
+    .density-cell-group:hover .density-cell {
       transform: scale(1.12);
       transition-duration: 180ms;
       transition-timing-function: ease;
-    }
-
-    .density-cell-group:hover .density-cell-hover-glow {
-      opacity: var(--density-hover-glow-opacity);
-      filter: drop-shadow(0 0 var(--density-glow-blur) rgba(126, 160, 255, var(--density-glow-alpha)));
     }
   }
 
@@ -209,15 +170,10 @@ const maxActual = Math.max(...points.map((point) => point.actual));
   @media (prefers-reduced-motion: reduce) {
     .density-cell {
       animation: none;
-    }
-
-    .density-cell,
-    .density-cell-hover-glow {
       transition: none;
     }
 
-    .density-cell-group:hover .density-cell,
-    .density-cell-group:hover .density-cell-hover-glow {
+    .density-cell-group:hover .density-cell {
       transform: none;
     }
   }
