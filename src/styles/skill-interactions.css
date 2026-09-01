@@ -182,6 +182,10 @@ html[data-theme='light'] {
     will-change: clip-path, opacity;
   }
 
+  .scroll-frame-clipped.mobile-scroll-focus::after {
+    inset: 0;
+  }
+
   .interactive-pill.mobile-scroll-focus,
   .kbd-tag.mobile-scroll-focus {
     transform: none;
