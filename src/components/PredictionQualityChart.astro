@@ -89,10 +89,6 @@ const maxActual = Math.max(...points.map((point) => point.actual));
           <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="density-hover-glow" x="-70%" y="-70%" width="240%" height="240%">
-          <feGaussianBlur stdDeviation="4.5" result="hoverBlur" />
-          <feMerge><feMergeNode in="hoverBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
       </defs>
 
       <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="var(--chart-plot-bg)" />
@@ -108,6 +104,11 @@ const maxActual = Math.max(...points.map((point) => point.actual));
 
       {density.map((bin) => {
         const intensity = Math.sqrt(bin.count / maxCount);
+        const baseOpacity = 0.10 + intensity * 0.78;
+        const hoverOpacity = Math.min(0.98, baseOpacity + 0.06 + intensity * 0.10);
+        const hoverGlowAlpha = 0.08 + intensity * 0.36;
+        const hoverGlowBlur = 2.5 + intensity * 3.5;
+
         return (
           <rect
             class="density-cell"
@@ -117,8 +118,9 @@ const maxActual = Math.max(...points.map((point) => point.actual));
             height={Math.max(1, cellHeight - 1.4)}
             rx="1.8"
             fill="url(#density-fill)"
-            opacity={0.10 + intensity * 0.78}
+            opacity={baseOpacity}
             filter={intensity > 0.72 ? 'url(#density-glow)' : undefined}
+            style={`--density-hover-opacity: ${hoverOpacity.toFixed(3)}; --density-glow-alpha: ${hoverGlowAlpha.toFixed(3)}; --density-glow-blur: ${hoverGlowBlur.toFixed(2)}px;`}
           />
         );
       })}
@@ -157,9 +159,9 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     }
 
     .density-cell:hover {
-      opacity: 1 !important;
-      filter: url(#density-hover-glow);
-      transform: scale(1.12);
+      opacity: var(--density-hover-opacity) !important;
+      filter: drop-shadow(0 0 var(--density-glow-blur) rgba(126, 160, 255, var(--density-glow-alpha)));
+      transform: scale(1.10);
     }
   }
 
