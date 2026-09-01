@@ -117,6 +117,7 @@ html[data-theme='light'] {
     --mobile-highlight-bg: var(--metric-hover-bg);
     --mobile-highlight-shadow: var(--metric-hover-shadow);
     --mobile-bloom-strength: 0;
+    --mobile-surface-strength: 0;
     --mobile-bloom-clip-top: 0%;
     --mobile-bloom-clip-bottom: 100%;
     transition: none;
@@ -143,7 +144,7 @@ html[data-theme='light'] {
     border-radius: inherit;
     background: var(--mobile-highlight-bg);
     box-shadow: var(--mobile-highlight-shadow);
-    opacity: var(--mobile-bloom-strength);
+    opacity: var(--mobile-surface-strength);
     will-change: opacity;
   }
 
@@ -156,7 +157,8 @@ html[data-theme='light'] {
     border: 1px solid var(--mobile-highlight-border);
     border-radius: inherit;
     clip-path: inset(var(--mobile-bloom-clip-top) 0 var(--mobile-bloom-clip-bottom) 0);
-    will-change: clip-path;
+    opacity: calc(0.72 + var(--mobile-bloom-strength) * 0.28);
+    will-change: clip-path, opacity;
   }
 
   .interactive-pill.mobile-scroll-focus,
