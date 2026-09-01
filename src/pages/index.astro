@@ -23,8 +23,39 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
       </p>
       <div class="mt-9 flex flex-wrap gap-3">
         <a href="#work" class="button-primary">View projects <span aria-hidden="true">↓</span></a>
-        <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">GitHub ↗</a>
+        <a href="#" class="button-primary" data-email-link aria-label="Email Liam Kinnally">Email ↗</a>
+        <span class="relative inline-flex">
+          <button
+            type="button"
+            class="button-secondary !w-[2.8rem] !px-0"
+            data-copy-email
+            aria-label="Copy Liam Kinnally email address"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+          </button>
+          <span
+            class="pointer-events-none absolute left-1/2 top-[-2.15rem] -translate-x-1/2 rounded-md border px-2 py-1 text-[0.7rem] font-semibold opacity-0 transition-opacity"
+            style="border-color: var(--border); background: var(--surface-strong); color: var(--text);"
+            data-copy-feedback
+            aria-hidden="true"
+          >Copied</span>
+        </span>
         <a href="https://www.linkedin.com/in/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">LinkedIn ↗</a>
+        <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">GitHub ↗</a>
       </div>
       <div class="mt-8 flex flex-wrap items-center gap-2.5">
         <span class="availability-pill interactive-pill">Open to Spring 2027 & Summer 2027 internships</span>
@@ -201,8 +232,40 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
         I’m currently pursuing software engineering, software testing/QA, and AI/ML-related internship opportunities. Based in Orlando, Florida — open to relocation.
       </p>
       <div class="mt-7 flex flex-wrap gap-3">
-        <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-primary">GitHub ↗</a>
+        <a href="#" class="button-primary" data-email-link aria-label="Email Liam Kinnally">Email ↗</a>
+        <!-- Resume button goes here later -->
+        <span class="relative inline-flex">
+          <button
+            type="button"
+            class="button-secondary !w-[2.8rem] !px-0"
+            data-copy-email
+            aria-label="Copy Liam Kinnally email address"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+          </button>
+          <span
+            class="pointer-events-none absolute left-1/2 top-[-2.15rem] -translate-x-1/2 rounded-md border px-2 py-1 text-[0.7rem] font-semibold opacity-0 transition-opacity"
+            style="border-color: var(--border); background: var(--surface-strong); color: var(--text);"
+            data-copy-feedback
+            aria-hidden="true"
+          >Copied</span>
+        </span>
         <a href="https://www.linkedin.com/in/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">LinkedIn ↗</a>
+        <a href="https://github.com/liamkinnally" target="_blank" rel="noreferrer" class="button-secondary">GitHub ↗</a>
       </div>
     </div>
   </section>
@@ -237,5 +300,53 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
 
       headings.forEach((heading) => observer.observe(heading));
     }
+  </script>
+
+  <script>
+    const user = 'lkinnally';
+    const domain = 'hotmail.com';
+    const address = `${user}@${domain}`;
+
+    const emailLinks = document.querySelectorAll<HTMLAnchorElement>('[data-email-link]');
+    emailLinks.forEach((link) => {
+      link.setAttribute('href', `mailto:${address}`);
+    });
+
+    const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy-email]');
+    copyButtons.forEach((button) => {
+      const feedback = button.parentElement?.querySelector<HTMLElement>('[data-copy-feedback]');
+      let feedbackTimer: number | undefined;
+
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(address);
+        } catch {
+          const textarea = document.createElement('textarea');
+          textarea.value = address;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          textarea.remove();
+        }
+
+        button.setAttribute('aria-label', 'Email address copied');
+        if (feedback) {
+          feedback.classList.remove('opacity-0');
+          feedback.classList.add('opacity-100');
+        }
+
+        if (feedbackTimer !== undefined) window.clearTimeout(feedbackTimer);
+        feedbackTimer = window.setTimeout(() => {
+          button.setAttribute('aria-label', 'Copy Liam Kinnally email address');
+          if (feedback) {
+            feedback.classList.remove('opacity-100');
+            feedback.classList.add('opacity-0');
+          }
+        }, 1600);
+      });
+    });
   </script>
 </BaseLayout>
