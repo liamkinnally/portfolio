@@ -2,8 +2,8 @@
 import { pointsPermutationImportance as data } from '../data/permutationImportance';
 
 const width = 760;
-const height = 390;
-const margin = { top: 22, right: 78, bottom: 52, left: 190 };
+const height = 396;
+const margin = { top: 22, right: 78, bottom: 58, left: 190 };
 const plotWidth = width - margin.left - margin.right;
 const plotHeight = height - margin.top - margin.bottom;
 const maxValue = 1.9;
@@ -99,12 +99,12 @@ const formatValue = (value: number) => value >= 0.1 ? value.toFixed(2) : value.t
         );
       })}
 
-      <text x={margin.left + plotWidth / 2} y={height - 7} text-anchor="middle" fill="var(--chart-axis)" font-size="10.5" font-weight="600">Increase in holdout MAE after feature shuffling</text>
+      <text x={margin.left + plotWidth / 2} y={height - 8} text-anchor="middle" fill="var(--chart-axis)" font-size="10.5" font-weight="600">Increase in holdout MAE after feature shuffling</text>
     </svg>
   </div>
 
   <div class="mx-5 mb-5 border-t border-white/[0.07] pt-4 text-sm leading-6 text-slate-400 sm:mx-6 sm:mb-6">
-    Shuffling the 10-game scoring average increases error by about 1.80 points, far more than any other feature. Error bars show the standard deviation across permutation repeats.
+    Shuffling the 10-game scoring average increases error by about 1.80 points, far more than any other feature. Error bars show standard deviation across repeated shuffles.
   </div>
 </div>
 
