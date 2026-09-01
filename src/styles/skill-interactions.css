@@ -129,6 +129,10 @@ html[data-theme='light'] {
     --mobile-highlight-shadow: var(--skill-hover-shadow);
   }
 
+  .chart-shell--compact .interactive-pill.mobile-scroll-focus {
+    --mobile-highlight-shadow: none;
+  }
+
   .kbd-tag.mobile-scroll-focus {
     --mobile-highlight-border: var(--mobile-pill-border);
     --mobile-highlight-bg: var(--mobile-tag-bg);
