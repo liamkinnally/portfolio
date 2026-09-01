@@ -60,9 +60,10 @@ html[data-theme='light'] ::selection {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Optically center the separators between the independently wrapped role phrases. */
-main > section:first-child .text-blue-200 > span:not(:last-child) {
-  margin-right: 0.38em;
+/* The separator owns equal space on both sides instead of relying on text-node whitespace. */
+.hero-role-separator {
+  display: inline-block;
+  padding-inline: 0.32em;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -96,6 +97,14 @@ main > section:first-child .text-blue-200 > span:not(:last-child) {
   .scroll-frame-focus.mobile-scroll-focus.glass-card {
     border-top-color: var(--border);
     box-shadow: 0 24px 80px var(--glass-shadow);
+  }
+
+  /* Header stack pills now begin neutral; their bloom is driven by real scroll input. */
+  .project-page .mobile-initial-highlight-group .kbd-tag {
+    border-color: var(--border);
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    box-shadow: none;
   }
 }
 
