@@ -1,9 +1,11 @@
 :root {
   --heading-shine: rgba(224, 236, 255, 0.50);
+  --heading-caret: #78a7ff;
 }
 
 html[data-theme='light'] {
   --heading-shine: rgba(72, 105, 184, 0.34);
+  --heading-caret: #557fe6;
 }
 
 .scroll-heading-shine,
@@ -11,8 +13,8 @@ html[data-theme='light'] {
   position: relative;
 }
 
-.scroll-heading-shine::after,
-#work article h3::after {
+.scroll-heading-shine::before,
+#work article h3::before {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -32,17 +34,31 @@ html[data-theme='light'] {
   opacity: 0;
 }
 
-.scroll-heading-shine::after {
+.scroll-heading-shine::before {
   content: attr(data-shine-text);
 }
 
-#work article h3::after {
+#work article h3::before {
   content: 'A reproducible ML pipeline for predicting NBA player performance.';
 }
 
-.scroll-heading-shine.is-visible::after,
-#work:has(h2.scroll-heading-shine.is-visible) article h3::after {
+.scroll-heading-shine.is-visible::before,
+#work:has(h2.scroll-heading-shine.is-visible) article h3::before {
   animation: heading-shine-sweep 1080ms cubic-bezier(0.22, 0.7, 0.2, 1) 120ms both;
+}
+
+#skills h2.scroll-heading-shine::after,
+#about h2.scroll-heading-shine::after {
+  content: '';
+  display: inline-block;
+  width: 0.055em;
+  height: 0.82em;
+  margin-left: 0.11em;
+  border-radius: 1px;
+  background: var(--heading-caret);
+  vertical-align: -0.06em;
+  opacity: 0.88;
+  animation: heading-caret-blink 1.08s steps(1, end) infinite;
 }
 
 @keyframes heading-shine-sweep {
@@ -62,9 +78,26 @@ html[data-theme='light'] {
   }
 }
 
+@keyframes heading-caret-blink {
+  0%,
+  46% {
+    opacity: 0.88;
+  }
+  47%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .scroll-heading-shine::after,
-  #work article h3::after {
+  .scroll-heading-shine::before,
+  #work article h3::before {
     animation: none !important;
+  }
+
+  #skills h2.scroll-heading-shine::after,
+  #about h2.scroll-heading-shine::after {
+    animation: none;
+    opacity: 0.72;
   }
 }
