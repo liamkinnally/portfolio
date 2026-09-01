@@ -130,6 +130,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           const viewportHeight = viewport?.height ?? window.innerHeight;
 
           return {
+            viewportTop,
             entryLine: viewportTop + viewportHeight * 0.80,
             releaseLine: viewportTop + viewportHeight * 0.20,
             viewportHeight,
@@ -141,6 +142,22 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
 
         const getSystemStepBloomDistance = (viewportHeight: number) =>
           Math.min(122, Math.max(96, viewportHeight * 0.115));
+
+        const getFrameExitDistance = (
+          viewportHeight: number,
+          target: HTMLElement,
+        ) => {
+          if (target.classList.contains('chart-shell')) {
+            return Math.min(168, Math.max(120, viewportHeight * 0.17));
+          }
+
+          const nestedFrames = target.querySelectorAll('.scroll-frame-focus').length;
+          if (nestedFrames >= 5) {
+            return Math.min(150, Math.max(112, viewportHeight * 0.15));
+          }
+
+          return Math.min(150, Math.max(104, viewportHeight * 0.14));
+        };
 
         const getCachedRect = (target: HTMLElement) => {
           const cached = layoutRects.get(target);
@@ -281,9 +298,8 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
 
         const updateScrollHighlights = () => {
           scrollFrame = 0;
-          const { entryLine, releaseLine, viewportHeight } = getViewportMotion();
+          const { viewportTop, entryLine, releaseLine, viewportHeight } = getViewportMotion();
 
-          // Read every rectangle needed for this frame before touching styles.
           preloadLayoutRects();
 
           for (const target of targets) {
@@ -291,14 +307,15 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const center = rect.top + rect.height / 2;
             const isFrame = target.classList.contains('scroll-frame-focus');
             const isChartFrame = isFrame && target.classList.contains('chart-shell');
-            const isLeafFrame = isFrame && target.classList.contains('scroll-frame-leaf');
             const entryAnchor = isFrame ? rect.top : center;
-            const releaseAnchor = isChartFrame || isLeafFrame
-              ? rect.top
-              : isFrame
-                ? rect.bottom
-                : center;
+            const releaseAnchor = isFrame ? rect.top : center;
             const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
+            const exitDistance = isFrame
+              ? getFrameExitDistance(viewportHeight, target)
+              : bloomDistance;
+            const targetReleaseLine = isChartFrame
+              ? viewportTop + viewportHeight * 0.10
+              : releaseLine;
 
             if (initialTargets.has(target)) {
               if (center > releaseLine) {
@@ -322,12 +339,12 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               continue;
             }
 
-            if (releaseAnchor > releaseLine) {
+            if (releaseAnchor > targetReleaseLine) {
               setBloom(target, 1, 'active');
               continue;
             }
 
-            const exitProgress = clamp01((releaseLine - releaseAnchor) / bloomDistance);
+            const exitProgress = clamp01((targetReleaseLine - releaseAnchor) / exitDistance);
             setBloom(target, 1 - exitProgress, 'exit');
           }
         };
@@ -369,7 +386,9 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
 
       if (finePointer && !reducedMotion) {
         const desktopFrames = Array.from(
-          document.querySelectorAll<HTMLElement>('.scroll-frame-major'),
+          document.querySelectorAll<HTMLElement>(
+            '.scroll-frame-major, .project-page .scroll-frame-focus, .project-page .metric-card',
+          ),
         );
         desktopFrames.forEach((target) => target.classList.add('desktop-scroll-frame'));
 
@@ -406,7 +425,6 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           const entryLine = viewportHeight * 0.86;
           const releaseLine = viewportHeight * 0.14;
 
-          // Batch all layout reads before the first frame style write.
           const frameRects = desktopFrames.map((target) => ({
             target,
             rect: target.getBoundingClientRect(),
