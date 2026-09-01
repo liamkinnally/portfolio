@@ -143,12 +143,22 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         const getSystemStepBloomDistance = (viewportHeight: number) =>
           Math.min(122, Math.max(96, viewportHeight * 0.115));
 
+        const isRollingMaeFrame = (target: HTMLElement) =>
+          target.classList.contains('chart-shell') && !!target.querySelector('.mae-wins-pill');
+
+        const isLingeringChartFrame = (target: HTMLElement) =>
+          target.classList.contains('chart-shell') && !isRollingMaeFrame(target);
+
         const getFrameExitDistance = (
           viewportHeight: number,
           target: HTMLElement,
         ) => {
-          if (target.classList.contains('chart-shell')) {
+          if (isRollingMaeFrame(target)) {
             return Math.min(168, Math.max(120, viewportHeight * 0.17));
+          }
+
+          if (isLingeringChartFrame(target)) {
+            return Math.min(250, Math.max(190, viewportHeight * 0.25));
           }
 
           const nestedFrames = target.querySelectorAll('.scroll-frame-focus').length;
@@ -187,6 +197,10 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           target: HTMLElement,
         ) => {
           if (target.classList.contains('scroll-frame-focus')) {
+            if (target.matches('#work .scroll-frame-major')) {
+              return Math.min(430, Math.max(350, viewportHeight * 0.43));
+            }
+
             const nestedFrames = Array.from(
               target.querySelectorAll<HTMLElement>('.scroll-frame-focus'),
             );
@@ -296,6 +310,34 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           target.classList.toggle('mobile-scroll-colored', surfaceProgress > 0.44);
         };
 
+        const keepFrameWithDescendants = (
+          target: HTMLElement,
+          releaseAnchor: number,
+          releaseLine: number,
+        ) => {
+          if (releaseAnchor > releaseLine) return;
+
+          const descendantStrength = targets.reduce((strongest, child) => {
+            if (child === target || !target.contains(child)) return strongest;
+            const strength = Number(child.style.getPropertyValue('--mobile-bloom-strength')) || 0;
+            return Math.max(strongest, strength);
+          }, 0);
+
+          const currentStrength = Number(
+            target.style.getPropertyValue('--mobile-bloom-strength'),
+          ) || 0;
+
+          if (descendantStrength <= currentStrength) return;
+
+          target.style.setProperty('--mobile-bloom-strength', descendantStrength.toFixed(4));
+          target.style.setProperty('--mobile-surface-strength', '0');
+          target.style.setProperty(
+            '--mobile-bloom-clip-top',
+            `${((1 - descendantStrength) * 100).toFixed(2)}%`,
+          );
+          target.style.setProperty('--mobile-bloom-clip-bottom', '0%');
+        };
+
         const updateScrollHighlights = () => {
           scrollFrame = 0;
           const { viewportTop, entryLine, releaseLine, viewportHeight } = getViewportMotion();
@@ -306,16 +348,23 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const rect = getCachedRect(target);
             const center = rect.top + rect.height / 2;
             const isFrame = target.classList.contains('scroll-frame-focus');
-            const isChartFrame = isFrame && target.classList.contains('chart-shell');
+            const isRollingChart = isFrame && isRollingMaeFrame(target);
+            const isLingeringChart = isFrame && isLingeringChartFrame(target);
             const entryAnchor = isFrame ? rect.top : center;
-            const releaseAnchor = isFrame ? rect.top : center;
+            const releaseAnchor = isLingeringChart
+              ? rect.bottom
+              : isFrame
+                ? rect.top
+                : center;
             const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
             const exitDistance = isFrame
               ? getFrameExitDistance(viewportHeight, target)
               : bloomDistance;
-            const targetReleaseLine = isChartFrame
+            const targetReleaseLine = isRollingChart
               ? viewportTop + viewportHeight * 0.10
-              : releaseLine;
+              : isLingeringChart
+                ? viewportTop + viewportHeight * 0.48
+                : releaseLine;
 
             if (initialTargets.has(target)) {
               if (center > releaseLine) {
@@ -346,6 +395,28 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
 
             const exitProgress = clamp01((targetReleaseLine - releaseAnchor) / exitDistance);
             setBloom(target, 1 - exitProgress, 'exit');
+          }
+
+          const exitingFrames = targets
+            .filter((target) => target.classList.contains('scroll-frame-focus'))
+            .sort(
+              (a, b) =>
+                a.querySelectorAll('.scroll-frame-focus').length -
+                b.querySelectorAll('.scroll-frame-focus').length,
+            );
+
+          for (const target of exitingFrames) {
+            const rect = getCachedRect(target);
+            const lingeringChart = isLingeringChartFrame(target);
+            const rollingChart = isRollingMaeFrame(target);
+            const releaseAnchor = lingeringChart ? rect.bottom : rect.top;
+            const targetReleaseLine = rollingChart
+              ? viewportTop + viewportHeight * 0.10
+              : lingeringChart
+                ? viewportTop + viewportHeight * 0.48
+                : releaseLine;
+
+            keepFrameWithDescendants(target, releaseAnchor, targetReleaseLine);
           }
         };
 
