@@ -1,11 +1,21 @@
+:root {
+  --particle-dot: rgba(145, 173, 255, 0.40);
+  --particle-line-rgb: 129, 159, 255;
+  --particle-line-strength: 0.115;
+}
+
+html:not([data-theme='light']) #particle-canvas {
+  opacity: 0.58;
+}
+
 html[data-theme='light'] {
-  --particle-dot: rgba(58, 84, 150, 0.36);
-  --particle-line-rgb: 58, 84, 148;
-  --particle-line-strength: 0.10;
+  --particle-dot: rgba(62, 88, 160, 0.46);
+  --particle-line-rgb: 63, 89, 162;
+  --particle-line-strength: 0.20;
 }
 
 html[data-theme='light'] #particle-canvas {
-  opacity: 0.70;
+  opacity: 0.84;
 }
 
 html[data-theme='light'] [class~="bg-[#090d15]"] {
