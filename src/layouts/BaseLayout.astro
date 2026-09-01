@@ -63,7 +63,7 @@ const {
       const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      if (coarsePointer && !reducedMotion && 'IntersectionObserver' in window) {
+      if (coarsePointer && !reducedMotion) {
         const selectors = [
           '#work .metric-card',
           '#work .kbd-tag',
@@ -92,12 +92,46 @@ const {
           target.dataset.mobileRevealTriggered = 'true';
         });
 
-        const activeTargets = new Set<HTMLElement>();
-        let releaseFrame = 0;
+        const pendingTargets = new Set<HTMLElement>();
+        targets.forEach((target) => {
+          if (target.dataset.mobileRevealTriggered !== 'true') pendingTargets.add(target);
+        });
 
-        const releasePassedHighlights = () => {
-          releaseFrame = 0;
-          const releaseLine = window.innerHeight * 0.20;
+        const activeTargets = new Set<HTMLElement>();
+        let scrollFrame = 0;
+
+        const getViewportBand = () => {
+          const viewport = window.visualViewport;
+          const viewportTop = viewport?.offsetTop ?? 0;
+          const viewportHeight = viewport?.height ?? window.innerHeight;
+
+          return {
+            entryLine: viewportTop + viewportHeight * 0.80,
+            releaseLine: viewportTop + viewportHeight * 0.20,
+          };
+        };
+
+        const updateScrollHighlights = () => {
+          scrollFrame = 0;
+          const { entryLine, releaseLine } = getViewportBand();
+
+          for (const target of pendingTargets) {
+            const rect = target.getBoundingClientRect();
+            const center = rect.top + rect.height / 2;
+
+            if (center > entryLine) continue;
+
+            if (center <= releaseLine) {
+              target.dataset.mobileRevealTriggered = 'true';
+              pendingTargets.delete(target);
+              continue;
+            }
+
+            target.dataset.mobileRevealTriggered = 'true';
+            target.classList.add('mobile-scroll-active');
+            pendingTargets.delete(target);
+            activeTargets.add(target);
+          }
 
           for (const target of activeTargets) {
             const rect = target.getBoundingClientRect();
@@ -110,12 +144,12 @@ const {
           }
         };
 
-        const scheduleReleaseCheck = () => {
-          if (releaseFrame) return;
-          releaseFrame = window.requestAnimationFrame(releasePassedHighlights);
+        const scheduleScrollUpdate = () => {
+          if (scrollFrame) return;
+          scrollFrame = window.requestAnimationFrame(updateScrollHighlights);
         };
 
-        const startObserver = () => {
+        const startTracking = () => {
           initiallyHighlighted.forEach((target) => {
             target.classList.add('mobile-scroll-active');
             activeTargets.add(target);
@@ -128,36 +162,14 @@ const {
             .querySelectorAll<HTMLElement>('.mobile-initial-highlight-group')
             .forEach((target) => target.classList.remove('mobile-initial-highlight-group'));
 
-          const observer = new IntersectionObserver(
-            (entries) => {
-              for (const entry of entries) {
-                if (!entry.isIntersecting || entry.intersectionRatio < 0.48) continue;
-
-                const target = entry.target as HTMLElement;
-                if (target.dataset.mobileRevealTriggered === 'true') continue;
-
-                target.dataset.mobileRevealTriggered = 'true';
-                target.classList.add('mobile-scroll-active');
-                activeTargets.add(target);
-                observer.unobserve(target);
-                scheduleReleaseCheck();
-              }
-            },
-            {
-              threshold: [0.48],
-              rootMargin: '0px 0px -8% 0px',
-            },
-          );
-
-          targets.forEach((target) => {
-            if (target.dataset.mobileRevealTriggered !== 'true') observer.observe(target);
-          });
-
-          window.addEventListener('scroll', scheduleReleaseCheck, { passive: true });
-          scheduleReleaseCheck();
+          window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
+          window.addEventListener('resize', scheduleScrollUpdate, { passive: true });
+          window.visualViewport?.addEventListener('resize', scheduleScrollUpdate, { passive: true });
+          window.visualViewport?.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
+          scheduleScrollUpdate();
         };
 
-        window.addEventListener('scroll', startObserver, { once: true, passive: true });
+        window.addEventListener('scroll', startTracking, { once: true, passive: true });
       }
     </script>
   </body>
