@@ -89,6 +89,10 @@ const maxActual = Math.max(...points.map((point) => point.actual));
           <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
+        <filter id="density-hover-glow" x="-70%" y="-70%" width="240%" height="240%">
+          <feGaussianBlur stdDeviation="4.5" result="hoverBlur" />
+          <feMerge><feMergeNode in="hoverBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
       </defs>
 
       <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="var(--chart-plot-bg)" />
@@ -142,7 +146,21 @@ const maxActual = Math.max(...points.map((point) => point.actual));
   }
 
   .density-cell {
+    transform-box: fill-box;
+    transform-origin: center;
     animation: density-in 420ms ease both;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .density-cell {
+      transition: opacity 160ms ease, filter 180ms ease, transform 180ms ease;
+    }
+
+    .density-cell:hover {
+      opacity: 1 !important;
+      filter: url(#density-hover-glow);
+      transform: scale(1.12);
+    }
   }
 
   @keyframes density-in {
@@ -150,6 +168,13 @@ const maxActual = Math.max(...points.map((point) => point.actual));
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .density-cell { animation: none; }
+    .density-cell {
+      animation: none;
+      transition: none;
+    }
+
+    .density-cell:hover {
+      transform: none;
+    }
   }
 </style>
