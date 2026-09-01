@@ -94,13 +94,13 @@ const systemSteps = [
       >Keeping the test honest</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          A model that sees any part of the outcome it's supposed to predict will look accurate for the wrong reason. Preventing that kind of data leakage shaped the whole pipeline.
+          A model that sees any part of the result it is supposed to predict will look accurate for the wrong reason. That failure is called data leakage, and preventing it shaped the whole pipeline.
         </p>
         <p>
-          Every historical feature — Jamal Murray's scoring average over his previous 5 or 10 appearances, his recent minutes, his rest, how his team has been playing — is built from a query bounded by the date of the game being predicted. In spreadsheet terms: list a player's games in date order, and the row for Game 11 can use anything from Games 1–10, but nothing from Game 11 itself. The bound is a date filter rather than a row offset, so a sorting mistake can't quietly pull a future game into the past. Averages also count only games the player actually appeared in, so a night off doesn't enter as a zero.
+          Every historical feature is built with a strict cutoff at the game being predicted. Jamal Murray’s 5- and 10-game scoring averages, his recent minutes, his rest, and how his team has been playing can only draw on games that finished earlier. Picture a spreadsheet with one row per appearance in date order: the row for Game 11 can use information from Games 1–10, but never anything from Game 11 itself. That cutoff is enforced by the date in the database query rather than by assuming the rows are already in the right order. Averages also include only games the player actually appeared in, so a night off is not treated as a zero.
         </p>
         <p>
-          Chronology governs the splits too. The most recent 20% of game dates are held out entirely, and hyperparameter tuning happens only on the earlier period, using expanding date blocks: the training window is cut into four consecutive chunks, giving three folds, each training on everything before a chunk and validating on the chunk itself. Nothing from the future is shuffled back into the past. That keeps the experiment close to the real task — using only what was known before tipoff to predict a player's next line.
+          The same chronological rule applies to training. The most recent 20% of game dates are set aside completely for the final test. On the earlier data, hyperparameter tuning uses expanding-window cross-validation: the dates are divided into four consecutive blocks, producing three rounds where the model trains on everything earlier and validates on the next block. Each round gives the model more past data to learn from, but never lets a later game inform a prediction about an earlier one. That keeps the experiment close to the real task — using only what was known before tipoff to predict a player’s next line.
         </p>
       </div>
     </section>
