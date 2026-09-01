@@ -1,23 +1,19 @@
 # Liam Kinnally — Portfolio
 
-This is the source for [liamkinnally.com](https://liamkinnally.com), my personal portfolio. I built it with Astro, TypeScript, Tailwind CSS, and Vercel.
+Source for [liamkinnally.com](https://liamkinnally.com), my personal site and project portfolio.
 
-## Local setup
+Built with Astro, TypeScript, Tailwind CSS, and Vercel.
 
-Requires Node.js 22.12+.
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Astro will print the local development URL in the terminal.
-
-## Checks and production build
+## Check and build
 
 ```bash
 npm run check
 npm run build
 ```
-
-Vercel deploys the `main` branch to `liamkinnally.com`.
