@@ -113,49 +113,82 @@ html[data-theme='light'] {
   .mobile-scroll-focus {
     position: relative;
     isolation: isolate;
-    --mobile-clip-top: 100%;
-    --mobile-clip-bottom: 0%;
-    transition: none;
+    --mobile-highlight-border: var(--metric-hover-border);
+    --mobile-highlight-bg: var(--metric-hover-bg);
+    --mobile-highlight-shadow: var(--metric-hover-shadow);
+    transition:
+      background 420ms cubic-bezier(.22, .72, .2, 1),
+      color 420ms cubic-bezier(.22, .72, .2, 1),
+      box-shadow 420ms cubic-bezier(.22, .72, .2, 1),
+      border-color 180ms ease;
+  }
+
+  .interactive-pill.mobile-scroll-focus {
+    --mobile-highlight-border: var(--mobile-pill-border);
+    --mobile-highlight-bg: var(--skill-hover-bg);
+    --mobile-highlight-shadow: var(--skill-hover-shadow);
+  }
+
+  .kbd-tag.mobile-scroll-focus {
+    --mobile-highlight-border: var(--mobile-pill-border);
+    --mobile-highlight-bg: var(--mobile-tag-bg);
+    --mobile-highlight-shadow: var(--mobile-tag-shadow);
   }
 
   .mobile-scroll-focus::after {
     content: '';
     position: absolute;
-    inset: 0;
-    z-index: -1;
+    inset: -1px;
+    z-index: 2;
     pointer-events: none;
-    border: 1px solid var(--metric-hover-border);
+    border: 1px solid var(--mobile-highlight-border);
     border-radius: inherit;
-    background: var(--metric-hover-bg);
-    box-shadow: var(--metric-hover-shadow);
-    clip-path: inset(var(--mobile-clip-top) 0 var(--mobile-clip-bottom) 0);
-    will-change: clip-path;
-  }
-
-  .interactive-pill.mobile-scroll-focus::after {
-    border-color: var(--mobile-pill-border);
-    background: var(--skill-hover-bg);
-    box-shadow: var(--skill-hover-shadow);
-  }
-
-  .kbd-tag.mobile-scroll-focus::after {
-    border-color: var(--mobile-pill-border);
-    background: var(--mobile-tag-bg);
-    box-shadow: var(--mobile-tag-shadow);
-  }
-
-  .mobile-scroll-focus.mobile-scroll-full::after {
     opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    will-change: clip-path, opacity;
   }
 
-  .mobile-scroll-focus.mobile-scroll-full {
-    border-color: var(--metric-hover-border);
-    background: var(--metric-hover-bg);
-    box-shadow: var(--metric-hover-shadow);
+  .mobile-scroll-focus.mobile-bloom-entering {
+    background: var(--mobile-highlight-bg);
+    box-shadow: var(--mobile-highlight-shadow);
   }
 
-  .interactive-pill.mobile-initial-highlight,
-  .interactive-pill.mobile-scroll-focus.mobile-scroll-full {
+  .interactive-pill.mobile-scroll-focus.mobile-bloom-entering,
+  .kbd-tag.mobile-scroll-focus.mobile-bloom-entering {
+    color: var(--skill-hover-text);
+  }
+
+  .mobile-scroll-focus.mobile-bloom-entering::after {
+    opacity: 1;
+    animation: mobile-border-bloom-in 520ms cubic-bezier(.18, .72, .2, 1) forwards;
+  }
+
+  .mobile-scroll-focus.mobile-scroll-active {
+    border-color: var(--mobile-highlight-border);
+    background: var(--mobile-highlight-bg);
+    box-shadow: var(--mobile-highlight-shadow);
+  }
+
+  .interactive-pill.mobile-scroll-focus.mobile-scroll-active,
+  .kbd-tag.mobile-scroll-focus.mobile-scroll-active {
+    transform: none;
+    color: var(--skill-hover-text);
+  }
+
+  .mobile-scroll-focus.mobile-bloom-exiting {
+    transition:
+      background 480ms cubic-bezier(.22, .72, .2, 1),
+      color 480ms cubic-bezier(.22, .72, .2, 1),
+      box-shadow 480ms cubic-bezier(.22, .72, .2, 1),
+      border-color 180ms ease;
+  }
+
+  .mobile-scroll-focus.mobile-bloom-exiting::after {
+    opacity: 1;
+    animation: mobile-border-bloom-out 480ms cubic-bezier(.4, 0, .3, 1) forwards;
+  }
+
+  .interactive-pill.mobile-initial-highlight {
     transform: none;
     border-color: var(--mobile-pill-border);
     background: var(--skill-hover-bg);
@@ -163,12 +196,29 @@ html[data-theme='light'] {
     box-shadow: var(--skill-hover-shadow);
   }
 
-  .mobile-initial-highlight-group .kbd-tag,
-  .kbd-tag.mobile-scroll-focus.mobile-scroll-full {
+  .mobile-initial-highlight-group .kbd-tag {
     transform: none;
     border-color: var(--mobile-pill-border);
     background: var(--mobile-tag-bg);
     color: var(--skill-hover-text);
     box-shadow: var(--mobile-tag-shadow);
+  }
+
+  @keyframes mobile-border-bloom-in {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes mobile-border-bloom-out {
+    from {
+      clip-path: inset(0 0 0 0);
+    }
+    to {
+      clip-path: inset(100% 0 0 0);
+    }
   }
 }
