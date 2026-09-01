@@ -21,6 +21,7 @@
   --mobile-tag-shadow: 0 0 0 1px rgba(120, 167, 255, 0.035) inset;
   --mobile-frame-border-major: rgba(126, 169, 255, 0.48);
   --mobile-frame-border-quiet: rgba(126, 169, 255, 0.26);
+  --desktop-frame-border-major: rgba(126, 169, 255, 0.30);
 }
 
 html[data-theme='light'] {
@@ -46,6 +47,7 @@ html[data-theme='light'] {
   --mobile-tag-shadow: 0 0 0 1px rgba(70, 105, 190, 0.025) inset;
   --mobile-frame-border-major: rgba(70, 105, 190, 0.34);
   --mobile-frame-border-quiet: rgba(70, 105, 190, 0.19);
+  --desktop-frame-border-major: rgba(70, 105, 190, 0.22);
 }
 
 #work .kbd-tag,
@@ -87,7 +89,7 @@ html[data-theme='light'] {
   #skills .kbd-tag:hover,
   #education .kbd-tag:hover,
   .project-page .kbd-tag:hover,
-  .interactive-pill:hover {
+  .interactive-pill:not(.chart-shell--compact .interactive-pill):not(.project-page .chart-shell .interactive-pill):hover {
     transform: translateY(-2px) scale(1.018);
     border-color: var(--skill-hover-border);
     background: var(--skill-hover-bg);
@@ -100,16 +102,47 @@ html[data-theme='light'] {
   }
 
   .chart-shell--compact .interactive-pill:hover,
-  .project-page .interactive-pill:hover {
+  .project-page .chart-shell .interactive-pill:hover {
     transform: none;
+    border-color: var(--skill-hover-border);
   }
 
   #work .metric-card:hover,
-  .project-page .metric-card:hover,
+  .project-page .metric-card:hover {
+    border-color: var(--metric-hover-border);
+    background: var(--metric-hover-bg);
+    box-shadow: none;
+  }
+
   .project-page .stationary-highlight:hover {
     border-color: var(--metric-hover-border);
     background: var(--metric-hover-bg);
     box-shadow: var(--metric-hover-shadow);
+  }
+
+  .desktop-scroll-frame {
+    position: relative;
+    isolation: isolate;
+    --desktop-frame-strength: 0;
+    --desktop-frame-clip-top: 0%;
+    --desktop-frame-clip-bottom: 100%;
+  }
+
+  .desktop-scroll-frame::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 2;
+    pointer-events: none;
+    border: 1px solid var(--desktop-frame-border-major);
+    border-radius: inherit;
+    clip-path: inset(var(--desktop-frame-clip-top) 0 var(--desktop-frame-clip-bottom) 0);
+    opacity: calc(0.55 + var(--desktop-frame-strength) * 0.27);
+    will-change: clip-path, opacity;
+  }
+
+  .scroll-frame-clipped.desktop-scroll-frame::after {
+    inset: 0;
   }
 }
 
