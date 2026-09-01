@@ -57,10 +57,10 @@ const systemSteps = [
           How well can you predict an NBA player's next box score — points, assists, rebounds — from only what was known before tipoff?
         </p>
         <p>
-          Not perfectly, and the data shows why. Among holdout games where a player arrived averaging 19–21 points over his previous ten, actual results ran from 0 to 41, and only about half landed within five points of that average. Recent scoring, minutes, rest, and matchup history all carry real signal; none of it makes the next line certain.
+          Not perfectly, and the data shows why. Among games reserved for the model’s final evaluation, players who entered averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41, and only about half finished within five points of that average. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
         </p>
         <p>
-          Against a target that noisy, the engineering matters more than the modeling. A regressor will happily post a good-looking score on badly built data, and a good score means little without something to compare it against. Most of the work went into making the final number mean something: features that can only see the past, evaluation that moves forward through time, and a simple baseline held to exactly the same test.
+          That natural variation makes a low average error hard to achieve. But a low error can also be easy to fake: a single feature that quietly peeks at the game being predicted will produce a number that looks excellent and means nothing. So the result only means something if it comes from an honest test — features that can only use information from the past, evaluation in the same order the games actually happened, and a simpler method held to the exact same conditions.
         </p>
       </div>
     </section>
