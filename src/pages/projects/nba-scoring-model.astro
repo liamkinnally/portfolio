@@ -94,13 +94,10 @@ const systemSteps = [
       >Keeping the test honest</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300 [text-wrap:pretty]">
         <p>
-          A model that sees any part of the result it is supposed to predict will look accurate for the wrong reason. That failure is called data leakage, and preventing it shaped the pipeline.
+          A model that sees any part of the result it is supposed to predict will look accurate for the wrong reason. That failure is called data leakage, and preventing it is why every historical feature uses a strict date cutoff. Jamal Murray’s 5-game and 10-game scoring averages, recent minutes, rest, and team form can use only games that finished earlier. Numbering his appearances in order, a prediction for Game 11 can use Games 1–10 but nothing from Game 11 itself. The database query enforces this by requiring each source game to have an earlier date than the game being predicted. Games he did not play are excluded from the averages rather than counted as zero.
         </p>
         <p>
-          Every historical feature uses a strict date cutoff. Jamal Murray’s 5‑ and 10‑game scoring averages, recent minutes, rest, and team form can only use games that finished earlier. If his appearances are numbered in order, a prediction for Game 11 can use Games 1–10, but nothing from Game 11 itself. The database query enforces that cutoff directly by requiring each source game to have an earlier date than the game being predicted, rather than relying on the rows already being in the right order. Games he did not play are excluded from the averages rather than counted as zero.
-        </p>
-        <p>
-          Chronology also governs tuning and evaluation. The most recent 20% of game dates are reserved for the final test. On the earlier data, expanding‑window cross‑validation divides the dates into four consecutive blocks, producing three rounds that train on everything earlier and validate on the next block. Later games never inform earlier predictions.
+          Chronology also governs tuning and evaluation. The most recent 20% of game dates are reserved for the final test. On the earlier data, expanding-window cross-validation divides the dates into four consecutive blocks, producing three rounds that train on the past and validate on the next block. Later games never inform earlier predictions.
         </p>
       </div>
     </section>
