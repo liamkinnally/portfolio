@@ -6,7 +6,7 @@ import PredictionQualityChart from '../../components/PredictionQualityChart.astr
 import PermutationImportanceChart from '../../components/PermutationImportanceChart.astro';
 
 const systemSteps = [
-  'ESPN JSON',
+  'ESPN JSON endpoints',
   'Validation + SQLite',
   'Feature Engineering',
   'Model Training',
@@ -29,7 +29,7 @@ const systemSteps = [
         data-shine-text="NBA Player Stat Prediction"
       >NBA Player Stat Prediction</h1>
       <p class="mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
-        An end-to-end Python pipeline for ingesting NBA data, engineering leakage-safe historical features, training gradient boosting models, and evaluating them against a rolling-average baseline on future games.
+        Predicting how many points, assists, and rebounds an NBA player will record in his next game, using only what was known before tipoff. An end-to-end Python pipeline covering data collection, feature engineering, model training, and evaluation against a simple baseline on games the model never saw during training.
       </p>
       <div class="mobile-initial-highlight-group mt-8 flex flex-wrap gap-2">
         <span class="kbd-tag">Python</span><span class="kbd-tag">scikit-learn</span><span class="kbd-tag">SQLAlchemy</span><span class="kbd-tag">SQLite</span><span class="kbd-tag">Matplotlib</span><span class="kbd-tag">pytest</span><span class="kbd-tag">GitHub Actions</span>
@@ -42,22 +42,22 @@ const systemSteps = [
     <section class="mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <MetricCard value="1,230" label="Games ingested" />
       <MetricCard value="26,547" label="Player-game rows" />
-      <MetricCard value="4.85" label="Points MAE" />
-      <MetricCard value="23 / 28" label="Trailing windows won" detail="points model vs. baseline" />
+      <MetricCard value="4.85" label="Points MAE" detail="average miss per prediction" />
+      <MetricCard value="23 / 28" label="7-day windows won" detail="points model vs. baseline" />
     </section>
 
     <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
       <h2
         class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]"
         data-scroll-heading
-        data-shine-text="The problem"
-      >The problem</h2>
+        data-shine-text="The question"
+      >The question</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          Predicting a player's next box-score line sounds simple until time enters the picture. A useful system has to learn only from information that would have actually been available before each game, and it has to be judged against a reasonable baseline rather than against nothing.
+          How well can you predict an NBA player's next box score (points, assists, rebounds) from only what was known before tipoff? Not perfectly. In the games set aside for testing, players averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
         </p>
         <p>
-          I built the project around that constraint: preserve chronology, avoid feature leakage, and make the evaluation reproducible from stored model artifacts.
+          A low error can still be easy to fake if a feature quietly peeks at the game being predicted. So useful performance has to survive an honest test: past information only, games evaluated in order, and a simpler method under the same conditions.
         </p>
       </div>
     </section>
@@ -87,34 +87,38 @@ const systemSteps = [
       <h2
         class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]"
         data-scroll-heading
-        data-shine-text="Leakage prevention"
-      >Leakage prevention</h2>
-      <div class="space-y-5 text-lg leading-8 text-slate-300">
+        data-shine-text="Keeping the test honest"
+      >Keeping the test honest</h2>
+      <div class="space-y-5 text-lg leading-8 text-slate-300 [text-wrap:pretty]">
         <p>
-          Rolling statistics are shifted so that a row cannot use information from the game it is trying to predict. Training and validation also move forward through time rather than randomly shuffling past and future observations together.
+          A model that sees any part of the result it is supposed to predict will look accurate for the wrong reason. That failure is called data leakage, and preventing it is why every historical feature uses a strict date cutoff. Jamal Murray’s 5-game and 10-game scoring averages, recent minutes, rest, and team form can use only games that finished earlier. Numbering his appearances in order, a prediction for Game 11 can use Games 1–10 but nothing from Game 11 itself. The database query enforces this by requiring each source game to have an earlier date than the game being predicted. Games he did not play are excluded from the averages rather than counted as zero.
         </p>
         <p>
-          That makes the reported holdout performance a more realistic test of how the system would behave on genuinely unseen future games.
+          Chronology also governs tuning and evaluation. The most recent 20% of game dates are reserved for the final test. On the earlier data, expanding-window cross-validation divides the dates into four consecutive blocks, producing three rounds that train on the past and validate on the next block. Later games never inform earlier predictions.
         </p>
       </div>
     </section>
 
     <section class="mt-24">
-      <div class="mb-9 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+      <div class="mb-28 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
         <h2
           class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]"
           data-scroll-heading
           data-shine-text="Evaluation"
         >Evaluation</h2>
-        <div class="space-y-5 text-lg leading-8 text-slate-300">
+        <div class="space-y-5 text-lg leading-8 text-slate-300 [text-wrap:pretty]">
           <p>
-            The project compares tuned gradient boosting regressors with a 10-game rolling-average baseline on identical chronological holdout rows. For points, the model reached 4.85 MAE and outperformed the baseline in 23 of 28 trailing seven-day windows; the assists model won 22 of 28.
+            A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. So the tuned gradient boosting models are compared head‑to‑head with a 10‑game rolling average, which predicts a player’s next game from their recent form and nothing else.
           </p>
           <p>
-            The visualizations below are rebuilt natively for this portfolio from the project's reporting data rather than embedded as exported chart images.
+            The final test contains 5,645 player-game rows that were never used in training. Across that chronological holdout, the points model’s mean absolute error is 4.85&nbsp;— a little under five points per prediction on average. For the 5,612 rows where both methods can predict, the model averaged 4.841 against 4.883 for the 10-game baseline. Assists showed the same small edge, 1.407 against 1.417, while rebounds were effectively tied.
+          </p>
+          <p>
+            The margins are small because a 10-game average is already a strong baseline here. Even so, the model posted lower error in 23 of 28 trailing seven-day windows for points and 22 of 28 for assists.
           </p>
         </div>
       </div>
+      <p class="mx-auto mb-6 w-fit max-w-full text-[0.8rem] leading-5 text-slate-400">The NBA model visualizations across this site are rebuilt natively from the project’s generated reporting data.</p>
       <RollingMaeChart animateHeading interactivePill />
     </section>
 
