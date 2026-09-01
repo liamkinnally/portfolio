@@ -57,10 +57,10 @@ const systemSteps = [
           How well can you predict an NBA player's next box score — points, assists, rebounds — from only what was known before tipoff?
         </p>
         <p>
-          Not perfectly, and the data shows why. Among games reserved for the model’s final evaluation, players who entered averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41, and only about half finished within five points of that average. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
+          Not perfectly, and the data shows why. In the final evaluation set, players who entered averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41, and only about half finished within five points of that average. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
         </p>
         <p>
-          That natural variation makes a low average error hard to achieve. But a low error can also be easy to fake: a single feature that quietly peeks at the game being predicted will produce a number that looks excellent and means nothing. So the result only means something if it comes from an honest test — features that can only use information from the past, evaluation in the same order the games actually happened, and a simpler method held to the exact same conditions.
+          A low error can still be easy to fake if a feature quietly peeks at the game being predicted. So useful performance has to survive an honest test: past information only, games evaluated in order, and a simpler method under the same conditions.
         </p>
       </div>
     </section>
@@ -94,13 +94,13 @@ const systemSteps = [
       >Keeping the test honest</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          A model that sees any part of the result it is supposed to predict will look accurate for the wrong reason. That failure is called data leakage, and preventing it shaped the whole pipeline.
+          A model that sees any part of the result it is supposed to predict will look accurate for the wrong reason. That failure is called data leakage, and preventing it shaped the pipeline.
         </p>
         <p>
-          Every historical feature is built with a strict cutoff at the game being predicted. Jamal Murray’s 5- and 10-game scoring averages, his recent minutes, his rest, and how his team has been playing can only draw on games that finished earlier. If his appearances are numbered in order, a prediction for Game 11 can use information from Games 1–10, but nothing from Game 11 itself. That cutoff is enforced directly in the database query, which requires each source game to have an earlier date than the game being predicted. Nothing depends on the rows already being in the right order. Averages also include only games he actually appeared in, so a game he didn’t play is not treated as a zero.
+          Every historical feature uses a strict date cutoff. Jamal Murray’s 5- and 10-game scoring averages, recent minutes, rest, and team form can only use games that finished earlier. If his appearances are numbered in order, a prediction for Game 11 can use Games 1–10, but nothing from Game 11 itself. The database query enforces that cutoff directly by requiring each source game to have an earlier date than the game being predicted, rather than relying on the rows already being in the right order. Games he did not play are excluded from the averages rather than counted as zero.
         </p>
         <p>
-          The same chronological rule applies to training. The most recent 20% of game dates are set aside completely for the final test. On the earlier data, hyperparameter tuning uses expanding-window cross-validation: the dates are divided into four consecutive blocks, producing three rounds where the model trains on everything earlier and validates on the next block. Each round gives the model more past data to learn from, but never lets a later game inform a prediction about an earlier one. That keeps the experiment close to the real task — using only what was known before tipoff to predict a player’s next line.
+          Chronology also governs tuning and evaluation. The most recent 20% of game dates are reserved for the final test. On the earlier data, expanding-window cross-validation divides the dates into four consecutive blocks, producing three rounds that train on everything earlier and validate on the next block. Later games never inform earlier predictions.
         </p>
       </div>
     </section>
@@ -114,13 +114,13 @@ const systemSteps = [
         >Evaluation</h2>
         <div class="space-y-5 text-lg leading-8 text-slate-300">
           <p>
-            A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. So the comparison is head-to-head: the tuned gradient boosting models against a 10-game rolling average, which predicts a player's next game from their recent form and nothing else.
+            A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. So the tuned gradient boosting models are compared head-to-head with a 10-game rolling average, which predicts a player’s next game from their recent form and nothing else.
           </p>
           <p>
-            The final test uses that chronological holdout: 5,645 player-game rows from March 11, 2026 onward, none of them used in training. Across that full set, the points model’s mean absolute error is 4.85 — meaning its predictions miss by a little under five points on average. The head-to-head comparison uses the 5,612 rows where the baseline can also predict, since a player with no prior games has no recent form to average from. There, the model averaged 4.841 against 4.883 for the rolling average, and assists 1.407 against 1.417. Rebounds were effectively a tie.
+            The final test set contains 5,645 player-game rows that were never used in training. Across that chronological holdout, the points model’s mean absolute error is 4.85 — a little under five points of error on average. For a fair comparison, the head-to-head narrows to the 5,612 rows where the baseline can also predict, since players with no prior games have no recent form to average. On those matched rows, the points model averaged 4.841 against 4.883 for the baseline. Assists showed the same small edge, 1.407 against 1.417, while rebounds were effectively tied.
           </p>
           <p>
-            That margin is small, and it should be. A 10-game average is a strong baseline here because most players are reasonably consistent, so the honest claim isn't that the model is dramatically better — it's that it is reliably a little better. Across 28 trailing seven-day windows, it posted the lower error in 23 for points and 22 for assists. The edge also grew with scoring volume: 0.23% for players under 8 points per game, rising to 1.81% for players averaging 22 or more.
+            The margins are modest because a 10-game average is already a strong baseline here. Even so, the model posted lower error in 23 of 28 trailing seven-day windows for points and 22 of 28 for assists. Its points edge also grew with scoring volume: from 0.23% for players averaging under 8 points per game to 1.81% for players averaging 22 or more.
           </p>
         </div>
       </div>
