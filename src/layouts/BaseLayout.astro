@@ -68,6 +68,7 @@ const {
       if (coarsePointer && !reducedMotion) {
         const selectors = [
           '.availability-pill.interactive-pill',
+          '.scroll-frame-focus',
           '#work .metric-card',
           '#work .kbd-tag',
           '#skills .kbd-tag',
@@ -115,14 +116,39 @@ const {
           };
         };
 
-        const getBloomDistance = (viewportHeight: number, elementHeight: number) =>
-          Math.min(
+        const getBloomDistance = (
+          viewportHeight: number,
+          elementHeight: number,
+          target: HTMLElement,
+        ) => {
+          if (target.classList.contains('scroll-frame-major')) {
+            return Math.min(
+              190,
+              Math.max(
+                112,
+                viewportHeight * 0.105 + Math.min(elementHeight, 420) * 0.12,
+              ),
+            );
+          }
+
+          if (target.classList.contains('scroll-frame-quiet')) {
+            return Math.min(
+              145,
+              Math.max(
+                84,
+                viewportHeight * 0.085 + Math.min(elementHeight, 240) * 0.12,
+              ),
+            );
+          }
+
+          return Math.min(
             118,
             Math.max(
               62,
               viewportHeight * 0.075 + Math.min(elementHeight, 180) * 0.24,
             ),
           );
+        };
 
         const setBloom = (
           target: HTMLElement,
@@ -155,7 +181,7 @@ const {
           for (const target of targets) {
             const rect = target.getBoundingClientRect();
             const center = rect.top + rect.height / 2;
-            const bloomDistance = getBloomDistance(viewportHeight, rect.height);
+            const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
 
             // Project-page hero stack pills deliberately begin fully highlighted.
             // They only participate in the scroll-mapped release at the upper boundary.
