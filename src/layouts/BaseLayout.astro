@@ -93,19 +93,11 @@ const {
           ),
         );
 
-        type BloomState = 'idle' | 'entering' | 'active' | 'exiting' | 'done';
-        const states = new Map<HTMLElement, BloomState>();
-        const timers = new Map<HTMLElement, number>();
-
-        targets.forEach((target) => {
-          states.set(target, initialTargets.has(target) ? 'active' : 'idle');
-        });
-
-        const ENTRY_MS = 520;
-        const EXIT_MS = 480;
         let scrollFrame = 0;
 
-        const getViewportBand = () => {
+        const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+
+        const getViewportMotion = () => {
           const viewport = window.visualViewport;
           const viewportTop = viewport?.offsetTop ?? 0;
           const viewportHeight = viewport?.height ?? window.innerHeight;
@@ -113,78 +105,70 @@ const {
           return {
             entryLine: viewportTop + viewportHeight * 0.80,
             releaseLine: viewportTop + viewportHeight * 0.20,
+            bloomDistance: Math.min(92, Math.max(64, viewportHeight * 0.095)),
           };
         };
 
-        const clearBloomTimer = (target: HTMLElement) => {
-          const timer = timers.get(target);
-          if (timer) window.clearTimeout(timer);
-          timers.delete(target);
-        };
+        const setBloom = (
+          target: HTMLElement,
+          strength: number,
+          phase: 'entry' | 'active' | 'exit',
+        ) => {
+          const progress = clamp01(strength);
+          let clipTop = 0;
+          let clipBottom = 0;
 
-        const finishEntry = (target: HTMLElement) => {
-          clearBloomTimer(target);
-          target.classList.remove('mobile-bloom-entering');
-          target.classList.add('mobile-scroll-active');
-          states.set(target, 'active');
-        };
+          if (phase === 'entry') {
+            clipBottom = (1 - progress) * 100;
+          } else if (phase === 'exit') {
+            clipTop = (1 - progress) * 100;
+          }
 
-        const startEntry = (target: HTMLElement) => {
-          const state = states.get(target);
-          if (state !== 'idle') return;
-
-          clearBloomTimer(target);
-          target.classList.remove('mobile-bloom-exiting');
-          target.classList.add('mobile-bloom-entering');
-          states.set(target, 'entering');
-
-          timers.set(target, window.setTimeout(() => finishEntry(target), ENTRY_MS));
-        };
-
-        const finishExit = (target: HTMLElement) => {
-          clearBloomTimer(target);
-          target.classList.remove('mobile-bloom-exiting');
-          states.set(target, 'done');
-        };
-
-        const startExit = (target: HTMLElement) => {
-          const state = states.get(target);
-          if (state === 'exiting' || state === 'done' || state === 'idle') return;
-
-          clearBloomTimer(target);
-          target.classList.remove('mobile-bloom-entering', 'mobile-scroll-active');
-
-          // Restart the element-local exit sweep even if a very fast scroll
-          // reaches the release line while the entry sweep is still running.
-          void target.offsetWidth;
-          target.classList.add('mobile-bloom-exiting');
-          states.set(target, 'exiting');
-
-          timers.set(target, window.setTimeout(() => finishExit(target), EXIT_MS));
+          target.style.setProperty('--mobile-bloom-strength', progress.toFixed(4));
+          target.style.setProperty('--mobile-bloom-clip-top', `${clipTop.toFixed(2)}%`);
+          target.style.setProperty('--mobile-bloom-clip-bottom', `${clipBottom.toFixed(2)}%`);
+          target.classList.toggle('mobile-scroll-colored', progress > 0.08);
         };
 
         const updateScrollHighlights = () => {
           scrollFrame = 0;
-          const { entryLine, releaseLine } = getViewportBand();
+          const { entryLine, releaseLine, bloomDistance } = getViewportMotion();
 
           for (const target of targets) {
-            const state = states.get(target) ?? 'idle';
-            if (state === 'done' || state === 'exiting') continue;
-
             const rect = target.getBoundingClientRect();
             const center = rect.top + rect.height / 2;
 
-            if (state === 'idle') {
-              if (center <= releaseLine) {
-                states.set(target, 'done');
-                continue;
+            // Hero-context pills deliberately begin fully highlighted. They only
+            // participate in the scroll-mapped release at the upper boundary.
+            if (initialTargets.has(target)) {
+              if (center > releaseLine) {
+                setBloom(target, 1, 'active');
+              } else {
+                const exitProgress = clamp01((releaseLine - center) / bloomDistance);
+                setBloom(target, 1 - exitProgress, 'exit');
               }
-
-              if (center <= entryLine) startEntry(target);
               continue;
             }
 
-            if (center <= releaseLine) startExit(target);
+            if (center > entryLine) {
+              setBloom(target, 0, 'entry');
+              continue;
+            }
+
+            const entryEnd = entryLine - bloomDistance;
+            if (center > entryEnd) {
+              const entryProgress = clamp01((entryLine - center) / bloomDistance);
+              setBloom(target, entryProgress, 'entry');
+              continue;
+            }
+
+            if (center > releaseLine) {
+              setBloom(target, 1, 'active');
+              continue;
+            }
+
+            const exitProgress = clamp01((releaseLine - center) / bloomDistance);
+            setBloom(target, 1 - exitProgress, 'exit');
           }
         };
 
@@ -194,9 +178,9 @@ const {
         };
 
         const startTracking = () => {
-          initialTargets.forEach((target) => {
-            target.classList.add('mobile-scroll-active');
-          });
+          // Establish the scroll-driven visual state before removing the
+          // first-frame hero highlight classes so there is no visible handoff.
+          updateScrollHighlights();
 
           document
             .querySelectorAll<HTMLElement>('.mobile-initial-highlight')
