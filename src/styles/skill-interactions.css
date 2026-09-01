@@ -111,21 +111,51 @@ html[data-theme='light'] {
 
 @media (hover: none) and (pointer: coarse) {
   .mobile-scroll-focus {
-    transition:
-      border-color 460ms ease,
-      background 460ms ease,
-      color 460ms ease,
-      box-shadow 460ms ease;
+    position: relative;
+    isolation: isolate;
+    --mobile-clip-top: 100%;
+    --mobile-clip-bottom: 0%;
+    transition: none;
   }
 
-  .mobile-scroll-focus.mobile-scroll-active {
+  .mobile-scroll-focus::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border: 1px solid var(--metric-hover-border);
+    border-radius: inherit;
+    background: var(--metric-hover-bg);
+    box-shadow: var(--metric-hover-shadow);
+    clip-path: inset(var(--mobile-clip-top) 0 var(--mobile-clip-bottom) 0);
+    will-change: clip-path;
+  }
+
+  .interactive-pill.mobile-scroll-focus::after {
+    border-color: var(--mobile-pill-border);
+    background: var(--skill-hover-bg);
+    box-shadow: var(--skill-hover-shadow);
+  }
+
+  .kbd-tag.mobile-scroll-focus::after {
+    border-color: var(--mobile-pill-border);
+    background: var(--mobile-tag-bg);
+    box-shadow: var(--mobile-tag-shadow);
+  }
+
+  .mobile-scroll-focus.mobile-scroll-full::after {
+    opacity: 0;
+  }
+
+  .mobile-scroll-focus.mobile-scroll-full {
     border-color: var(--metric-hover-border);
     background: var(--metric-hover-bg);
     box-shadow: var(--metric-hover-shadow);
   }
 
   .interactive-pill.mobile-initial-highlight,
-  .interactive-pill.mobile-scroll-focus.mobile-scroll-active {
+  .interactive-pill.mobile-scroll-focus.mobile-scroll-full {
     transform: none;
     border-color: var(--mobile-pill-border);
     background: var(--skill-hover-bg);
@@ -134,7 +164,7 @@ html[data-theme='light'] {
   }
 
   .mobile-initial-highlight-group .kbd-tag,
-  .kbd-tag.mobile-scroll-focus.mobile-scroll-active {
+  .kbd-tag.mobile-scroll-focus.mobile-scroll-full {
     transform: none;
     border-color: var(--mobile-pill-border);
     background: var(--mobile-tag-bg);
