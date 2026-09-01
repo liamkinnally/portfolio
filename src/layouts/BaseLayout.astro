@@ -121,6 +121,16 @@ const {
           elementHeight: number,
           target: HTMLElement,
         ) => {
+          if (target.classList.contains('scroll-frame-education')) {
+            return Math.min(
+              380,
+              Math.max(
+                240,
+                viewportHeight * 0.12 + Math.min(elementHeight, 620) * 0.45,
+              ),
+            );
+          }
+
           if (target.classList.contains('scroll-frame-major')) {
             return Math.min(
               190,
