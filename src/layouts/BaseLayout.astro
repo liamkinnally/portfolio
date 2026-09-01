@@ -65,6 +65,7 @@ const {
 
       if (coarsePointer && !reducedMotion) {
         const selectors = [
+          '.availability-pill.interactive-pill',
           '#work .metric-card',
           '#work .kbd-tag',
           '#skills .kbd-tag',
@@ -76,7 +77,6 @@ const {
         ];
 
         const initiallyHighlightedSelectors = [
-          '.availability-pill.interactive-pill',
           '.project-page header .kbd-tag',
         ];
 
@@ -155,8 +155,8 @@ const {
             const center = rect.top + rect.height / 2;
             const bloomDistance = getBloomDistance(viewportHeight, rect.height);
 
-            // Hero-context pills deliberately begin fully highlighted. They only
-            // participate in the scroll-mapped release at the upper boundary.
+            // Project-page hero stack pills deliberately begin fully highlighted.
+            // They only participate in the scroll-mapped release at the upper boundary.
             if (initialTargets.has(target)) {
               if (center > releaseLine) {
                 setBloom(target, 1, 'active');
@@ -196,12 +196,9 @@ const {
 
         const startTracking = () => {
           // Establish the scroll-driven visual state before removing the
-          // first-frame hero highlight classes so there is no visible handoff.
+          // first-frame project-stack highlight class so there is no visible handoff.
           updateScrollHighlights();
 
-          document
-            .querySelectorAll<HTMLElement>('.mobile-initial-highlight')
-            .forEach((target) => target.classList.remove('mobile-initial-highlight'));
           document
             .querySelectorAll<HTMLElement>('.mobile-initial-highlight-group')
             .forEach((target) => target.classList.remove('mobile-initial-highlight-group'));
