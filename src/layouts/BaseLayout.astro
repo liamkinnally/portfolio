@@ -267,10 +267,11 @@ const {
             const center = rect.top + rect.height / 2;
             const isFrame = target.classList.contains('scroll-frame-focus');
             const isChartFrame = isFrame && target.classList.contains('chart-shell');
+            const isLeafFrame = isFrame && target.classList.contains('scroll-frame-leaf');
             const entryAnchor = isFrame ? rect.top : center;
-            // Chart frames use the same top-edge anchor in both directions so
-            // reversing the scroll reverses the nested frame/pill sequence cleanly.
-            const releaseAnchor = isChartFrame
+            // Chart frames and small leaf cards release from the top edge so
+            // their border visibly unwinds as the element leaves the viewport.
+            const releaseAnchor = isChartFrame || isLeafFrame
               ? rect.top
               : isFrame
                 ? rect.bottom
