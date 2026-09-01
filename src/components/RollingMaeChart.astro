@@ -83,6 +83,9 @@ const formatDate = (date: string) => {
           <feGaussianBlur stdDeviation="2.25" result="resultBlur" />
           <feMerge><feMergeNode in="resultBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
+        <filter id="mae-tooltip-shadow" x="-30%" y="-30%" width="160%" height="180%">
+          <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#020617" flood-opacity="0.5" />
+        </filter>
       </defs>
 
       <rect x={margin.left} y={margin.top} width={plotWidth} height={plotHeight} rx="14" fill="var(--chart-plot-bg)" />
@@ -109,6 +112,16 @@ const formatDate = (date: string) => {
       {!compact && data.map((point, index) => {
         const bandLeft = index === 0 ? margin.left : (x(index - 1) + x(index)) / 2;
         const bandRight = index === data.length - 1 ? margin.left + plotWidth : (x(index) + x(index + 1)) / 2;
+        const tooltipWidth = 144;
+        const tooltipHeight = 76;
+        const tooltipGap = 12;
+        const tooltipX = index < data.length / 2
+          ? Math.min(x(index) + tooltipGap, margin.left + plotWidth - tooltipWidth - 8)
+          : Math.max(x(index) - tooltipWidth - tooltipGap, margin.left + 8);
+        const tooltipY = margin.top + 10;
+        const delta = point.model - point.baseline;
+        const isWin = delta < 0;
+        const resultLabel = `${isWin ? 'Win' : 'Loss'} · ${Math.abs(delta).toFixed(2)} ${isWin ? 'lower' : 'higher'}`;
 
         return (
           <g class="date-hover-group">
@@ -116,6 +129,15 @@ const formatDate = (date: string) => {
             <line class="date-hover-guide" x1={x(index)} x2={x(index)} y1={margin.top} y2={margin.top + plotHeight} />
             <circle class="date-hover-point date-hover-point--model" cx={x(index)} cy={y(point.model)} r="4.5" />
             <circle class="date-hover-point date-hover-point--baseline" cx={x(index)} cy={y(point.baseline)} r="4" />
+            <g class="date-hover-tooltip" transform={`translate(${tooltipX}, ${tooltipY})`}>
+              <rect class="date-hover-tooltip-box" width={tooltipWidth} height={tooltipHeight} rx="9" filter="url(#mae-tooltip-shadow)" />
+              <text class="date-hover-tooltip-date" x="10" y="17">{formatDate(point.date)}</text>
+              <text class="date-hover-tooltip-label" x="10" y="36">Model</text>
+              <text class="date-hover-tooltip-value date-hover-tooltip-value--model" x={tooltipWidth - 10} y="36" text-anchor="end">{point.model.toFixed(2)}</text>
+              <text class="date-hover-tooltip-label" x="10" y="52">Baseline</text>
+              <text class="date-hover-tooltip-value" x={tooltipWidth - 10} y="52" text-anchor="end">{point.baseline.toFixed(2)}</text>
+              <text class:list={['date-hover-tooltip-result', isWin ? 'date-hover-tooltip-result--win' : 'date-hover-tooltip-result--loss']} x="10" y="68">{resultLabel}</text>
+            </g>
           </g>
         );
       })}
@@ -171,7 +193,8 @@ const formatDate = (date: string) => {
   }
 
   .date-hover-guide,
-  .date-hover-point {
+  .date-hover-point,
+  .date-hover-tooltip {
     opacity: 0;
     pointer-events: none;
   }
@@ -202,6 +225,50 @@ const formatDate = (date: string) => {
     stroke-width: 2;
   }
 
+  .date-hover-tooltip-box {
+    fill: #0b1324;
+    fill-opacity: 0.96;
+    stroke: rgba(148, 163, 184, 0.24);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .date-hover-tooltip-date {
+    fill: #e2e8f0;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .date-hover-tooltip-label {
+    fill: #94a3b8;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .date-hover-tooltip-value {
+    fill: #cbd5e1;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .date-hover-tooltip-value--model {
+    fill: #9fc0ff;
+  }
+
+  .date-hover-tooltip-result {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .date-hover-tooltip-result--win {
+    fill: #93b7ff;
+  }
+
+  .date-hover-tooltip-result--loss {
+    fill: #94a3b8;
+  }
+
   .window-result-bar {
     transform-box: fill-box;
     transform-origin: center;
@@ -216,12 +283,20 @@ const formatDate = (date: string) => {
       transition: opacity 140ms ease, transform 160ms ease;
     }
 
+    .date-hover-tooltip {
+      transition: opacity 130ms ease;
+    }
+
     .date-hover-group:hover .date-hover-guide {
       opacity: 0.36;
     }
 
-    .date-hover-group:hover .date-hover-point {
+    .date-hover-group:hover .date-hover-point,
+    .date-hover-group:hover .date-hover-tooltip {
       opacity: 1;
+    }
+
+    .date-hover-group:hover .date-hover-point {
       transform: scale(1);
     }
 
@@ -254,6 +329,7 @@ const formatDate = (date: string) => {
 
     .date-hover-guide,
     .date-hover-point,
+    .date-hover-tooltip,
     .window-result-bar {
       transition: none;
     }
