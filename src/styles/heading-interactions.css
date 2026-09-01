@@ -51,7 +51,7 @@ html[data-theme='light'] {
 #about h2.scroll-heading-shine::after {
   content: '';
   display: inline-block;
-  width: 0.035em;
+  width: 1px;
   height: 0.84em;
   margin-left: 0.07em;
   border-radius: 0.5px;
