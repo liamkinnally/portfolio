@@ -2,11 +2,13 @@
   --focus-ring: rgba(129, 140, 248, 0.82);
   --card-top-edge: rgba(255, 255, 255, 0.125);
   --card-inner-edge: rgba(255, 255, 255, 0.025);
+  --metric-depth-shadow: rgba(0, 0, 0, 0.075);
 }
 
 html[data-theme='light'] {
   --card-top-edge: rgba(24, 39, 63, 0.14);
   --card-inner-edge: rgba(255, 255, 255, 0.72);
+  --metric-depth-shadow: rgba(38, 57, 88, 0.055);
 }
 
 html {
@@ -49,11 +51,41 @@ html[data-theme='light'] ::selection {
     color-mix(in srgb, var(--metric-bg) 82%, var(--surface-strong) 18%),
     var(--metric-bg)
   );
-  box-shadow: inset 0 1px 0 var(--card-inner-edge);
+  box-shadow:
+    inset 0 1px 0 var(--card-inner-edge),
+    0 8px 24px var(--metric-depth-shadow);
 }
 
 .metric-card > :first-child {
   font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Preserve normal word spacing between the separately wrapped hero-role phrases. */
+main > section:first-child .text-blue-200 > span:not(:last-child) {
+  margin-right: 0.28em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Keep the new resting depth on hover instead of letting the legacy hover rule flatten it. */
+  #work .metric-card:hover,
+  .project-page .metric-card:hover {
+    box-shadow:
+      inset 0 1px 0 var(--card-inner-edge),
+      0 8px 24px var(--metric-depth-shadow);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /*
+    The animated scroll trace needs to own the border on mobile. The fidelity pass
+    brightens the resting top edge on desktop, but keeping that static highlight
+    underneath a mobile scroll-frame makes the reveal look pre-drawn. Preserve the
+    refined surface while returning animated frames to a neutral resting edge.
+  */
+  .scroll-frame-focus.mobile-scroll-focus.glass-card {
+    border-top-color: var(--border);
+    box-shadow: 0 24px 80px var(--glass-shadow);
+  }
 }
 
 ::-webkit-scrollbar {
