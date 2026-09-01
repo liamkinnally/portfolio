@@ -177,6 +177,9 @@ const {
           for (const target of targets) {
             const rect = target.getBoundingClientRect();
             const center = rect.top + rect.height / 2;
+            const isFrame = target.classList.contains('scroll-frame-focus');
+            const entryAnchor = isFrame ? rect.top : center;
+            const releaseAnchor = isFrame ? rect.bottom : center;
             const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
 
             // Project-page hero stack pills deliberately begin fully highlighted.
@@ -191,24 +194,24 @@ const {
               continue;
             }
 
-            if (center > entryLine) {
+            if (entryAnchor > entryLine) {
               setBloom(target, 0, 'entry');
               continue;
             }
 
             const entryEnd = entryLine - bloomDistance;
-            if (center > entryEnd) {
-              const entryProgress = clamp01((entryLine - center) / bloomDistance);
+            if (entryAnchor > entryEnd) {
+              const entryProgress = clamp01((entryLine - entryAnchor) / bloomDistance);
               setBloom(target, entryProgress, 'entry');
               continue;
             }
 
-            if (center > releaseLine) {
+            if (releaseAnchor > releaseLine) {
               setBloom(target, 1, 'active');
               continue;
             }
 
-            const exitProgress = clamp01((releaseLine - center) / bloomDistance);
+            const exitProgress = clamp01((releaseLine - releaseAnchor) / bloomDistance);
             setBloom(target, 1 - exitProgress, 'exit');
           }
         };
