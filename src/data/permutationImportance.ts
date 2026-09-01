@@ -5,8 +5,7 @@ export interface PermutationImportancePoint {
   std: number;
 }
 
-// Points-model holdout permutation importance from
-// nba-scoring-model/reports/data/permutation_importance.csv.
+// Exported from nba-scoring-model/reports/data/permutation_importance.csv.
 export const pointsPermutationImportance: PermutationImportancePoint[] = [
   { feature: 'points_avg_10', label: '10-game points avg', mean: 1.796014, std: 0.035186 },
   { feature: 'minutes_avg_5', label: 'Recent minutes', mean: 0.162763, std: 0.012780 },
