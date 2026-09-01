@@ -113,6 +113,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         );
 
         let scrollFrame = 0;
+        let geometryObserver: ResizeObserver | null = null;
 
         const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
         const smoothstep = (value: number) => {
@@ -132,26 +133,16 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           };
         };
 
-        const getInlineBloomDistance = (viewportHeight: number, elementHeight: number) =>
-          Math.min(
-            118,
-            Math.max(
-              62,
-              viewportHeight * 0.075 + Math.min(elementHeight, 180) * 0.24,
-            ),
-          );
+        // Small controls should feel the same whether their text happens to wrap
+        // or not. Their scroll distance is therefore tied only to the viewport,
+        // not to their current rendered height.
+        const getInlineBloomDistance = (viewportHeight: number) =>
+          Math.min(108, Math.max(72, viewportHeight * 0.095));
 
-        const getSystemStepBloomDistance = (
-          viewportHeight: number,
-          elementHeight: number,
-        ) =>
-          Math.min(
-            126,
-            Math.max(
-              94,
-              viewportHeight * 0.07 + Math.min(elementHeight, 150) * 0.26,
-            ),
-          );
+        // System Design steps intentionally use a slightly longer local trace,
+        // but the duration is still stable across text/layout changes.
+        const getSystemStepBloomDistance = (viewportHeight: number) =>
+          Math.min(122, Math.max(96, viewportHeight * 0.115));
 
         const getBloomDistance = (
           viewportHeight: number,
@@ -160,8 +151,9 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         ) => {
           if (target.classList.contains('scroll-frame-focus')) {
             // A frame containing several nested frames is the System Design card.
-            // Let its trace span the actual child layout, then complete just after
-            // the final step card rather than finishing near the first row.
+            // This is one of the places where actual child positions matter: the
+            // outer trace should still finish just after the final step even if the
+            // steps reflow. Durations of the individual steps remain geometry-free.
             const nestedFrames = Array.from(
               target.querySelectorAll<HTMLElement>('.scroll-frame-focus'),
             );
@@ -172,15 +164,12 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
                 ...nestedFrames.map((step) => {
                   const stepRect = step.getBoundingClientRect();
                   const stepTopOffset = stepRect.top - frameRect.top;
-                  return (
-                    stepTopOffset +
-                    getSystemStepBloomDistance(viewportHeight, stepRect.height)
-                  );
+                  return stepTopOffset + getSystemStepBloomDistance(viewportHeight);
                 }),
               );
-              const frameTail = Math.max(
-                26,
-                Math.min(44, elementHeight * 0.055),
+              const frameTail = Math.min(
+                42,
+                Math.max(28, viewportHeight * 0.038),
               );
 
               return Math.min(
@@ -189,19 +178,19 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               );
             }
 
-            // Step cards inside System Design get a slightly longer local draw
-            // distance than generic quiet cards, so each reveal feels deliberate.
+            // Step cards inside System Design keep their deliberately slower local
+            // trace without depending on how many lines of text are inside them.
             const parentFrame = target.parentElement?.closest<HTMLElement>('.scroll-frame-focus');
             if (
               parentFrame &&
               parentFrame.querySelectorAll('.scroll-frame-focus').length >= 5
             ) {
-              return getSystemStepBloomDistance(viewportHeight, elementHeight);
+              return getSystemStepBloomDistance(viewportHeight);
             }
 
-            // Chart shells are nested interactions: derive the frame distance from
-            // the actual pill position(s), so the frame starts first and completes
-            // just after the final pill regardless of wrapping or screen size.
+            // Chart shells are another genuinely geometric sequence: the frame
+            // should complete after the final informational pill. Read the live pill
+            // positions, but use stable viewport-based pill durations.
             if (target.classList.contains('chart-shell')) {
               const frameRect = target.getBoundingClientRect();
               const pills = Array.from(
@@ -214,15 +203,12 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
                     const pillRect = pill.getBoundingClientRect();
                     const pillCenterOffset =
                       pillRect.top + pillRect.height / 2 - frameRect.top;
-                    return (
-                      pillCenterOffset +
-                      getInlineBloomDistance(viewportHeight, pillRect.height)
-                    );
+                    return pillCenterOffset + getInlineBloomDistance(viewportHeight);
                   }),
                 );
-                const frameTail = Math.max(
-                  22,
-                  Math.min(38, elementHeight * 0.055),
+                const frameTail = Math.min(
+                  36,
+                  Math.max(24, viewportHeight * 0.035),
                 );
 
                 return Math.min(
@@ -232,22 +218,34 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               }
             }
 
+            // Generic frames should not retune themselves because a sentence wraps
+            // or a pill changes height. Keep their duration semantic: viewport size,
+            // frame type, and number of animated children. The child count is stable
+            // across copy/layout changes, unlike pixel height.
             const animatedChildCount = target.querySelectorAll(
               '.kbd-tag, .metric-card, .interactive-pill',
             ).length;
-            const contentAwareDistance =
-              viewportHeight * 0.085 +
-              Math.min(elementHeight, 560) * 0.22 +
-              Math.min(animatedChildCount, 10) * 16;
 
             if (target.classList.contains('scroll-frame-quiet')) {
-              return Math.min(175, Math.max(84, contentAwareDistance * 0.72));
+              const stableQuietDistance =
+                viewportHeight * 0.07 +
+                Math.min(animatedChildCount, 10) * 12 +
+                25;
+              return Math.min(175, Math.max(84, stableQuietDistance));
             }
 
-            return Math.min(380, Math.max(112, contentAwareDistance));
+            if (animatedChildCount === 0) {
+              return Math.min(170, Math.max(112, viewportHeight * 0.15));
+            }
+
+            const stableFrameDistance =
+              viewportHeight * 0.085 +
+              Math.min(animatedChildCount, 10) * 16 +
+              95;
+            return Math.min(380, Math.max(112, stableFrameDistance));
           }
 
-          return getInlineBloomDistance(viewportHeight, elementHeight);
+          return getInlineBloomDistance(viewportHeight);
         };
 
         const setBloom = (
@@ -342,14 +340,34 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             .querySelectorAll<HTMLElement>('.mobile-initial-highlight-group')
             .forEach((target) => target.classList.remove('mobile-initial-highlight-group'));
 
-          window.addEventListener('scroll', scheduleScrollUpdate, { once: true, passive: true });
+          window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
           window.addEventListener('resize', scheduleScrollUpdate, { passive: true });
+          window.addEventListener('orientationchange', scheduleScrollUpdate, { passive: true });
           window.visualViewport?.addEventListener('resize', scheduleScrollUpdate, { passive: true });
           window.visualViewport?.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
+
+          // Re-run the mapping whenever layout changes without a scroll event — for
+          // example after fonts settle, copy wraps differently, or a responsive card
+          // changes size. Observing main also catches position shifts caused by an
+          // earlier section changing height.
+          if ('ResizeObserver' in window) {
+            geometryObserver = new ResizeObserver(() => scheduleScrollUpdate());
+            targets.forEach((target) => geometryObserver?.observe(target));
+            const main = document.querySelector<HTMLElement>('main');
+            if (main) geometryObserver.observe(main);
+          }
+
+          document.fonts?.ready
+            .then(() => scheduleScrollUpdate())
+            .catch(() => {});
+          window.addEventListener('load', scheduleScrollUpdate, { once: true, passive: true });
           scheduleScrollUpdate();
         };
 
-        window.addEventListener('scroll', startTracking, { once: true, passive: true });
+        // Start immediately. The project-page initial highlight is preserved by
+        // initialTargets, so there is no reason to wait for the first scroll before
+        // measuring the real layout.
+        startTracking();
       }
 
       if (finePointer && !reducedMotion) {
