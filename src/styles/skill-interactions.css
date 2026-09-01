@@ -89,7 +89,7 @@ html[data-theme='light'] {
   #skills .kbd-tag:hover,
   #education .kbd-tag:hover,
   .project-page .kbd-tag:hover,
-  .interactive-pill:not(.chart-shell--compact .interactive-pill):not(.project-page .chart-shell .interactive-pill):hover {
+  .interactive-pill:not(.availability-pill):not(.chart-shell--compact .interactive-pill):not(.project-page .chart-shell .interactive-pill):hover {
     transform: translateY(-2px) scale(1.018);
     border-color: var(--skill-hover-border);
     background: var(--skill-hover-bg);
@@ -99,6 +99,7 @@ html[data-theme='light'] {
 
   .availability-pill.interactive-pill:hover {
     transform: none;
+    border-color: var(--skill-hover-border);
   }
 
   .chart-shell--compact .interactive-pill:hover,
