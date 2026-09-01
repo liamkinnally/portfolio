@@ -19,6 +19,8 @@
   --mobile-pill-border: rgba(132, 174, 255, 0.58);
   --mobile-tag-bg: rgba(120, 167, 255, 0.065);
   --mobile-tag-shadow: 0 0 0 1px rgba(120, 167, 255, 0.035) inset;
+  --mobile-frame-border-major: rgba(126, 169, 255, 0.48);
+  --mobile-frame-border-quiet: rgba(126, 169, 255, 0.26);
 }
 
 html[data-theme='light'] {
@@ -42,6 +44,8 @@ html[data-theme='light'] {
   --mobile-pill-border: rgba(70, 105, 190, 0.44);
   --mobile-tag-bg: rgba(85, 127, 230, 0.055);
   --mobile-tag-shadow: 0 0 0 1px rgba(70, 105, 190, 0.025) inset;
+  --mobile-frame-border-major: rgba(70, 105, 190, 0.34);
+  --mobile-frame-border-quiet: rgba(70, 105, 190, 0.19);
 }
 
 #work .kbd-tag,
@@ -137,6 +141,19 @@ html[data-theme='light'] {
     --mobile-highlight-border: var(--mobile-pill-border);
     --mobile-highlight-bg: var(--mobile-tag-bg);
     --mobile-highlight-shadow: var(--mobile-tag-shadow);
+  }
+
+  .scroll-frame-focus.mobile-scroll-focus {
+    --mobile-highlight-bg: transparent;
+    --mobile-highlight-shadow: none;
+  }
+
+  .scroll-frame-major.mobile-scroll-focus {
+    --mobile-highlight-border: var(--mobile-frame-border-major);
+  }
+
+  .scroll-frame-quiet.mobile-scroll-focus {
+    --mobile-highlight-border: var(--mobile-frame-border-quiet);
   }
 
   .mobile-scroll-focus::before {
