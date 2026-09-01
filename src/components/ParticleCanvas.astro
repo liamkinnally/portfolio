@@ -11,11 +11,25 @@
     let width = window.innerWidth;
     let height = window.innerHeight;
     let animationFrame = 0;
+    let resizePending = true;
+    let running = true;
+
+    let dotColor = 'rgba(145, 173, 255, 0.34)';
+    let lineRgb = '129, 159, 255';
+    let lineStrength = 0.085;
 
     type Particle = { x: number; y: number; vx: number; vy: number; r: number };
     let particles: Particle[] = [];
 
     const particleCount = () => Math.min(72, Math.max(28, Math.floor(width / 24)));
+
+    const syncTheme = () => {
+      const rootStyles = getComputedStyle(document.documentElement);
+      dotColor = rootStyles.getPropertyValue('--particle-dot').trim() || dotColor;
+      lineRgb = rootStyles.getPropertyValue('--particle-line-rgb').trim() || lineRgb;
+      const nextStrength = Number(rootStyles.getPropertyValue('--particle-line-strength').trim());
+      if (Number.isFinite(nextStrength) && nextStrength > 0) lineStrength = nextStrength;
+    };
 
     const resize = () => {
       width = window.innerWidth;
@@ -32,16 +46,14 @@
         vy: (Math.random() - 0.5) * 0.16,
         r: Math.random() * 1.2 + 0.45,
       }));
+      resizePending = false;
     };
 
     const draw = () => {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
+      if (!ctx || !running) return;
+      if (resizePending) resize();
 
-      const rootStyles = getComputedStyle(document.documentElement);
-      const dotColor = rootStyles.getPropertyValue('--particle-dot').trim() || 'rgba(145, 173, 255, 0.34)';
-      const lineRgb = rootStyles.getPropertyValue('--particle-line-rgb').trim() || '129, 159, 255';
-      const lineStrength = Number(rootStyles.getPropertyValue('--particle-line-strength').trim()) || 0.085;
+      ctx.clearRect(0, 0, width, height);
 
       for (const p of particles) {
         p.x += p.vx;
@@ -57,15 +69,20 @@
         ctx.fill();
       }
 
+      const connectionDistance = 118;
+      const connectionDistanceSq = connectionDistance * connectionDistance;
+
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i];
           const b = particles[j];
           const dx = a.x - b.x;
           const dy = a.y - b.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 118) {
-            const alpha = (1 - dist / 118) * lineStrength;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < connectionDistanceSq) {
+            const dist = Math.sqrt(distSq);
+            const alpha = (1 - dist / connectionDistance) * lineStrength;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -79,12 +96,24 @@
       animationFrame = requestAnimationFrame(draw);
     };
 
+    syncTheme();
     resize();
     draw();
-    window.addEventListener('resize', resize, { passive: true });
+
+    window.addEventListener('resize', () => {
+      resizePending = true;
+    }, { passive: true });
+
+    window.addEventListener('themechange', syncTheme);
+
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) cancelAnimationFrame(animationFrame);
-      else draw();
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(animationFrame);
+      } else if (!running) {
+        running = true;
+        animationFrame = requestAnimationFrame(draw);
+      }
     });
   }
 </script>
