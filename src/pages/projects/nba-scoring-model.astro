@@ -54,7 +54,7 @@ const systemSteps = [
       >The question</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          How well can you predict an NBA player's next box score — points, assists, rebounds — from only what was known before tipoff? Not perfectly. In the games set aside for testing, players averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
+          How well can you predict an NBA player's next box score&nbsp;— points, assists, rebounds&nbsp;— from only what was known before tipoff? Not perfectly. In the games set aside for testing, players averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
         </p>
         <p>
           A low error can still be easy to fake if a feature quietly peeks at the game being predicted. So useful performance has to survive an honest test: past information only, games evaluated in order, and a simpler method under the same conditions.
@@ -111,7 +111,7 @@ const systemSteps = [
             A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. So the tuned gradient boosting models are compared head‑to‑head with a 10‑game rolling average, which predicts a player’s next game from their recent form and nothing else.
           </p>
           <p>
-            The final test contains 5,645 player-game rows that were never used in training. Across that chronological holdout, the points model’s mean absolute error is 4.85 — a little under five points per prediction on average. For the 5,612 rows where both methods can predict, the model averaged 4.841 against 4.883 for the 10-game baseline. Assists showed the same small edge, 1.407 against 1.417, while rebounds were effectively tied.
+            The final test contains 5,645 player-game rows that were never used in training. Across that chronological holdout, the points model’s mean absolute error is 4.85&nbsp;— a little under five points per prediction on average. For the 5,612 rows where both methods can predict, the model averaged 4.841 against 4.883 for the 10-game baseline. Assists showed the same small edge, 1.407 against 1.417, while rebounds were effectively tied.
           </p>
           <p>
             The margins are small because a 10-game average is already a strong baseline here. Even so, the model posted lower error in 23 of 28 trailing seven-day windows for points and 22 of 28 for assists.
