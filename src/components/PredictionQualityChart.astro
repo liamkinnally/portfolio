@@ -105,6 +105,7 @@ const maxActual = Math.max(...points.map((point) => point.actual));
       {density.map((bin) => {
         const intensity = Math.sqrt(bin.count / maxCount);
         const baseOpacity = 0.10 + intensity * 0.78;
+        const hoverGlowOpacity = 0.12 + intensity * 0.30;
         const hoverGlowAlpha = 0.08 + intensity * 0.36;
         const hoverGlowBlur = 2.5 + intensity * 3.5;
         const cellX = margin.left + bin.x * cellWidth + 0.7;
@@ -115,7 +116,7 @@ const maxActual = Math.max(...points.map((point) => point.actual));
         return (
           <g
             class="density-cell-group"
-            style={`--density-glow-alpha: ${hoverGlowAlpha.toFixed(3)}; --density-glow-blur: ${hoverGlowBlur.toFixed(2)}px;`}
+            style={`--density-hover-glow-opacity: ${hoverGlowOpacity.toFixed(3)}; --density-glow-alpha: ${hoverGlowAlpha.toFixed(3)}; --density-glow-blur: ${hoverGlowBlur.toFixed(2)}px;`}
           >
             <rect
               class="density-cell-hover-glow"
@@ -125,7 +126,6 @@ const maxActual = Math.max(...points.map((point) => point.actual));
               height={renderedHeight}
               rx="1.8"
               fill="url(#density-fill)"
-              opacity={baseOpacity}
               pointer-events="none"
             />
             <rect
@@ -197,7 +197,7 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     }
 
     .density-cell-group:hover .density-cell-hover-glow {
-      opacity: 0.72;
+      opacity: var(--density-hover-glow-opacity);
       filter: drop-shadow(0 0 var(--density-glow-blur) rgba(126, 160, 255, var(--density-glow-alpha)));
     }
   }
