@@ -7,7 +7,10 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
 <BaseLayout>
   <section class="container-shell flex min-h-[92vh] items-center pt-28 pb-20">
     <div class="fade-up max-w-4xl">
-      <div class="eyebrow">UCF · B.S. in Information Technology · CECS</div>
+      <div class="eyebrow">
+        <span class="sm:hidden">UCF · B.S. IT · CECS</span>
+        <span class="hidden sm:inline">UCF · B.S. in Information Technology · CECS</span>
+      </div>
       <h1
         class="scroll-heading-shine gradient-text mt-7 text-6xl font-[790] leading-[0.94] tracking-[-0.06em] sm:text-7xl md:text-8xl lg:text-[6.4rem]"
         data-scroll-heading
@@ -16,7 +19,9 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
         Liam Kinnally
       </h1>
       <p class="mt-6 text-lg font-semibold tracking-[-0.015em] text-blue-200 sm:text-xl">
-        Software Engineering · Software Testing · AI / ML
+        <span class="inline-block whitespace-nowrap">Software Engineering ·</span>
+        <span class="inline-block whitespace-nowrap">Software Testing ·</span>
+        <span class="inline-block whitespace-nowrap">AI / ML</span>
       </p>
       <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
         I build software and data-driven systems that are meant to be tested, measured, and improved.
@@ -162,8 +167,14 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
             <span class="kbd-tag">Data Structures & Algorithms</span>
             <span class="kbd-tag">Discrete Mathematics</span>
             <span class="kbd-tag">Object-Oriented Programming (Java)</span>
-            <span class="kbd-tag">Computer Architecture Concepts (Digital Logic & Assembly)</span>
-            <span class="kbd-tag">Database Concepts (SQL & Database Connectivity)</span>
+            <span class="kbd-tag">
+              <span class="sm:hidden">Computer Architecture · Logic & Assembly</span>
+              <span class="hidden sm:inline">Computer Architecture Concepts (Digital Logic & Assembly)</span>
+            </span>
+            <span class="kbd-tag">
+              <span class="sm:hidden">Database Concepts · SQL & Connectivity</span>
+              <span class="hidden sm:inline">Database Concepts (SQL & Database Connectivity)</span>
+            </span>
             <span class="kbd-tag">Secure Software Development</span>
           </div>
         </div>
