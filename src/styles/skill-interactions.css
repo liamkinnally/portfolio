@@ -116,11 +116,10 @@ html[data-theme='light'] {
     --mobile-highlight-border: var(--metric-hover-border);
     --mobile-highlight-bg: var(--metric-hover-bg);
     --mobile-highlight-shadow: var(--metric-hover-shadow);
-    transition:
-      background 420ms cubic-bezier(.22, .72, .2, 1),
-      color 420ms cubic-bezier(.22, .72, .2, 1),
-      box-shadow 420ms cubic-bezier(.22, .72, .2, 1),
-      border-color 180ms ease;
+    --mobile-bloom-strength: 0;
+    --mobile-bloom-clip-top: 0%;
+    --mobile-bloom-clip-bottom: 100%;
+    transition: none;
   }
 
   .interactive-pill.mobile-scroll-focus {
@@ -135,6 +134,19 @@ html[data-theme='light'] {
     --mobile-highlight-shadow: var(--mobile-tag-shadow);
   }
 
+  .mobile-scroll-focus::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: var(--mobile-highlight-bg);
+    box-shadow: var(--mobile-highlight-shadow);
+    opacity: var(--mobile-bloom-strength);
+    will-change: opacity;
+  }
+
   .mobile-scroll-focus::after {
     content: '';
     position: absolute;
@@ -143,49 +155,18 @@ html[data-theme='light'] {
     pointer-events: none;
     border: 1px solid var(--mobile-highlight-border);
     border-radius: inherit;
-    opacity: 0;
-    clip-path: inset(0 0 100% 0);
-    will-change: clip-path, opacity;
+    clip-path: inset(var(--mobile-bloom-clip-top) 0 var(--mobile-bloom-clip-bottom) 0);
+    will-change: clip-path;
   }
 
-  .mobile-scroll-focus.mobile-bloom-entering {
-    background: var(--mobile-highlight-bg);
-    box-shadow: var(--mobile-highlight-shadow);
-  }
-
-  .interactive-pill.mobile-scroll-focus.mobile-bloom-entering,
-  .kbd-tag.mobile-scroll-focus.mobile-bloom-entering {
-    color: var(--skill-hover-text);
-  }
-
-  .mobile-scroll-focus.mobile-bloom-entering::after {
-    opacity: 1;
-    animation: mobile-border-bloom-in 520ms cubic-bezier(.18, .72, .2, 1) forwards;
-  }
-
-  .mobile-scroll-focus.mobile-scroll-active {
-    border-color: var(--mobile-highlight-border);
-    background: var(--mobile-highlight-bg);
-    box-shadow: var(--mobile-highlight-shadow);
-  }
-
-  .interactive-pill.mobile-scroll-focus.mobile-scroll-active,
-  .kbd-tag.mobile-scroll-focus.mobile-scroll-active {
+  .interactive-pill.mobile-scroll-focus,
+  .kbd-tag.mobile-scroll-focus {
     transform: none;
+  }
+
+  .interactive-pill.mobile-scroll-focus.mobile-scroll-colored,
+  .kbd-tag.mobile-scroll-focus.mobile-scroll-colored {
     color: var(--skill-hover-text);
-  }
-
-  .mobile-scroll-focus.mobile-bloom-exiting {
-    transition:
-      background 480ms cubic-bezier(.22, .72, .2, 1),
-      color 480ms cubic-bezier(.22, .72, .2, 1),
-      box-shadow 480ms cubic-bezier(.22, .72, .2, 1),
-      border-color 180ms ease;
-  }
-
-  .mobile-scroll-focus.mobile-bloom-exiting::after {
-    opacity: 1;
-    animation: mobile-border-bloom-out 480ms cubic-bezier(.4, 0, .3, 1) forwards;
   }
 
   .interactive-pill.mobile-initial-highlight {
@@ -202,23 +183,5 @@ html[data-theme='light'] {
     background: var(--mobile-tag-bg);
     color: var(--skill-hover-text);
     box-shadow: var(--mobile-tag-shadow);
-  }
-
-  @keyframes mobile-border-bloom-in {
-    from {
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  @keyframes mobile-border-bloom-out {
-    from {
-      clip-path: inset(0 0 0 0);
-    }
-    to {
-      clip-path: inset(100% 0 0 0);
-    }
   }
 }
