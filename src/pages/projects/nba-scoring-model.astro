@@ -54,10 +54,7 @@ const systemSteps = [
       >The question</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          How well can you predict an NBA player's next box score — points, assists, rebounds — from only what was known before tipoff?
-        </p>
-        <p>
-          Not perfectly, and the data shows why. In the final evaluation set, players who entered averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41, and only about half finished within five points of that average. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
+          How well can you predict an NBA player's next box score — points, assists, rebounds — from only what was known before tipoff? Not perfectly. In the games set aside for testing, players averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
         </p>
         <p>
           A low error can still be easy to fake if a feature quietly peeks at the game being predicted. So useful performance has to survive an honest test: past information only, games evaluated in order, and a simpler method under the same conditions.
@@ -103,7 +100,7 @@ const systemSteps = [
     </section>
 
     <section class="mt-24">
-      <div class="mb-10 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+      <div class="mb-28 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
         <h2
           class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]"
           data-scroll-heading
