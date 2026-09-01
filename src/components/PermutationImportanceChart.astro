@@ -29,12 +29,14 @@ const formatValue = (value: number) => value >= 0.1 ? value.toFixed(2) : value.t
   </div>
 
   <div class="mt-2 px-2 pb-2 sm:px-3 sm:pb-3">
-    <svg class="block h-auto w-full" viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="importance-title importance-desc">
+    <svg class="block h-auto w-full" viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="importance-title importance-desc" data-importance-chart>
       <title id="importance-title">Permutation importance for the points model</title>
       <desc id="importance-desc">The ten-game points average is the dominant feature. Recent minutes are the strongest secondary feature, followed by activity, shorter-term scoring form, rest, opponent history, and recent rebounds.</desc>
 
       <defs>
-        <linearGradient id="importance-bar" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id="importance-bar" x1="-0.16" y1="0" x2="1.04" y2="0">
+          <animate attributeName="x1" values="-0.16;0.08;-0.16" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="x2" values="1.04;1.28;1.04" dur="10s" repeatCount="indefinite" />
           <stop offset="0%" stop-color="#6895ef" />
           <stop offset="100%" stop-color="#987be6" />
         </linearGradient>
@@ -78,6 +80,12 @@ const formatValue = (value: number) => value >= 0.1 ? value.toFixed(2) : value.t
     Shuffling the 10-game scoring average increases error by about 1.80 points, far more than any other feature. Error bars show the standard deviation across permutation repeats.
   </div>
 </div>
+
+<script>
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<SVGSVGElement>('[data-importance-chart]').forEach((chart) => chart.pauseAnimations());
+  }
+</script>
 
 <style>
   .chart-shell {
