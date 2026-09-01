@@ -134,6 +134,7 @@ html[data-theme='light'] {
   }
 
   .chart-shell--compact .interactive-pill.mobile-scroll-focus {
+    --mobile-highlight-bg: transparent;
     --mobile-highlight-shadow: none;
   }
 
