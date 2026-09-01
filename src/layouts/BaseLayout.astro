@@ -125,12 +125,64 @@ const {
             ),
           );
 
+        const getSystemStepBloomDistance = (
+          viewportHeight: number,
+          elementHeight: number,
+        ) =>
+          Math.min(
+            126,
+            Math.max(
+              94,
+              viewportHeight * 0.07 + Math.min(elementHeight, 150) * 0.26,
+            ),
+          );
+
         const getBloomDistance = (
           viewportHeight: number,
           elementHeight: number,
           target: HTMLElement,
         ) => {
           if (target.classList.contains('scroll-frame-focus')) {
+            // A frame containing several nested frames is the System Design card.
+            // Let its trace span the actual child layout, then complete just after
+            // the final step card rather than finishing near the first row.
+            const nestedFrames = Array.from(
+              target.querySelectorAll<HTMLElement>('.scroll-frame-focus'),
+            );
+
+            if (nestedFrames.length >= 5) {
+              const frameRect = target.getBoundingClientRect();
+              const lastStepCompletion = Math.max(
+                ...nestedFrames.map((step) => {
+                  const stepRect = step.getBoundingClientRect();
+                  const stepTopOffset = stepRect.top - frameRect.top;
+                  return (
+                    stepTopOffset +
+                    getSystemStepBloomDistance(viewportHeight, stepRect.height)
+                  );
+                }),
+              );
+              const frameTail = Math.max(
+                26,
+                Math.min(44, elementHeight * 0.055),
+              );
+
+              return Math.min(
+                620,
+                Math.max(180, lastStepCompletion + frameTail),
+              );
+            }
+
+            // Step cards inside System Design get a slightly longer local draw
+            // distance than generic quiet cards, so each reveal feels deliberate.
+            const parentFrame = target.parentElement?.closest<HTMLElement>('.scroll-frame-focus');
+            if (
+              parentFrame &&
+              parentFrame.querySelectorAll('.scroll-frame-focus').length >= 5
+            ) {
+              return getSystemStepBloomDistance(viewportHeight, elementHeight);
+            }
+
             // Chart shells are nested interactions: derive the frame distance from
             // the actual pill position(s), so the frame starts first and completes
             // just after the final pill regardless of wrapping or screen size.
