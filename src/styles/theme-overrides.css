@@ -16,6 +16,10 @@ html[data-theme='light'] {
   --particle-line-strength: 0.20;
 }
 
+.project-page > a[href='/']:hover {
+  color: var(--link-hover-accent) !important;
+}
+
 html[data-theme='light'] #particle-canvas {
   opacity: 0.84;
 }
