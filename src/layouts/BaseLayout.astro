@@ -63,6 +63,7 @@ const {
 
     <script>
       const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (coarsePointer && !reducedMotion) {
@@ -334,6 +335,87 @@ const {
         };
 
         window.addEventListener('scroll', startTracking, { once: true, passive: true });
+      }
+
+      if (finePointer && !reducedMotion) {
+        const desktopFrames = Array.from(
+          document.querySelectorAll<HTMLElement>('.scroll-frame-major'),
+        );
+        desktopFrames.forEach((target) => target.classList.add('desktop-scroll-frame'));
+
+        let desktopScrollFrame = 0;
+        const clampDesktop = (value: number) => Math.min(1, Math.max(0, value));
+        const smoothDesktop = (value: number) => {
+          const t = clampDesktop(value);
+          return t * t * (3 - 2 * t);
+        };
+
+        const setDesktopFrame = (
+          target: HTMLElement,
+          strength: number,
+          phase: 'entry' | 'active' | 'exit',
+        ) => {
+          const progress = smoothDesktop(strength);
+          let clipTop = 0;
+          let clipBottom = 0;
+
+          if (phase === 'entry') {
+            clipBottom = (1 - progress) * 100;
+          } else if (phase === 'exit') {
+            clipTop = (1 - progress) * 100;
+          }
+
+          target.style.setProperty('--desktop-frame-strength', progress.toFixed(4));
+          target.style.setProperty('--desktop-frame-clip-top', `${clipTop.toFixed(2)}%`);
+          target.style.setProperty('--desktop-frame-clip-bottom', `${clipBottom.toFixed(2)}%`);
+        };
+
+        const updateDesktopFrames = () => {
+          desktopScrollFrame = 0;
+          const viewportHeight = window.innerHeight;
+          const entryLine = viewportHeight * 0.86;
+          const releaseLine = viewportHeight * 0.14;
+
+          for (const target of desktopFrames) {
+            const rect = target.getBoundingClientRect();
+            const drawDistance = Math.min(
+              260,
+              Math.max(
+                150,
+                viewportHeight * 0.11 + Math.min(rect.height, 520) * 0.16,
+              ),
+            );
+
+            if (rect.top > entryLine) {
+              setDesktopFrame(target, 0, 'entry');
+              continue;
+            }
+
+            const entryEnd = entryLine - drawDistance;
+            if (rect.top > entryEnd) {
+              const progress = clampDesktop((entryLine - rect.top) / drawDistance);
+              setDesktopFrame(target, progress, 'entry');
+              continue;
+            }
+
+            if (rect.bottom > releaseLine) {
+              setDesktopFrame(target, 1, 'active');
+              continue;
+            }
+
+            const exitProgress = clampDesktop((releaseLine - rect.bottom) / drawDistance);
+            setDesktopFrame(target, 1 - exitProgress, 'exit');
+          }
+        };
+
+        const scheduleDesktopUpdate = () => {
+          if (desktopScrollFrame) return;
+          desktopScrollFrame = window.requestAnimationFrame(updateDesktopFrames);
+        };
+
+        window.addEventListener('scroll', scheduleDesktopUpdate, { passive: true });
+        window.addEventListener('resize', scheduleDesktopUpdate, { passive: true });
+        updateDesktopFrames();
       }
     </script>
   </body>
