@@ -133,12 +133,14 @@ html[data-theme='light'] {
     --mobile-highlight-shadow: var(--skill-hover-shadow);
   }
 
-  .chart-shell--compact .interactive-pill.mobile-scroll-focus {
+  .chart-shell--compact .interactive-pill.mobile-scroll-focus,
+  .project-page .chart-shell .interactive-pill.mobile-scroll-focus {
     --mobile-highlight-bg: transparent;
     --mobile-highlight-shadow: none;
   }
 
-  #work .metric-card.mobile-scroll-focus {
+  #work .metric-card.mobile-scroll-focus,
+  .project-page .metric-card.mobile-scroll-focus {
     --mobile-highlight-shadow: none;
   }
 
