@@ -97,22 +97,23 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           '.project-page .interactive-pill',
         ];
 
-        const initiallyHighlightedSelectors = [
+        const deferredInitialSelectors = [
           '.project-page header .kbd-tag',
         ];
 
         const targets = Array.from(
           document.querySelectorAll<HTMLElement>(
-            [...selectors, ...initiallyHighlightedSelectors].join(','),
+            [...selectors, ...deferredInitialSelectors].join(','),
           ),
         );
         targets.forEach((target) => target.classList.add('mobile-scroll-focus'));
 
-        const initialTargets = new Set(
+        const deferredInitialTargets = new Set(
           Array.from(
-            document.querySelectorAll<HTMLElement>(initiallyHighlightedSelectors.join(',')),
+            document.querySelectorAll<HTMLElement>(deferredInitialSelectors.join(',')),
           ),
         );
+        const initialScrollY = window.scrollY;
 
         let scrollFrame = 0;
         let geometryObserver: ResizeObserver | null = null;
@@ -366,12 +367,15 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
                 ? viewportTop + viewportHeight * 0.48
                 : releaseLine;
 
-            if (initialTargets.has(target)) {
+            if (deferredInitialTargets.has(target)) {
+              const activationDistance = getInlineBloomDistance(viewportHeight);
+              const scrollProgress = clamp01((window.scrollY - initialScrollY) / activationDistance);
+
               if (center > releaseLine) {
-                setBloom(target, 1, 'active');
+                setBloom(target, scrollProgress, scrollProgress < 1 ? 'entry' : 'active');
               } else {
-                const exitProgress = clamp01((releaseLine - center) / bloomDistance);
-                setBloom(target, 1 - exitProgress, 'exit');
+                const exitProgress = clamp01((releaseLine - center) / activationDistance);
+                setBloom(target, Math.min(scrollProgress, 1 - exitProgress), 'exit');
               }
               continue;
             }
