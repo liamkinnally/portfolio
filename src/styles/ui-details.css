@@ -60,14 +60,12 @@ html[data-theme='light'] ::selection {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* The separator owns equal space on both sides instead of relying on text-node whitespace. */
 .hero-role-separator {
   display: inline-block;
   padding-inline: 0.32em;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  /* Keep the new resting depth on hover instead of letting the legacy hover rule flatten it. */
   #work .metric-card:hover,
   .project-page .metric-card:hover {
     box-shadow:
@@ -75,7 +73,6 @@ html[data-theme='light'] ::selection {
       0 8px 24px var(--metric-depth-shadow);
   }
 
-  /* Let the animated project-page trace own the edge instead of competing with a static bright top border. */
   .project-page .desktop-scroll-frame.glass-card,
   .project-page .desktop-scroll-frame.metric-card {
     border-top-color: var(--border);
@@ -88,18 +85,11 @@ html[data-theme='light'] ::selection {
 }
 
 @media (hover: none) and (pointer: coarse) {
-  /*
-    The animated scroll trace needs to own the border on mobile. The fidelity pass
-    brightens the resting top edge on desktop, but keeping that static highlight
-    underneath a mobile scroll-frame makes the reveal look pre-drawn. Preserve the
-    refined surface while returning animated frames to a neutral resting edge.
-  */
   .scroll-frame-focus.mobile-scroll-focus.glass-card {
     border-top-color: var(--border);
     box-shadow: 0 24px 80px var(--glass-shadow);
   }
 
-  /* Header stack pills now begin neutral; their bloom is driven by real scroll input. */
   .project-page .mobile-initial-highlight-group .kbd-tag {
     border-color: var(--border);
     background: var(--tag-bg);
