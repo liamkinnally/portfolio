@@ -208,7 +208,7 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
             type="button"
             class="button-secondary !w-[2.8rem] !px-0"
             data-copy-email
-            aria-label="Copy Liam Kinnally email address"
+            aria-label="Copy email address"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -309,7 +309,7 @@ import RollingMaeChart from '../components/RollingMaeChart.astro';
 
         if (feedbackTimer !== undefined) window.clearTimeout(feedbackTimer);
         feedbackTimer = window.setTimeout(() => {
-          button.setAttribute('aria-label', 'Copy Liam Kinnally email address');
+          button.setAttribute('aria-label', 'Copy email address');
           if (feedback) {
             feedback.classList.remove('opacity-100');
             feedback.classList.add('opacity-0');
