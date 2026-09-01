@@ -13,7 +13,7 @@ const x = (value: number) => margin.left + (value / maxValue) * plotWidth;
 const formatValue = (value: number) => value >= 0.1 ? value.toFixed(2) : value.toFixed(3);
 ---
 
-<div class="chart-shell">
+<div class="chart-shell scroll-frame-focus scroll-frame-quiet scroll-frame-clipped">
   <div class="flex flex-col gap-4 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6 sm:pt-6">
     <div>
       <div class="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-slate-400">Model interpretability · points</div>
