@@ -57,8 +57,16 @@ html[data-theme='light'] {
   border-radius: 0.5px;
   background: var(--heading-caret);
   vertical-align: -0.065em;
+  opacity: 0;
+  visibility: visible;
+}
+
+#skills h2.scroll-heading-shine.is-visible::after,
+#about h2.scroll-heading-shine.is-visible::after {
   opacity: 0.9;
-  animation: heading-caret-blink 1.08s steps(1, end) infinite;
+  animation:
+    heading-caret-blink 1.08s steps(1, end) 5,
+    heading-caret-fade 380ms ease-out 5.4s forwards;
 }
 
 @keyframes heading-shine-sweep {
@@ -81,10 +89,19 @@ html[data-theme='light'] {
 @keyframes heading-caret-blink {
   0%,
   46% {
-    opacity: 0.9;
+    visibility: visible;
   }
   47%,
   100% {
+    visibility: hidden;
+  }
+}
+
+@keyframes heading-caret-fade {
+  from {
+    opacity: 0.9;
+  }
+  to {
     opacity: 0;
   }
 }
@@ -98,6 +115,11 @@ html[data-theme='light'] {
   #skills h2.scroll-heading-shine::after,
   #about h2.scroll-heading-shine::after {
     animation: none;
+    opacity: 0;
+  }
+
+  #skills h2.scroll-heading-shine.is-visible::after,
+  #about h2.scroll-heading-shine.is-visible::after {
     opacity: 0.72;
   }
 }
