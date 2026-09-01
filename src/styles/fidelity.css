@@ -2,13 +2,11 @@
   --focus-ring: rgba(129, 140, 248, 0.82);
   --card-top-edge: rgba(255, 255, 255, 0.125);
   --card-inner-edge: rgba(255, 255, 255, 0.025);
-  --metric-depth-shadow: rgba(0, 0, 0, 0.075);
 }
 
 html[data-theme='light'] {
   --card-top-edge: rgba(24, 39, 63, 0.14);
   --card-inner-edge: rgba(255, 255, 255, 0.72);
-  --metric-depth-shadow: rgba(38, 57, 88, 0.055);
 }
 
 html {
@@ -51,9 +49,7 @@ html[data-theme='light'] ::selection {
     color-mix(in srgb, var(--metric-bg) 82%, var(--surface-strong) 18%),
     var(--metric-bg)
   );
-  box-shadow:
-    inset 0 1px 0 var(--card-inner-edge),
-    0 8px 24px var(--metric-depth-shadow);
+  box-shadow: inset 0 1px 0 var(--card-inner-edge);
 }
 
 .metric-card > :first-child {
