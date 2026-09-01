@@ -121,34 +121,20 @@ const {
           elementHeight: number,
           target: HTMLElement,
         ) => {
-          if (target.classList.contains('scroll-frame-education')) {
-            return Math.min(
-              380,
-              Math.max(
-                240,
-                viewportHeight * 0.12 + Math.min(elementHeight, 620) * 0.45,
-              ),
-            );
-          }
+          if (target.classList.contains('scroll-frame-focus')) {
+            const animatedChildCount = target.querySelectorAll(
+              '.kbd-tag, .metric-card, .interactive-pill',
+            ).length;
+            const contentAwareDistance =
+              viewportHeight * 0.085 +
+              Math.min(elementHeight, 560) * 0.22 +
+              Math.min(animatedChildCount, 10) * 16;
 
-          if (target.classList.contains('scroll-frame-major')) {
-            return Math.min(
-              190,
-              Math.max(
-                112,
-                viewportHeight * 0.105 + Math.min(elementHeight, 420) * 0.12,
-              ),
-            );
-          }
+            if (target.classList.contains('scroll-frame-quiet')) {
+              return Math.min(175, Math.max(84, contentAwareDistance * 0.72));
+            }
 
-          if (target.classList.contains('scroll-frame-quiet')) {
-            return Math.min(
-              145,
-              Math.max(
-                84,
-                viewportHeight * 0.085 + Math.min(elementHeight, 240) * 0.12,
-              ),
-            );
+            return Math.min(380, Math.max(112, contentAwareDistance));
           }
 
           return Math.min(
