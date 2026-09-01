@@ -60,9 +60,9 @@ html[data-theme='light'] ::selection {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Preserve normal word spacing between the separately wrapped hero-role phrases. */
+/* Optically center the separators between the independently wrapped role phrases. */
 main > section:first-child .text-blue-200 > span:not(:last-child) {
-  margin-right: 0.28em;
+  margin-right: 0.38em;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -72,6 +72,17 @@ main > section:first-child .text-blue-200 > span:not(:last-child) {
     box-shadow:
       inset 0 1px 0 var(--card-inner-edge),
       0 8px 24px var(--metric-depth-shadow);
+  }
+
+  /* Let the animated project-page trace own the edge instead of competing with a static bright top border. */
+  .project-page .desktop-scroll-frame.glass-card,
+  .project-page .desktop-scroll-frame.metric-card {
+    border-top-color: var(--border);
+  }
+
+  .project-page .desktop-scroll-frame::after {
+    border-color: color-mix(in srgb, var(--desktop-frame-border-major) 82%, var(--accent) 18%);
+    opacity: calc(0.48 + var(--desktop-frame-strength) * 0.42);
   }
 }
 
