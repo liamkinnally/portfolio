@@ -130,8 +130,8 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     </svg>
   </div>
 
-  <div class="mx-5 mb-5 grid gap-3 border-t border-white/[0.07] pt-4 text-sm leading-6 sm:mx-6 sm:mb-6 sm:grid-cols-[1fr_auto] sm:items-center">
-    <span class="text-slate-400">Typical outcomes cluster around the parity line, while high-scoring games sit well below it as predictions compress toward the mean.</span>
+  <div class="mx-5 mb-5 grid gap-2 border-t border-white/[0.07] pt-4 text-sm leading-6 sm:mx-6 sm:mb-6 sm:grid-cols-[1fr_auto] sm:items-center">
+    <span class="text-slate-400">Typical outcomes track the parity line; high-scoring games fall below it as predictions compress toward the mean.</span>
     <span class="shrink-0 font-semibold text-blue-200">Max: {maxPrediction.toFixed(1)} predicted · {maxActual.toFixed(0)} actual</span>
   </div>
 </div>
