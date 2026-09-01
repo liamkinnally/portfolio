@@ -104,13 +104,10 @@ const maxActual = Math.max(...points.map((point) => point.actual));
 
       {density.map((bin) => {
         const intensity = Math.sqrt(bin.count / maxCount);
-        const baseOpacity = 0.15 + intensity * 0.80;
-        const hoverOpacity = Math.min(1, baseOpacity + 0.07 + intensity * 0.05);
-        const trailOpacity = Math.min(0.99, baseOpacity + 0.035 + intensity * 0.025);
-        const hoverGlowAlpha = 0.10 + intensity * 0.36;
-        const trailGlowAlpha = hoverGlowAlpha * 0.58;
-        const hoverGlowBlur = 3.25 + intensity * 4.75;
-        const trailGlowBlur = hoverGlowBlur * 0.82;
+        const baseOpacity = 0.10 + intensity * 0.78;
+        const hoverOpacity = Math.min(0.98, baseOpacity + 0.06 + intensity * 0.10);
+        const hoverGlowAlpha = 0.08 + intensity * 0.36;
+        const hoverGlowBlur = 2.5 + intensity * 3.5;
 
         return (
           <rect
@@ -121,8 +118,9 @@ const maxActual = Math.max(...points.map((point) => point.actual));
             height={Math.max(1, cellHeight - 1.4)}
             rx="1.8"
             fill="url(#density-fill)"
+            opacity={baseOpacity}
             filter={intensity > 0.72 ? 'url(#density-glow)' : undefined}
-            style={`--density-base-opacity: ${baseOpacity.toFixed(3)}; --density-hover-opacity: ${hoverOpacity.toFixed(3)}; --density-trail-opacity: ${trailOpacity.toFixed(3)}; --density-glow-alpha: ${hoverGlowAlpha.toFixed(3)}; --density-trail-glow-alpha: ${trailGlowAlpha.toFixed(3)}; --density-glow-blur: ${hoverGlowBlur.toFixed(2)}px; --density-trail-glow-blur: ${trailGlowBlur.toFixed(2)}px;`}
+            style={`--density-hover-opacity: ${hoverOpacity.toFixed(3)}; --density-glow-alpha: ${hoverGlowAlpha.toFixed(3)}; --density-glow-blur: ${hoverGlowBlur.toFixed(2)}px;`}
           />
         );
       })}
@@ -140,38 +138,6 @@ const maxActual = Math.max(...points.map((point) => point.actual));
   </div>
 </div>
 
-<script>
-  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (finePointer && !reducedMotion) {
-    const cells = document.querySelectorAll<SVGRectElement>('.density-cell');
-    const trailTimers = new WeakMap<SVGRectElement, number>();
-
-    cells.forEach((cell) => {
-      cell.addEventListener('pointerenter', () => {
-        const pendingTimer = trailTimers.get(cell);
-        if (pendingTimer !== undefined) window.clearTimeout(pendingTimer);
-
-        cell.classList.remove('density-cell--trail');
-        cell.classList.add('density-cell--active');
-      });
-
-      cell.addEventListener('pointerleave', () => {
-        cell.classList.remove('density-cell--active');
-        cell.classList.add('density-cell--trail');
-
-        const timer = window.setTimeout(() => {
-          cell.classList.remove('density-cell--trail');
-          trailTimers.delete(cell);
-        }, 260);
-
-        trailTimers.set(cell, timer);
-      });
-    });
-  }
-</script>
-
 <style>
   .chart-shell {
     overflow: hidden;
@@ -182,7 +148,6 @@ const maxActual = Math.max(...points.map((point) => point.actual));
   }
 
   .density-cell {
-    opacity: var(--density-base-opacity);
     transform-box: fill-box;
     transform-origin: center;
     animation: density-in 420ms ease both;
@@ -190,24 +155,13 @@ const maxActual = Math.max(...points.map((point) => point.actual));
 
   @media (hover: hover) and (pointer: fine) {
     .density-cell {
-      transition:
-        opacity 620ms cubic-bezier(.2,.7,.2,1),
-        filter 760ms ease-out,
-        transform 560ms cubic-bezier(.2,.7,.2,1);
+      transition: opacity 160ms ease, filter 180ms ease, transform 180ms ease;
     }
 
-    .density-cell--active {
-      opacity: var(--density-hover-opacity);
+    .density-cell:hover {
+      opacity: var(--density-hover-opacity) !important;
       filter: drop-shadow(0 0 var(--density-glow-blur) rgba(126, 160, 255, var(--density-glow-alpha)));
       transform: scale(1.10);
-      transition-duration: 280ms, 340ms, 300ms;
-    }
-
-    .density-cell--trail {
-      opacity: var(--density-trail-opacity);
-      filter: drop-shadow(0 0 var(--density-trail-glow-blur) rgba(126, 160, 255, var(--density-trail-glow-alpha)));
-      transform: scale(1.045);
-      transition-duration: 240ms, 300ms, 280ms;
     }
   }
 
@@ -221,8 +175,7 @@ const maxActual = Math.max(...points.map((point) => point.actual));
       transition: none;
     }
 
-    .density-cell--active,
-    .density-cell--trail {
+    .density-cell:hover {
       transform: none;
     }
   }
