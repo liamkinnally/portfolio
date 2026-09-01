@@ -19,6 +19,7 @@
   --accent: #78a7ff;
   --accent-2: #9a7cff;
   --accent-text: #c4d8ff;
+  --link-hover-accent: #b9a9ff;
 
   --page-glow-1: rgba(80, 121, 255, 0.14);
   --page-glow-2: rgba(149, 84, 255, 0.10);
@@ -77,6 +78,7 @@ html[data-theme='light'] {
   --accent: #557fe6;
   --accent-2: #7667dc;
   --accent-text: #345da9;
+  --link-hover-accent: #6d59c7;
 
   --page-glow-1: rgba(78, 117, 216, 0.11);
   --page-glow-2: rgba(126, 96, 210, 0.08);
@@ -283,12 +285,14 @@ a {
 }
 
 .nav-link:hover {
-  color: var(--text);
+  color: var(--link-hover-accent);
   background: var(--nav-hover);
 }
 
-html:not([data-theme='light']) .featured-project-nav-link:hover {
-  color: #b9a9ff !important;
+#work a[href]:not(.button-primary):hover,
+.site-header a[aria-label='Home']:hover span,
+.site-header .social-link:hover {
+  color: var(--link-hover-accent) !important;
 }
 
 .metric-card {
