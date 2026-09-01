@@ -199,7 +199,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         ) => {
           if (target.classList.contains('scroll-frame-focus')) {
             if (target.matches('#work .scroll-frame-major')) {
-              return Math.min(430, Math.max(350, viewportHeight * 0.43));
+              return Math.min(500, Math.max(410, viewportHeight * 0.50));
             }
 
             const nestedFrames = Array.from(
@@ -352,6 +352,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const isRollingChart = isFrame && isRollingMaeFrame(target);
             const isLingeringChart = isFrame && isLingeringChartFrame(target);
             const isEducationPill = target.matches('#education .kbd-tag');
+            const isFeaturedProjectFrame = isFrame && target.matches('#work .scroll-frame-major');
             const entryAnchor = isFrame ? rect.top : center;
             const releaseAnchor = isLingeringChart
               ? rect.bottom
@@ -364,7 +365,9 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               : bloomDistance;
             const targetEntryLine = isEducationPill
               ? viewportTop + viewportHeight * 0.96
-              : entryLine;
+              : isFeaturedProjectFrame
+                ? viewportTop + viewportHeight * 0.88
+                : entryLine;
             const exitDistance = isFrame
               ? getFrameExitDistance(viewportHeight, target)
               : bloomDistance;
