@@ -29,7 +29,7 @@ const systemSteps = [
         data-shine-text="NBA Player Stat Prediction"
       >NBA Player Stat Prediction</h1>
       <p class="mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
-        An end-to-end Python pipeline for ingesting NBA data, engineering leakage-safe historical features, training gradient boosting models, and evaluating them against a rolling-average baseline on future games.
+        Predicting how many points, assists, and rebounds an NBA player will record in his next game — using only what was known before tipoff. An end-to-end Python pipeline covering data collection, feature engineering, model training, and evaluation against a simple baseline.
       </p>
       <div class="mobile-initial-highlight-group mt-8 flex flex-wrap gap-2">
         <span class="kbd-tag">Python</span><span class="kbd-tag">scikit-learn</span><span class="kbd-tag">SQLAlchemy</span><span class="kbd-tag">SQLite</span><span class="kbd-tag">Matplotlib</span><span class="kbd-tag">pytest</span><span class="kbd-tag">GitHub Actions</span>
@@ -42,8 +42,8 @@ const systemSteps = [
     <section class="mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <MetricCard value="1,230" label="Games ingested" />
       <MetricCard value="26,547" label="Player-game rows" />
-      <MetricCard value="4.85" label="Points MAE" />
-      <MetricCard value="23 / 28" label="Trailing windows won" detail="points model vs. baseline" />
+      <MetricCard value="4.85" label="Points MAE" detail="average miss per prediction" />
+      <MetricCard value="23 / 28" label="7-day windows won" detail="points model vs. baseline" />
     </section>
 
     <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
@@ -54,10 +54,13 @@ const systemSteps = [
       >The question</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          How well can an NBA player's next game be predicted using only information that was available before it happened? That question started the project. Recent scoring, minutes, rest, opponent history, and other trends can all carry useful signal, but none of them makes the next box score predictable with certainty.
+          How well can you predict an NBA player's next box score — points, assists, rebounds — from only what was known before tipoff?
         </p>
         <p>
-          Answering that question credibly became as much an engineering problem as a modeling one. Every feature had to respect chronology, training and evaluation had to reflect a real future-prediction setting, the model and baseline had to be scored on identical observations, and the results had to remain reproducible from saved artifacts. Those constraints shaped the pipeline from data collection through evaluation.
+          Not perfectly, and the data shows why. Among holdout games where a player arrived averaging 19–21 points over his previous ten, actual results ran from 0 to 41, and only about half landed within five points of that average. Recent scoring, minutes, rest, and matchup history all carry real signal; none of it makes the next line certain.
+        </p>
+        <p>
+          Against a target that noisy, the engineering matters more than the modeling. A regressor will happily post a good-looking score on badly built data, and a good score means little without something to compare it against. Most of the work went into making the final number mean something: features that can only see the past, evaluation that moves forward through time, and a simple baseline held to exactly the same test.
         </p>
       </div>
     </section>
@@ -87,14 +90,17 @@ const systemSteps = [
       <h2
         class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]"
         data-scroll-heading
-        data-shine-text="Leakage prevention"
-      >Leakage prevention</h2>
+        data-shine-text="Keeping the test honest"
+      >Keeping the test honest</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          Rolling statistics are shifted so that a row cannot use information from the game it is trying to predict. Training and validation also move forward through time rather than randomly shuffling past and future observations together.
+          A model that sees any part of the outcome it's supposed to predict will look accurate for the wrong reason. Preventing that kind of data leakage shaped the whole pipeline.
         </p>
         <p>
-          That makes the reported holdout performance a more realistic test of how the system would behave on genuinely unseen future games.
+          Every historical feature — Jamal Murray's scoring average over his previous 5 or 10 appearances, his recent minutes, his rest, how his team has been playing — is built from a query bounded by the date of the game being predicted. In spreadsheet terms: list a player's games in date order, and the row for Game 11 can use anything from Games 1–10, but nothing from Game 11 itself. The bound is a date filter rather than a row offset, so a sorting mistake can't quietly pull a future game into the past. Averages also count only games the player actually appeared in, so a night off doesn't enter as a zero.
+        </p>
+        <p>
+          Chronology governs the splits too. The most recent 20% of game dates are held out entirely, and hyperparameter tuning happens only on the earlier period, using expanding date blocks: the training window is cut into four consecutive chunks, giving three folds, each training on everything before a chunk and validating on the chunk itself. Nothing from the future is shuffled back into the past. That keeps the experiment close to the real task — using only what was known before tipoff to predict a player's next line.
         </p>
       </div>
     </section>
@@ -108,10 +114,16 @@ const systemSteps = [
         >Evaluation</h2>
         <div class="space-y-5 text-lg leading-8 text-slate-300">
           <p>
-            The project compares tuned gradient boosting regressors with a 10-game rolling-average baseline on identical chronological holdout rows. For points, the model reached 4.85 MAE and outperformed the baseline in 23 of 28 trailing seven-day windows; the assists model won 22 of 28.
+            A model can look accurate on its own terms and still add nothing, if a much simpler rule does the same job. So the comparison is head-to-head: the tuned gradient boosting models against a 10-game rolling average, which predicts a player's next game from their recent form and nothing else.
           </p>
           <p>
-            The visualizations below are rebuilt natively for this portfolio from the project's reporting data rather than embedded as exported chart images.
+            Both are scored on the same chronological holdout — 5,645 player-game rows from March 11, 2026 onward, never seen during training. For points, the model's mean absolute error is 4.85, meaning a typical prediction misses by a little under five points, against 4.88 for the rolling average across the 5,612 rows where both methods can predict. Assists: 1.407 against 1.417. Rebounds are effectively a tie.
+          </p>
+          <p>
+            That margin is small, and it should be. A 10-game average is a strong baseline here, because most players are reasonably consistent, so the honest claim isn't that the model is dramatically better — it's that it's reliably a little better. Across 28 trailing seven-day windows it posted the lower error in 23 for points and 22 for assists. The edge also grows with scoring volume: 0.23% for players under 8 points per game, rising to 1.81% for players averaging 22 or more.
+          </p>
+          <p>
+            The visualizations below are rebuilt natively for this page from the project's reporting data rather than embedded as exported chart images.
           </p>
         </div>
       </div>
