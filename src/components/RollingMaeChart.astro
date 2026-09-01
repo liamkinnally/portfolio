@@ -106,6 +106,20 @@ const formatDate = (date: string) => {
         <circle cx={x(index)} cy={y(point.model)} r={point.model < point.baseline ? 2.6 : 2.1} fill={point.model < point.baseline ? '#7fa9f7' : 'var(--chart-point-muted)'} opacity={point.model < point.baseline ? 0.78 : 0.52} />
       ))}
 
+      {!compact && data.map((point, index) => {
+        const bandLeft = index === 0 ? margin.left : (x(index - 1) + x(index)) / 2;
+        const bandRight = index === data.length - 1 ? margin.left + plotWidth : (x(index) + x(index + 1)) / 2;
+
+        return (
+          <g class="date-hover-group">
+            <rect class="date-hover-hit" x={bandLeft} y={margin.top} width={bandRight - bandLeft} height={plotHeight} fill="transparent" />
+            <line class="date-hover-guide" x1={x(index)} x2={x(index)} y1={margin.top} y2={margin.top + plotHeight} />
+            <circle class="date-hover-point date-hover-point--model" cx={x(index)} cy={y(point.model)} r="4.5" />
+            <circle class="date-hover-point date-hover-point--baseline" cx={x(index)} cy={y(point.baseline)} r="4" />
+          </g>
+        );
+      })}
+
       <g transform={`translate(${margin.left}, ${margin.top + plotHeight + 42})`}>
         {data.map((point, index) => {
           const resultX = (index / data.length) * plotWidth + 1;
@@ -156,12 +170,61 @@ const formatDate = (date: string) => {
     animation: chart-draw 760ms 80ms cubic-bezier(.2,.7,.2,1) forwards;
   }
 
+  .date-hover-guide,
+  .date-hover-point {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .date-hover-guide {
+    stroke: var(--chart-label);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .date-hover-point {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.72);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .date-hover-point--model {
+    fill: #8eb7ff;
+    stroke: #d9e7ff;
+    stroke-width: 1.2;
+  }
+
+  .date-hover-point--baseline {
+    fill: var(--chart-plot-bg);
+    stroke: var(--chart-baseline);
+    stroke-width: 2;
+  }
+
   .window-result-bar {
     transform-box: fill-box;
     transform-origin: center;
   }
 
   @media (hover: hover) and (pointer: fine) {
+    .date-hover-guide {
+      transition: opacity 140ms ease;
+    }
+
+    .date-hover-point {
+      transition: opacity 140ms ease, transform 160ms ease;
+    }
+
+    .date-hover-group:hover .date-hover-guide {
+      opacity: 0.36;
+    }
+
+    .date-hover-group:hover .date-hover-point {
+      opacity: 1;
+      transform: scale(1);
+    }
+
     .window-result-bar {
       transition: opacity 160ms ease, filter 180ms ease, transform 180ms ease;
     }
@@ -189,10 +252,13 @@ const formatDate = (date: string) => {
       stroke-dashoffset: 0;
     }
 
+    .date-hover-guide,
+    .date-hover-point,
     .window-result-bar {
       transition: none;
     }
 
+    .date-hover-point,
     .window-result--win:hover .window-result-bar,
     .window-result--loss:hover .window-result-bar {
       transform: none;
