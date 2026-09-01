@@ -6,7 +6,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="Page Not Found — Liam Kinnally"
   description="The page you were looking for could not be found."
 >
-  <section class="container-shell flex min-h-screen items-center pt-24 pb-20">
+  <section class="container-shell flex min-h-[calc(100vh-7rem)] items-center pt-24 pb-20">
     <div class="max-w-2xl">
       <div class="eyebrow">404</div>
       <h1 class="gradient-text mt-6 text-5xl font-[780] tracking-[-0.05em] sm:text-6xl">That page isn’t here.</h1>
@@ -14,4 +14,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <a href="/" class="button-primary mt-8">Back to portfolio →</a>
     </div>
   </section>
+
+  <footer class="container-shell pb-10 pt-4 text-sm text-slate-500">
+    <div class="flex flex-col gap-2 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+      <span>© 2026 Liam Kinnally · Orlando, FL</span>
+      <span>Built with Astro · TypeScript · Tailwind CSS · Canvas · Vercel</span>
+    </div>
+  </footer>
 </BaseLayout>
