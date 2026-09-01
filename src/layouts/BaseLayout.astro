@@ -116,12 +116,54 @@ const {
           };
         };
 
+        const getInlineBloomDistance = (viewportHeight: number, elementHeight: number) =>
+          Math.min(
+            118,
+            Math.max(
+              62,
+              viewportHeight * 0.075 + Math.min(elementHeight, 180) * 0.24,
+            ),
+          );
+
         const getBloomDistance = (
           viewportHeight: number,
           elementHeight: number,
           target: HTMLElement,
         ) => {
           if (target.classList.contains('scroll-frame-focus')) {
+            // Chart shells are nested interactions: derive the frame distance from
+            // the actual pill position(s), so the frame starts first and completes
+            // just after the final pill regardless of wrapping or screen size.
+            if (target.classList.contains('chart-shell')) {
+              const frameRect = target.getBoundingClientRect();
+              const pills = Array.from(
+                target.querySelectorAll<HTMLElement>('.interactive-pill'),
+              );
+
+              if (pills.length) {
+                const lastPillCompletion = Math.max(
+                  ...pills.map((pill) => {
+                    const pillRect = pill.getBoundingClientRect();
+                    const pillCenterOffset =
+                      pillRect.top + pillRect.height / 2 - frameRect.top;
+                    return (
+                      pillCenterOffset +
+                      getInlineBloomDistance(viewportHeight, pillRect.height)
+                    );
+                  }),
+                );
+                const frameTail = Math.max(
+                  22,
+                  Math.min(38, elementHeight * 0.055),
+                );
+
+                return Math.min(
+                  280,
+                  Math.max(112, lastPillCompletion + frameTail),
+                );
+              }
+            }
+
             const animatedChildCount = target.querySelectorAll(
               '.kbd-tag, .metric-card, .interactive-pill',
             ).length;
@@ -137,13 +179,7 @@ const {
             return Math.min(380, Math.max(112, contentAwareDistance));
           }
 
-          return Math.min(
-            118,
-            Math.max(
-              62,
-              viewportHeight * 0.075 + Math.min(elementHeight, 180) * 0.24,
-            ),
-          );
+          return getInlineBloomDistance(viewportHeight, elementHeight);
         };
 
         const setBloom = (
@@ -178,8 +214,15 @@ const {
             const rect = target.getBoundingClientRect();
             const center = rect.top + rect.height / 2;
             const isFrame = target.classList.contains('scroll-frame-focus');
+            const isChartFrame = isFrame && target.classList.contains('chart-shell');
             const entryAnchor = isFrame ? rect.top : center;
-            const releaseAnchor = isFrame ? rect.bottom : center;
+            // Chart frames use the same top-edge anchor in both directions so
+            // reversing the scroll reverses the nested frame/pill sequence cleanly.
+            const releaseAnchor = isChartFrame
+              ? rect.top
+              : isFrame
+                ? rect.bottom
+                : center;
             const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
 
             // Project-page hero stack pills deliberately begin fully highlighted.
