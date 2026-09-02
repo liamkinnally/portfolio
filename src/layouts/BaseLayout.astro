@@ -373,6 +373,10 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const isPredictionPill = !isFrame && isPredictionQualityPill(target);
             const isLingeringChart = isFrame && isLingeringChartFrame(target);
             const isEducationPill = target.matches('#education .kbd-tag');
+            const isEducationFrame = isFrame && !!target.closest('#education');
+            const isSkillPill = target.matches('#skills .kbd-tag');
+            const isSkillFrame = isFrame && !!target.closest('#skills');
+            const isFeaturedProjectPill = target.matches('#work .kbd-tag');
             const isFeaturedProjectFrame = isFrame && target.matches('#work .scroll-frame-major');
             const isBottomContactCard =
               isFrame &&
@@ -399,9 +403,11 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
                 ? viewportTop + viewportHeight * 0.88
                 : isPredictionPill
                   ? viewportTop + viewportHeight * 0.90
-                  : isFeaturedProjectFrame
-                    ? viewportTop + viewportHeight * 0.88
-                    : entryLine;
+                  : isSkillFrame
+                    ? viewportTop + viewportHeight * 0.91
+                    : isFeaturedProjectFrame
+                      ? viewportTop + viewportHeight * 0.88
+                      : entryLine;
             const exitDistance = isEducationPill
               ? Math.min(88, Math.max(72, viewportHeight * 0.085))
               : isPredictionPill
@@ -410,18 +416,26 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
                   ? getFrameExitDistance(viewportHeight, target)
                   : bloomDistance;
             const targetReleaseLine = isEducationPill
-              ? viewportTop + viewportHeight * 0.12
-              : isPredictionPill
+              ? viewportTop + viewportHeight * 0.19
+              : isEducationFrame
                 ? viewportTop + viewportHeight * 0.14
-                : isProjectRollingChart
-                  ? viewportTop + viewportHeight * 0.44
-                  : isPredictionChart
-                    ? viewportTop + viewportHeight * 0.36
-                    : isRollingChart
-                      ? viewportTop + viewportHeight * 0.10
-                      : isLingeringChart
-                        ? viewportTop + viewportHeight * 0.48
-                        : releaseLine;
+                : isSkillPill || isSkillFrame
+                  ? viewportTop + viewportHeight * 0.14
+                  : isFeaturedProjectPill
+                    ? viewportTop + viewportHeight * 0.10
+                    : isFeaturedProjectFrame
+                      ? viewportTop + viewportHeight * 0.30
+                      : isPredictionPill
+                        ? viewportTop + viewportHeight * 0.14
+                        : isProjectRollingChart
+                          ? viewportTop + viewportHeight * 0.44
+                          : isPredictionChart
+                            ? viewportTop + viewportHeight * 0.36
+                            : isRollingChart
+                              ? viewportTop + viewportHeight * 0.10
+                              : isLingeringChart
+                                ? viewportTop + viewportHeight * 0.48
+                                : releaseLine;
 
             if (deferredInitialTargets.has(target)) {
               const activationDistance = getInlineBloomDistance(viewportHeight);
@@ -482,18 +496,29 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const isProjectRollingChart =
               isRollingMaeFrame(target) && !!target.closest('.project-page');
             const isPredictionChart = isPredictionQualityFrame(target);
+            const isEducationFrame = !!target.closest('#education');
+            const isFeaturedProjectFrame = target.matches('#work .scroll-frame-major');
+            const isSkillFrame = !!target.closest('#skills');
 
-            if (isBottomContactCard || isProjectRollingChart || isPredictionChart) continue;
+            if (
+              isBottomContactCard ||
+              isProjectRollingChart ||
+              isPredictionChart ||
+              isEducationFrame ||
+              isFeaturedProjectFrame
+            ) continue;
 
             const rect = getCachedRect(target);
             const lingeringChart = isLingeringChartFrame(target);
             const rollingChart = isRollingMaeFrame(target);
             const releaseAnchor = lingeringChart ? rect.bottom : rect.top;
-            const targetReleaseLine = rollingChart
-              ? viewportTop + viewportHeight * 0.10
-              : lingeringChart
-                ? viewportTop + viewportHeight * 0.48
-                : releaseLine;
+            const targetReleaseLine = isSkillFrame
+              ? viewportTop + viewportHeight * 0.14
+              : rollingChart
+                ? viewportTop + viewportHeight * 0.10
+                : lingeringChart
+                  ? viewportTop + viewportHeight * 0.48
+                  : releaseLine;
 
             keepFrameWithDescendants(target, releaseAnchor, targetReleaseLine);
           }
