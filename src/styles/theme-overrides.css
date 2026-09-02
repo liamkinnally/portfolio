@@ -71,3 +71,9 @@ html[data-theme='light'] [class~="bg-blue-300/[0.06]"] {
     white-space: nowrap;
   }
 }
+
+@media (max-width: 639px) {
+  html[data-theme='dark'] .project-page .project-body-copy {
+    color: #e2e8f0;
+  }
+}
