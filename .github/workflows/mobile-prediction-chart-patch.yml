@@ -1,0 +1,148 @@
+name: Mobile prediction chart optimization
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mobile-prediction-chart-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Optimize prediction quality chart on mobile
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/components/PredictionQualityChart.astro')
+          text = path.read_text()
+
+          old = '<div class="chart-shell scroll-frame-focus scroll-frame-quiet scroll-frame-clipped">'
+          new = '<div class="chart-shell scroll-frame-focus scroll-frame-quiet scroll-frame-clipped" data-prediction-quality-chart>'
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected one prediction chart shell, found {text.count(old)}')
+          text = text.replace(old, new)
+
+          density_start = '      {density.map((bin) => {'
+          if text.count(density_start) != 2:
+              raise SystemExit(f'Expected two density maps, found {text.count(density_start)}')
+          text = text.replace(density_start, '      <g class="density-layer">\n' + density_start, 1)
+
+          parity_line = '      <line x1={x(0)} y1={y(0)} x2={x(axisMax)} y2={y(axisMax)} stroke="var(--chart-reference)" stroke-width="1.6" stroke-dasharray="7 7" opacity="0.70" />'
+          if text.count(parity_line) != 1:
+              raise SystemExit(f'Expected one parity line, found {text.count(parity_line)}')
+          text = text.replace(parity_line, '      </g>\n\n' + parity_line)
+
+          script = '''<script>
+  (() => {
+    const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLElement>('[data-prediction-quality-chart]').forEach((chart) => {
+      if (!coarsePointer || reducedMotion || !('IntersectionObserver' in window)) {
+        chart.classList.add('density-in-view');
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+        if (!entry?.isIntersecting) return;
+
+        requestAnimationFrame(() => chart.classList.add('density-in-view'));
+        observer.disconnect();
+      }, {
+        threshold: 0.16,
+        rootMargin: '0px 0px -8% 0px',
+      });
+
+      observer.observe(chart);
+    });
+  })();
+</script>
+
+'''
+          style_marker = '<style>\n  .chart-shell {'
+          if text.count(style_marker) != 1:
+              raise SystemExit(f'Expected one style marker, found {text.count(style_marker)}')
+          text = text.replace(style_marker, script + style_marker)
+
+          keyframes = '''  @keyframes density-in {
+    from { opacity: 0; transform: translateY(3px); }
+  }
+
+'''
+          if text.count(keyframes) != 1:
+              raise SystemExit(f'Expected one density keyframe block, found {text.count(keyframes)}')
+
+          mobile_css = '''  @keyframes density-layer-in {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .density-cell {
+      animation: none;
+      filter: none !important;
+    }
+
+    .density-layer {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+
+    .chart-shell.density-in-view .density-layer {
+      animation: density-layer-in 420ms cubic-bezier(.2,.7,.2,1) both;
+    }
+
+    .density-hover-group {
+      display: none;
+    }
+  }
+
+'''
+          text = text.replace(keyframes, keyframes + mobile_css)
+
+          reduced_marker = '''  @media (prefers-reduced-motion: reduce) {
+    .density-cell {
+      animation: none;
+      transition: none;
+    }
+'''
+          reduced_replacement = '''  @media (prefers-reduced-motion: reduce) {
+    .density-cell {
+      animation: none;
+      transition: none;
+    }
+
+    .density-layer,
+    .chart-shell.density-in-view .density-layer {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+'''
+          if text.count(reduced_marker) != 1:
+              raise SystemExit(f'Expected one reduced-motion block, found {text.count(reduced_marker)}')
+          text = text.replace(reduced_marker, reduced_replacement)
+
+          path.write_text(text)
+          PY
+
+      - name: Commit changes and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/mobile-prediction-chart-patch.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/PredictionQualityChart.astro .github/workflows/mobile-prediction-chart-patch.yml
+          git commit -m "Optimize prediction quality chart on mobile"
+          git push origin main
