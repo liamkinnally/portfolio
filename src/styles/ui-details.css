@@ -132,11 +132,6 @@ html[data-theme='light'] ::selection {
     box-shadow: 0 24px 80px var(--glass-shadow);
   }
 
-  .availability-pill.interactive-pill.mobile-scroll-focus::before,
-  .availability-pill.interactive-pill.mobile-scroll-focus::after {
-    display: none;
-  }
-
   .project-page .mobile-initial-highlight-group .kbd-tag {
     border-color: var(--border);
     background: var(--tag-bg);
