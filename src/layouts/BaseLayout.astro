@@ -475,7 +475,9 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               const scrollProgress = clamp01((window.scrollY - initialScrollY) / activationDistance);
               const deferredReleaseLine = target.matches('.availability-pill.interactive-pill')
                 ? viewportTop + viewportHeight * 0.22
-                : releaseLine;
+                : target.matches('.project-page header .kbd-tag')
+                  ? releaseLine - 16
+                  : releaseLine;
 
               if (center > deferredReleaseLine) {
                 setBloom(target, scrollProgress, scrollProgress < 1 ? 'entry' : 'active');
