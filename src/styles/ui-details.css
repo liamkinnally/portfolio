@@ -67,7 +67,7 @@ html[data-theme='light'] ::selection {
 
 @media (max-width: 639px) {
   section.container-shell:first-of-type > .fade-up > p:first-of-type {
-    font-size: 1rem;
+    font-size: 1.04rem;
     letter-spacing: -0.025em;
     white-space: nowrap;
   }
@@ -130,6 +130,11 @@ html[data-theme='light'] ::selection {
   .scroll-frame-focus.mobile-scroll-focus.glass-card {
     border-top-color: var(--border);
     box-shadow: 0 24px 80px var(--glass-shadow);
+  }
+
+  .availability-pill.interactive-pill.mobile-scroll-focus::before,
+  .availability-pill.interactive-pill.mobile-scroll-focus::after {
+    display: none;
   }
 
   .project-page .mobile-initial-highlight-group .kbd-tag {
