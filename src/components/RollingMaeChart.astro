@@ -180,6 +180,25 @@ const formatDate = (date: string) => {
       group.addEventListener('pointerleave', () => result.classList.remove('is-linked-active'));
     });
   });
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('.chart-shell--compact').forEach((chart) => {
+    if (reducedMotion) {
+      chart.classList.add('chart-in-view');
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (!entry?.isIntersecting) return;
+
+      chart.classList.add('chart-in-view');
+      observer.disconnect();
+    }, { threshold: 0.2 });
+
+    observer.observe(chart);
+  });
 </script>
 
 <style>
@@ -205,6 +224,19 @@ const formatDate = (date: string) => {
     stroke-dasharray: .018 .018;
     stroke-dashoffset: 1;
     animation: chart-draw 760ms 80ms cubic-bezier(.2,.7,.2,1) forwards;
+  }
+
+  .chart-shell--compact .chart-model,
+  .chart-shell--compact .chart-baseline {
+    animation: none;
+  }
+
+  .chart-shell--compact.chart-in-view .chart-model {
+    animation: chart-draw 1.55s 240ms cubic-bezier(.2,.7,.2,1) forwards;
+  }
+
+  .chart-shell--compact.chart-in-view .chart-baseline {
+    animation: chart-draw 1.35s 120ms cubic-bezier(.2,.7,.2,1) forwards;
   }
 
   .date-hover-guide,
