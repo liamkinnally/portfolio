@@ -1,0 +1,55 @@
+name: Project hero spacing patch
+
+on: [push]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Tighten mobile hero spacing and preserve pill timing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('src/pages/projects/nba-scoring-model.astro')
+          text = page.read_text()
+          old = '<article class="project-page container-shell pt-32 pb-24">'
+          new = '<article class="project-page container-shell pt-28 pb-24 sm:pt-32">'
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected one project article padding target, found {text.count(old)}')
+          page.write_text(text.replace(old, new))
+
+          layout = Path('src/layouts/BaseLayout.astro')
+          text = layout.read_text()
+          old = """              const deferredReleaseLine = target.matches('.availability-pill.interactive-pill')
+                ? viewportTop + viewportHeight * 0.22
+                : releaseLine;
+"""
+          new = """              const deferredReleaseLine = target.matches('.availability-pill.interactive-pill')
+                ? viewportTop + viewportHeight * 0.22
+                : target.matches('.project-page header .kbd-tag')
+                  ? releaseLine - 16
+                  : releaseLine;
+"""
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected one deferred release target, found {text.count(old)}')
+          layout.write_text(text.replace(old, new))
+          PY
+
+      - name: Commit changes and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/project-hero-spacing-patch.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/projects/nba-scoring-model.astro src/layouts/BaseLayout.astro .github/workflows/project-hero-spacing-patch.yml
+          git commit -m "Tighten mobile project hero spacing"
+          git push origin main
