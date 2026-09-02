@@ -383,11 +383,16 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               target.classList.contains('scroll-frame-major') &&
               target.closest('section')?.previousElementSibling?.id === 'about';
             const entryAnchor = isFrame ? rect.top : center;
-            const releaseAnchor = isProjectRollingChart || isPredictionChart || isLingeringChart
-              ? rect.bottom
-              : isFrame
-                ? rect.top
-                : center;
+            const releaseAnchor =
+              isProjectRollingChart ||
+              isPredictionChart ||
+              isLingeringChart ||
+              isEducationFrame ||
+              isFeaturedProjectFrame
+                ? rect.bottom
+                : isFrame
+                  ? rect.top
+                  : center;
             const defaultBloomDistance = getBloomDistance(viewportHeight, rect.height, target);
             const bloomDistance = isPredictionPill
               ? Math.min(86, Math.max(68, viewportHeight * 0.08))
@@ -418,24 +423,26 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const targetReleaseLine = isEducationPill
               ? viewportTop + viewportHeight * 0.19
               : isEducationFrame
-                ? viewportTop + viewportHeight * 0.14
-                : isSkillPill || isSkillFrame
-                  ? viewportTop + viewportHeight * 0.14
-                  : isFeaturedProjectPill
-                    ? viewportTop + viewportHeight * 0.10
-                    : isFeaturedProjectFrame
-                      ? viewportTop + viewportHeight * 0.30
-                      : isPredictionPill
-                        ? viewportTop + viewportHeight * 0.14
-                        : isProjectRollingChart
-                          ? viewportTop + viewportHeight * 0.44
-                          : isPredictionChart
-                            ? viewportTop + viewportHeight * 0.36
-                            : isRollingChart
-                              ? viewportTop + viewportHeight * 0.10
-                              : isLingeringChart
-                                ? viewportTop + viewportHeight * 0.48
-                                : releaseLine;
+                ? viewportTop + viewportHeight * 0.52
+                : isSkillPill
+                  ? viewportTop + viewportHeight * 0.20
+                  : isSkillFrame
+                    ? viewportTop + viewportHeight * 0.14
+                    : isFeaturedProjectPill
+                      ? viewportTop + viewportHeight * 0.10
+                      : isFeaturedProjectFrame
+                        ? viewportTop + viewportHeight * 0.52
+                        : isPredictionPill
+                          ? viewportTop + viewportHeight * 0.14
+                          : isProjectRollingChart
+                            ? viewportTop + viewportHeight * 0.44
+                            : isPredictionChart
+                              ? viewportTop + viewportHeight * 0.36
+                              : isRollingChart
+                                ? viewportTop + viewportHeight * 0.10
+                                : isLingeringChart
+                                  ? viewportTop + viewportHeight * 0.48
+                                  : releaseLine;
 
             if (deferredInitialTargets.has(target)) {
               const activationDistance = getInlineBloomDistance(viewportHeight);
