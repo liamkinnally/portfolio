@@ -423,7 +423,33 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const targetReleaseLine = isEducationPill
               ? viewportTop + viewportHeight * 0.19
               : isEducationFrame
-                ? viewportTop + viewportHeight * 0.52
+                ? (() => {
+                    const educationPills = Array.from(
+                      target.querySelectorAll<HTMLElement>('.kbd-tag'),
+                    );
+                    if (!educationPills.length) {
+                      return viewportTop + viewportHeight * 0.52;
+                    }
+
+                    const bottomPillRect = educationPills
+                      .map((pill) => getCachedRect(pill))
+                      .reduce((lowest, pillRect) =>
+                        pillRect.bottom > lowest.bottom ? pillRect : lowest,
+                      );
+                    const bottomPillCenter =
+                      bottomPillRect.top + bottomPillRect.height / 2;
+                    const frameTailOffset = rect.bottom - bottomPillCenter;
+                    const educationPillExitDistance = Math.min(
+                      88,
+                      Math.max(72, viewportHeight * 0.085),
+                    );
+                    const educationPillExitEnd =
+                      viewportTop +
+                      viewportHeight * 0.19 -
+                      educationPillExitDistance;
+
+                    return educationPillExitEnd + frameTailOffset + exitDistance;
+                  })()
                 : isSkillPill
                   ? viewportTop + viewportHeight * 0.20
                   : isSkillFrame
