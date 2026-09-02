@@ -98,6 +98,7 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         ];
 
         const deferredInitialSelectors = [
+          '.availability-pill.interactive-pill',
           '.project-page header .kbd-tag',
         ];
 
@@ -380,11 +381,16 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             if (deferredInitialTargets.has(target)) {
               const activationDistance = getInlineBloomDistance(viewportHeight);
               const scrollProgress = clamp01((window.scrollY - initialScrollY) / activationDistance);
+              const deferredReleaseLine = target.matches('.availability-pill.interactive-pill')
+                ? viewportTop + viewportHeight * 0.08
+                : releaseLine;
 
-              if (center > releaseLine) {
+              if (center > deferredReleaseLine) {
                 setBloom(target, scrollProgress, scrollProgress < 1 ? 'entry' : 'active');
               } else {
-                const exitProgress = clamp01((releaseLine - center) / activationDistance);
+                const exitProgress = clamp01(
+                  (deferredReleaseLine - center) / activationDistance,
+                );
                 setBloom(target, Math.min(scrollProgress, 1 - exitProgress), 'exit');
               }
               continue;
