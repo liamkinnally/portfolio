@@ -54,7 +54,7 @@ const systemSteps = [
       >The question</h2>
       <div class="space-y-5 text-lg leading-8 text-slate-300">
         <p>
-          How well can you predict an NBA player's next box score (points, assists, rebounds) from only what was known before tipoff? Not perfectly. In the games set aside for testing, players averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41. Recent scoring, minutes, rest, and matchup history all carry useful signal, but none of them makes the next line certain.
+          How well can you predict an NBA player's next box score (points, assists, rebounds) from only what was known before tipoff? Not perfectly. In the games set aside for testing, players averaging 19–21 points over their previous ten games went on to score anywhere from 0 to 41. Recent scoring, minutes, rest, and matchup history all carry useful signal, but individual game outcomes remain highly variable.
         </p>
         <p>
           A low error can still be easy to fake if a feature quietly peeks at the game being predicted. So useful performance has to survive an honest test: past information only, games evaluated in order, and a simpler method under the same conditions.
@@ -174,7 +174,7 @@ const systemSteps = [
       >Engineering, not just modeling</h2>
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet scroll-frame-leaf glass-card rounded-xl p-5"><h3 class="font-semibold">Reproducible artifacts</h3><p class="mt-2 leading-7 text-slate-300">Serialized model pipelines include evaluation-window metadata so reported metrics can be reproduced later.</p></div>
-        <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet scroll-frame-leaf glass-card rounded-xl p-5"><h3 class="font-semibold">Automated testing</h3><p class="mt-2 leading-7 text-slate-300">A pytest suite runs in GitHub Actions CI to catch regressions in the data and modeling pipeline.</p></div>
+        <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet scroll-frame-leaf glass-card rounded-xl p-5"><h3 class="font-semibold">Automated testing</h3><p class="mt-2 leading-7 text-slate-300">A pytest suite runs in GitHub Actions CI to catch regressions across the data and modeling pipeline.</p></div>
         <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet scroll-frame-leaf glass-card rounded-xl p-5"><h3 class="font-semibold">CLI workflow</h3><p class="mt-2 leading-7 text-slate-300">Evaluation reports are regenerated from saved models in one command instead of relying on a notebook-only workflow.</p></div>
         <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet scroll-frame-leaf glass-card rounded-xl p-5"><h3 class="font-semibold">Database-backed pipeline</h3><p class="mt-2 leading-7 text-slate-300">SQLAlchemy and SQLite provide a structured persistence layer for game and player-level records.</p></div>
       </div>
