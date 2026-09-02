@@ -148,6 +148,15 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
         const isRollingMaeFrame = (target: HTMLElement) =>
           target.classList.contains('chart-shell') && !!target.querySelector('.mae-wins-pill');
 
+        const isPredictionQualityFrame = (target: HTMLElement) =>
+          target.classList.contains('chart-shell') &&
+          !!target.querySelector('[data-shine-text="Actual vs. predicted"]');
+
+        const isPredictionQualityPill = (target: HTMLElement) => {
+          const frame = target.closest<HTMLElement>('.chart-shell');
+          return !!frame && isPredictionQualityFrame(frame);
+        };
+
         const isLingeringChartFrame = (target: HTMLElement) =>
           target.classList.contains('chart-shell') && !isRollingMaeFrame(target);
 
@@ -155,6 +164,14 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
           viewportHeight: number,
           target: HTMLElement,
         ) => {
+          if (isPredictionQualityFrame(target)) {
+            return Math.min(190, Math.max(145, viewportHeight * 0.18));
+          }
+
+          if (isRollingMaeFrame(target) && target.closest('.project-page')) {
+            return Math.min(210, Math.max(165, viewportHeight * 0.20));
+          }
+
           if (isRollingMaeFrame(target)) {
             return Math.min(168, Math.max(120, viewportHeight * 0.17));
           }
@@ -351,38 +368,66 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             const center = rect.top + rect.height / 2;
             const isFrame = target.classList.contains('scroll-frame-focus');
             const isRollingChart = isFrame && isRollingMaeFrame(target);
+            const isProjectRollingChart = isRollingChart && !!target.closest('.project-page');
+            const isPredictionChart = isFrame && isPredictionQualityFrame(target);
+            const isPredictionPill = !isFrame && isPredictionQualityPill(target);
             const isLingeringChart = isFrame && isLingeringChartFrame(target);
             const isEducationPill = target.matches('#education .kbd-tag');
             const isFeaturedProjectFrame = isFrame && target.matches('#work .scroll-frame-major');
+            const isBottomContactCard =
+              isFrame &&
+              target.classList.contains('scroll-frame-major') &&
+              target.closest('section')?.previousElementSibling?.id === 'about';
             const entryAnchor = isFrame ? rect.top : center;
-            const releaseAnchor = isLingeringChart
+            const releaseAnchor = isProjectRollingChart || isPredictionChart || isLingeringChart
               ? rect.bottom
               : isFrame
                 ? rect.top
                 : center;
-            const bloomDistance = getBloomDistance(viewportHeight, rect.height, target);
+            const defaultBloomDistance = getBloomDistance(viewportHeight, rect.height, target);
+            const bloomDistance = isPredictionPill
+              ? Math.min(86, Math.max(68, viewportHeight * 0.08))
+              : defaultBloomDistance;
             const entryDistance = isEducationPill
-              ? Math.min(116, Math.max(86, viewportHeight * 0.105))
-              : bloomDistance;
+              ? Math.min(78, Math.max(62, viewportHeight * 0.075))
+              : isPredictionChart
+                ? Math.min(170, Math.max(135, viewportHeight * 0.16))
+                : bloomDistance;
             const targetEntryLine = isEducationPill
-              ? viewportTop + viewportHeight * 0.96
-              : isFeaturedProjectFrame
+              ? viewportTop + viewportHeight * 0.985
+              : isPredictionChart
                 ? viewportTop + viewportHeight * 0.88
-                : entryLine;
-            const exitDistance = isFrame
-              ? getFrameExitDistance(viewportHeight, target)
-              : bloomDistance;
-            const targetReleaseLine = isRollingChart
-              ? viewportTop + viewportHeight * 0.10
-              : isLingeringChart
-                ? viewportTop + viewportHeight * 0.48
-                : releaseLine;
+                : isPredictionPill
+                  ? viewportTop + viewportHeight * 0.90
+                  : isFeaturedProjectFrame
+                    ? viewportTop + viewportHeight * 0.88
+                    : entryLine;
+            const exitDistance = isEducationPill
+              ? Math.min(88, Math.max(72, viewportHeight * 0.085))
+              : isPredictionPill
+                ? Math.min(92, Math.max(74, viewportHeight * 0.09))
+                : isFrame
+                  ? getFrameExitDistance(viewportHeight, target)
+                  : bloomDistance;
+            const targetReleaseLine = isEducationPill
+              ? viewportTop + viewportHeight * 0.12
+              : isPredictionPill
+                ? viewportTop + viewportHeight * 0.14
+                : isProjectRollingChart
+                  ? viewportTop + viewportHeight * 0.44
+                  : isPredictionChart
+                    ? viewportTop + viewportHeight * 0.36
+                    : isRollingChart
+                      ? viewportTop + viewportHeight * 0.10
+                      : isLingeringChart
+                        ? viewportTop + viewportHeight * 0.48
+                        : releaseLine;
 
             if (deferredInitialTargets.has(target)) {
               const activationDistance = getInlineBloomDistance(viewportHeight);
               const scrollProgress = clamp01((window.scrollY - initialScrollY) / activationDistance);
               const deferredReleaseLine = target.matches('.availability-pill.interactive-pill')
-                ? viewportTop + viewportHeight * 0.08
+                ? viewportTop + viewportHeight * 0.22
                 : releaseLine;
 
               if (center > deferredReleaseLine) {
@@ -408,6 +453,11 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
               continue;
             }
 
+            if (isBottomContactCard) {
+              setBloom(target, 1, 'active');
+              continue;
+            }
+
             if (releaseAnchor > targetReleaseLine) {
               setBloom(target, 1, 'active');
               continue;
@@ -426,6 +476,15 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
             );
 
           for (const target of exitingFrames) {
+            const isBottomContactCard =
+              target.classList.contains('scroll-frame-major') &&
+              target.closest('section')?.previousElementSibling?.id === 'about';
+            const isProjectRollingChart =
+              isRollingMaeFrame(target) && !!target.closest('.project-page');
+            const isPredictionChart = isPredictionQualityFrame(target);
+
+            if (isBottomContactCard || isProjectRollingChart || isPredictionChart) continue;
+
             const rect = getCachedRect(target);
             const lingeringChart = isLingeringChartFrame(target);
             const rollingChart = isRollingMaeFrame(target);
