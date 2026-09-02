@@ -1,6 +1,6 @@
 name: Project hero spacing patch
 
-on: [push]
+"on": [push]
 
 permissions:
   contents: write
