@@ -156,10 +156,10 @@ const systemSteps = [
         </div>
         <div class="space-y-5 text-lg leading-8 text-slate-300">
           <p>
-            Holdout permutation importance measures how much prediction error increases when one feature is shuffled while the others stay intact. The player's 10-game scoring average dominates the points model, with recent minutes the strongest secondary signal.
+            Holdout permutation importance measures how much prediction error increases when the values of one feature are randomly rearranged across the holdout data, breaking its relationship with the outcome while leaving the other features unchanged. The player’s 10-game scoring average is by far the strongest signal in the points model, with recent minutes being the strongest secondary signal.
           </p>
           <p>
-            Because several rolling features are correlated, these values describe the contribution of each feature given the others rather than a complete measure of the underlying basketball concept's importance.
+            As some of the features contain overlapping information, the importance attributed to any one feature can be reduced because other features may still preserve part of the same signal. These values therefore represent how much the model relies on each feature beyond what is already captured by the other features, rather than the total predictive value of the broader signal that feature represents.
           </p>
         </div>
       </div>
