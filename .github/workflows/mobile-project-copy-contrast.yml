@@ -1,10 +1,6 @@
 name: Mobile project copy contrast
 
-on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/mobile-project-copy-contrast.yml'
+on: [push]
 
 permissions:
   contents: write
@@ -52,7 +48,7 @@ jobs:
           for old, new, expected in replacements:
               count = text.count(old)
               if count != expected:
-                  raise SystemExit(f'Expected {expected} occurrences of {old!r}, found {count}')
+                  raise SystemExit(f'Expected {expected} occurrences, found {count}: {old}')
               text = text.replace(old, new)
 
           page.write_text(text)
