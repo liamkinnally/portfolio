@@ -1,0 +1,77 @@
+name: Education border timing patch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/education-border-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Align education frame exit with bottom coursework pill
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/layouts/BaseLayout.astro')
+          text = path.read_text()
+
+          old = """              : isEducationFrame
+                ? viewportTop + viewportHeight * 0.52
+"""
+
+          new = """              : isEducationFrame
+                ? (() => {
+                    const educationPills = Array.from(
+                      target.querySelectorAll<HTMLElement>('.kbd-tag'),
+                    );
+                    if (!educationPills.length) {
+                      return viewportTop + viewportHeight * 0.52;
+                    }
+
+                    const bottomPillRect = educationPills
+                      .map((pill) => getCachedRect(pill))
+                      .reduce((lowest, pillRect) =>
+                        pillRect.bottom > lowest.bottom ? pillRect : lowest,
+                      );
+                    const bottomPillCenter =
+                      bottomPillRect.top + bottomPillRect.height / 2;
+                    const frameTailOffset = rect.bottom - bottomPillCenter;
+                    const educationPillExitDistance = Math.min(
+                      88,
+                      Math.max(72, viewportHeight * 0.085),
+                    );
+                    const educationPillExitEnd =
+                      viewportTop +
+                      viewportHeight * 0.19 -
+                      educationPillExitDistance;
+
+                    return educationPillExitEnd + frameTailOffset + exitDistance;
+                  })()
+"""
+
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one education release trigger, found {text.count(old)}')
+
+          path.write_text(text.replace(old, new))
+          PY
+
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/education-border-patch.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/layouts/BaseLayout.astro .github/workflows/education-border-patch.yml
+          git commit -m "Tune education card border exit timing"
+          git push origin main
