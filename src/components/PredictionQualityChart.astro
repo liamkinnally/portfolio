@@ -66,7 +66,7 @@ const maxPrediction = Math.max(...points.map((point) => point.predicted));
 const maxActual = Math.max(...points.map((point) => point.actual));
 ---
 
-<div class="chart-shell scroll-frame-focus scroll-frame-quiet scroll-frame-clipped">
+<div class="chart-shell scroll-frame-focus scroll-frame-quiet scroll-frame-clipped" data-prediction-quality-chart>
   <div class="flex flex-col gap-4 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between sm:px-6 sm:pt-6">
     <div>
       <div class="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-slate-400">Chronological holdout · points</div>
@@ -120,6 +120,7 @@ const maxActual = Math.max(...points.map((point) => point.actual));
         </g>
       ))}
 
+      <g class="density-layer">
       {density.map((bin) => {
         const intensity = Math.sqrt(bin.count / maxCount);
         const baseOpacity = 0.10 + intensity * 0.78;
@@ -138,6 +139,8 @@ const maxActual = Math.max(...points.map((point) => point.actual));
           />
         );
       })}
+
+      </g>
 
       <line x1={x(0)} y1={y(0)} x2={x(axisMax)} y2={y(axisMax)} stroke="var(--chart-reference)" stroke-width="1.6" stroke-dasharray="7 7" opacity="0.70" />
 
@@ -211,6 +214,33 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     <span class="shrink-0 font-semibold text-blue-200">Max: {maxPrediction.toFixed(1)} predicted · {maxActual.toFixed(0)} actual</span>
   </div>
 </div>
+
+<script>
+  (() => {
+    const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLElement>('[data-prediction-quality-chart]').forEach((chart) => {
+      if (!coarsePointer || reducedMotion || !('IntersectionObserver' in window)) {
+        chart.classList.add('density-in-view');
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+        if (!entry?.isIntersecting) return;
+
+        requestAnimationFrame(() => chart.classList.add('density-in-view'));
+        observer.disconnect();
+      }, {
+        threshold: 0.16,
+        rootMargin: '0px 0px -8% 0px',
+      });
+
+      observer.observe(chart);
+    });
+  })();
+</script>
 
 <style>
   .chart-shell {
@@ -332,10 +362,42 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     from { opacity: 0; transform: translateY(3px); }
   }
 
+  @keyframes density-layer-in {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .density-cell {
+      animation: none;
+      filter: none !important;
+    }
+
+    .density-layer {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+
+    .chart-shell.density-in-view .density-layer {
+      animation: density-layer-in 420ms cubic-bezier(.2,.7,.2,1) both;
+    }
+
+    .density-hover-group {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .density-cell {
       animation: none;
       transition: none;
+    }
+
+    .density-layer,
+    .chart-shell.density-in-view .density-layer {
+      animation: none;
+      opacity: 1;
+      transform: none;
     }
 
     .density-hover-guide,
