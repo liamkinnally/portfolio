@@ -21,6 +21,7 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
+          import base64
           from pathlib import Path
 
           path = Path('src/components/PredictionQualityChart.astro')
@@ -42,94 +43,21 @@ jobs:
               raise SystemExit(f'Expected one parity line, found {text.count(parity_line)}')
           text = text.replace(parity_line, '      </g>\n\n' + parity_line)
 
-          script = '''<script>
-  (() => {
-    const coarsePointer = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    document.querySelectorAll<HTMLElement>('[data-prediction-quality-chart]').forEach((chart) => {
-      if (!coarsePointer || reducedMotion || !('IntersectionObserver' in window)) {
-        chart.classList.add('density-in-view');
-        return;
-      }
-
-      const observer = new IntersectionObserver((entries) => {
-        const entry = entries[0];
-        if (!entry?.isIntersecting) return;
-
-        requestAnimationFrame(() => chart.classList.add('density-in-view'));
-        observer.disconnect();
-      }, {
-        threshold: 0.16,
-        rootMargin: '0px 0px -8% 0px',
-      });
-
-      observer.observe(chart);
-    });
-  })();
-</script>
-
-'''
+          script = base64.b64decode('PHNjcmlwdD4KICAoKCkgPT4gewogICAgY29uc3QgY29hcnNlUG9pbnRlciA9IHdpbmRvdy5tYXRjaE1lZGlhKCcoaG92ZXI6IG5vbmUpIGFuZCAocG9pbnRlcjogY29hcnNlKScpLm1hdGNoZXM7CiAgICBjb25zdCByZWR1Y2VkTW90aW9uID0gd2luZG93Lm1hdGNoTWVkaWEoJyhwcmVmZXJzLXJlZHVjZWQtbW90aW9uOiByZWR1Y2UpJykubWF0Y2hlczsKCiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsPEhUTUxFbGVtZW50PignW2RhdGEtcHJlZGljdGlvbi1xdWFsaXR5LWNoYXJ0XScpLmZvckVhY2goKGNoYXJ0KSA9PiB7CiAgICAgIGlmICghY29hcnNlUG9pbnRlciB8fCByZWR1Y2VkTW90aW9uIHx8ICEoJ0ludGVyc2VjdGlvbk9ic2VydmVyJyBpbiB3aW5kb3cpKSB7CiAgICAgICAgY2hhcnQuY2xhc3NMaXN0LmFkZCgnZGVuc2l0eS1pbi12aWV3Jyk7CiAgICAgICAgcmV0dXJuOwogICAgICB9CgogICAgICBjb25zdCBvYnNlcnZlciA9IG5ldyBJbnRlcnNlY3Rpb25PYnNlcnZlcigoZW50cmllcykgPT4gewogICAgICAgIGNvbnN0IGVudHJ5ID0gZW50cmllc1swXTsKICAgICAgICBpZiAoIWVudHJ5Py5pc0ludGVyc2VjdGluZykgcmV0dXJuOwoKICAgICAgICByZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCkgPT4gY2hhcnQuY2xhc3NMaXN0LmFkZCgnZGVuc2l0eS1pbi12aWV3JykpOwogICAgICAgIG9ic2VydmVyLmRpc2Nvbm5lY3QoKTsKICAgICAgfSwgewogICAgICAgIHRocmVzaG9sZDogMC4xNiwKICAgICAgICByb290TWFyZ2luOiAnMHB4IDBweCAtOCUgMHB4JywKICAgICAgfSk7CgogICAgICBvYnNlcnZlci5vYnNlcnZlKGNoYXJ0KTsKICAgIH0pOwogIH0pKCk7Cjwvc2NyaXB0PgoK').decode()
           style_marker = '<style>\n  .chart-shell {'
           if text.count(style_marker) != 1:
               raise SystemExit(f'Expected one style marker, found {text.count(style_marker)}')
           text = text.replace(style_marker, script + style_marker)
 
-          keyframes = '''  @keyframes density-in {
-    from { opacity: 0; transform: translateY(3px); }
-  }
-
-'''
+          keyframes = base64.b64decode('ICBAa2V5ZnJhbWVzIGRlbnNpdHktaW4gewogICAgZnJvbSB7IG9wYWNpdHk6IDA7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgzcHgpOyB9CiAgfQoK').decode()
           if text.count(keyframes) != 1:
               raise SystemExit(f'Expected one density keyframe block, found {text.count(keyframes)}')
 
-          mobile_css = '''  @keyframes density-layer-in {
-    from { opacity: 0; transform: translateY(3px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (hover: none) and (pointer: coarse) {
-    .density-cell {
-      animation: none;
-      filter: none !important;
-    }
-
-    .density-layer {
-      opacity: 0;
-      transform: translateY(3px);
-    }
-
-    .chart-shell.density-in-view .density-layer {
-      animation: density-layer-in 420ms cubic-bezier(.2,.7,.2,1) both;
-    }
-
-    .density-hover-group {
-      display: none;
-    }
-  }
-
-'''
+          mobile_css = base64.b64decode('ICBAa2V5ZnJhbWVzIGRlbnNpdHktbGF5ZXItaW4gewogICAgZnJvbSB7IG9wYWNpdHk6IDA7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgzcHgpOyB9CiAgICB0byB7IG9wYWNpdHk6IDE7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgwKTsgfQogIH0KCiAgQG1lZGlhIChob3Zlcjogbm9uZSkgYW5kIChwb2ludGVyOiBjb2Fyc2UpIHsKICAgIC5kZW5zaXR5LWNlbGwgewogICAgICBhbmltYXRpb246IG5vbmU7CiAgICAgIGZpbHRlcjogbm9uZSAhaW1wb3J0YW50OwogICAgfQoKICAgIC5kZW5zaXR5LWxheWVyIHsKICAgICAgb3BhY2l0eTogMDsKICAgICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDNweCk7CiAgICB9CgogICAgLmNoYXJ0LXNoZWxsLmRlbnNpdHktaW4tdmlldyAuZGVuc2l0eS1sYXllciB7CiAgICAgIGFuaW1hdGlvbjogZGVuc2l0eS1sYXllci1pbiA0MjBtcyBjdWJpYy1iZXppZXIoLjIsLjcsLjIsMSkgYm90aDsKICAgIH0KCiAgICAuZGVuc2l0eS1ob3Zlci1ncm91cCB7CiAgICAgIGRpc3BsYXk6IG5vbmU7CiAgICB9CiAgfQoK').decode()
           text = text.replace(keyframes, keyframes + mobile_css)
 
-          reduced_marker = '''  @media (prefers-reduced-motion: reduce) {
-    .density-cell {
-      animation: none;
-      transition: none;
-    }
-'''
-          reduced_replacement = '''  @media (prefers-reduced-motion: reduce) {
-    .density-cell {
-      animation: none;
-      transition: none;
-    }
-
-    .density-layer,
-    .chart-shell.density-in-view .density-layer {
-      animation: none;
-      opacity: 1;
-      transform: none;
-    }
-'''
+          reduced_marker = base64.b64decode('ICBAbWVkaWEgKHByZWZlcnMtcmVkdWNlZC1tb3Rpb246IHJlZHVjZSkgewogICAgLmRlbnNpdHktY2VsbCB7CiAgICAgIGFuaW1hdGlvbjogbm9uZTsKICAgICAgdHJhbnNpdGlvbjogbm9uZTsKICAgIH0K').decode()
+          reduced_replacement = base64.b64decode('ICBAbWVkaWEgKHByZWZlcnMtcmVkdWNlZC1tb3Rpb246IHJlZHVjZSkgewogICAgLmRlbnNpdHktY2VsbCB7CiAgICAgIGFuaW1hdGlvbjogbm9uZTsKICAgICAgdHJhbnNpdGlvbjogbm9uZTsKICAgIH0KCiAgICAuZGVuc2l0eS1sYXllciwKICAgIC5jaGFydC1zaGVsbC5kZW5zaXR5LWluLXZpZXcgLmRlbnNpdHktbGF5ZXIgewogICAgICBhbmltYXRpb246IG5vbmU7CiAgICAgIG9wYWNpdHk6IDE7CiAgICAgIHRyYW5zZm9ybTogbm9uZTsKICAgIH0K').decode()
           if text.count(reduced_marker) != 1:
               raise SystemExit(f'Expected one reduced-motion block, found {text.count(reduced_marker)}')
           text = text.replace(reduced_marker, reduced_replacement)
