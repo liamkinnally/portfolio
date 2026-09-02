@@ -108,7 +108,7 @@ const systemSteps = [
         >Evaluation</h2>
         <div class="space-y-5 text-lg leading-8 text-slate-300 [text-wrap:pretty]">
           <p>
-            A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. So the tuned gradient boosting models are compared head-to-head with a simple 10-game rolling-average baseline, where the player’s average over their previous 10 games is used as the predicted value for that stat in their next game.
+            A model can look accurate on its own terms and still add nothing if a much simpler rule does the same job. To test whether the added complexity is actually worthwhile, the tuned gradient boosting models are compared head-to-head with a simple 10-game rolling-average baseline, where the player’s average over their previous 10 games is used as the predicted value for that stat in their next game.
           </p>
           <p>
             The final test contains 5,645 player-game rows that were never used in training. Across that chronological holdout, the points model’s mean absolute error is 4.85&nbsp;— a little under five points per prediction on average. For the 5,612 rows where both methods can predict, the model averaged 4.841 against 4.883 for the 10-game baseline. Assists showed the same small edge, 1.407 against 1.417, while rebounds were effectively tied.
