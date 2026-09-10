@@ -3,6 +3,7 @@
 ![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
+![HTML Canvas API](https://img.shields.io/badge/HTML_Canvas_API-E34F26?logo=html5&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Hosted_on-Vercel-000000?logo=vercel&logoColor=white)
 [![Website](https://img.shields.io/badge/Website-Visit-2EA44F)](https://liamkinnally.com)
 
