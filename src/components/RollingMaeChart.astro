@@ -167,6 +167,23 @@ const formatDate = (date: string) => {
   )}
 </div>
 
+{!compact && (
+  <details class="chart-data">
+    <summary>View rolling error data</summary>
+    <p>Mean absolute error (MAE) is the average size of a prediction error, in points. Lower is better. Each row covers the seven days ending on the listed date.</p>
+    <p class="sm:hidden">Scroll the table sideways to see all columns.</p>
+    <div class="chart-data-region" role="region" aria-label="Rolling error data, scroll to read all dates" tabindex="0">
+      <table>
+        <caption class="sr-only">Points model and 10-game baseline across 28 trailing windows.</caption>
+        <thead><tr><th scope="col">Window end</th><th scope="col">Model MAE</th><th scope="col">Baseline MAE</th><th scope="col">Lower error</th></tr></thead>
+        <tbody>
+          {data.map((point) => <tr><th scope="row">{point.date}</th><td>{point.model.toFixed(3)}</td><td>{point.baseline.toFixed(3)}</td><td>{point.model < point.baseline ? 'Model' : 'Baseline'}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </details>
+)}
+
 <script>
   document.querySelectorAll<HTMLElement>('.chart-shell:not(.chart-shell--compact)').forEach((chart) => {
     chart.querySelectorAll<SVGGElement>('.date-hover-group[data-window-index]').forEach((group) => {

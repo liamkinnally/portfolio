@@ -9,12 +9,12 @@ html[data-theme='light'] {
 }
 
 .scroll-heading-shine,
-#work article h3 {
+#work [data-featured-heading] {
   position: relative;
 }
 
 .scroll-heading-shine::before,
-#work article h3::before {
+#work [data-featured-heading]::before {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -35,11 +35,11 @@ html[data-theme='light'] {
 }
 
 .scroll-heading-shine::before {
-  content: attr(data-shine-text);
+  content: attr(data-shine-text) / "";
 }
 
-#work article h3::before {
-  content: 'A reproducible ML pipeline for predicting NBA player performance.';
+#work [data-featured-heading]::before {
+  content: attr(data-shine-text) / "";
 }
 
 .scroll-heading-shine.is-visible::before,
@@ -108,7 +108,7 @@ html[data-theme='light'] {
 
 @media (prefers-reduced-motion: reduce) {
   .scroll-heading-shine::before,
-  #work article h3::before {
+  #work [data-featured-heading]::before {
     animation: none !important;
   }
 

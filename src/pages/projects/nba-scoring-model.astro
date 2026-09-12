@@ -19,7 +19,7 @@ const systemSteps = [
   description="Technical project page for Liam Kinnally's NBA player-stat prediction pipeline built with Python, scikit-learn, SQLAlchemy, pytest, and GitHub Actions."
 >
   <article class="project-page container-shell pt-28 pb-24 sm:pt-32">
-    <a href="/" class="text-sm font-semibold text-slate-300 transition hover:text-white">← Back home</a>
+    <a href="/projects" class="text-sm font-semibold text-slate-300 transition hover:text-white">← All projects</a>
 
     <header class="mt-12 max-w-4xl">
       <div class="eyebrow">Machine learning · data engineering · testing</div>
@@ -32,14 +32,16 @@ const systemSteps = [
         Predicting how many points, assists, and rebounds an NBA player will record in his next game, using only what was known before tipoff. An end-to-end Python pipeline covering data collection, feature engineering, model training, and evaluation against a simple baseline on games the model never saw during training.
       </p>
       <div class="mobile-initial-highlight-group mt-8 flex flex-wrap gap-2">
-        <span class="kbd-tag">Python</span><span class="kbd-tag">scikit-learn</span><span class="kbd-tag">SQLAlchemy</span><span class="kbd-tag">SQLite</span><span class="kbd-tag">Matplotlib</span><span class="kbd-tag">pytest</span><span class="kbd-tag">GitHub Actions</span>
+        <span class="kbd-tag">Python</span><span class="kbd-tag">pandas</span><span class="kbd-tag">scikit-learn</span><span class="kbd-tag">SQLAlchemy</span><span class="kbd-tag">SQLite</span><span class="kbd-tag">Matplotlib</span><span class="kbd-tag">pytest</span><span class="kbd-tag">GitHub Actions</span>
       </div>
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="https://github.com/liamkinnally/nba-scoring-model" target="_blank" rel="noreferrer" class="button-primary">View source ↗</a>
       </div>
     </header>
 
-    <section class="mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <p class="project-body-copy mt-12 text-sm leading-6 text-slate-400">Evaluated on the 2025–26 regular season. The chronological holdout begins March 11, 2026.</p>
+
+    <section class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <MetricCard value="1,230" label="Games ingested" />
       <MetricCard value="26,547" label="Player-game rows" />
       <MetricCard value="4.85" label="Points MAE" detail="average miss per prediction" />

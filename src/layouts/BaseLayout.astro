@@ -72,9 +72,10 @@ const socialImageAlt = 'Liam Kinnally — Software Engineering · Software Testi
     </script>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <ParticleCanvas />
     <Header />
-    <main class="relative z-10">
+    <main id="main-content" tabindex="-1" class="relative z-10">
       <slot />
     </main>
     <Analytics />

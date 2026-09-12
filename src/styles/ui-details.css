@@ -6,6 +6,7 @@
 }
 
 html[data-theme='light'] {
+  --focus-ring: #557fe6;
   --card-top-edge: rgba(24, 39, 63, 0.14);
   --card-inner-edge: rgba(255, 255, 255, 0.72);
   --metric-depth-shadow: rgba(38, 57, 88, 0.055);
@@ -104,6 +105,7 @@ html[data-theme='light'] ::selection {
 @media (max-width: 379px) {
   section.container-shell:first-of-type > .fade-up > p:first-of-type {
     font-size: 0.92rem;
+    white-space: normal;
   }
 }
 
@@ -163,4 +165,80 @@ html[data-theme='light'] ::selection {
   html {
     scroll-behavior: auto;
   }
+}
+
+
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.5rem;
+  background: var(--surface-strong);
+  color: var(--text);
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.chart-data {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 0.875rem;
+}
+
+.chart-data summary {
+  width: fit-content;
+  padding-block: 0.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.chart-data p {
+  margin-block: 0.75rem;
+  line-height: 1.6;
+}
+
+.chart-data-region {
+  max-height: 24rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.chart-data table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-data caption {
+  text-align: left;
+  padding-block: 0.5rem;
+}
+
+.chart-data th,
+.chart-data td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.chart-data th {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.chart-data th:first-child,
+.chart-data td:first-child {
+  text-align: left;
 }

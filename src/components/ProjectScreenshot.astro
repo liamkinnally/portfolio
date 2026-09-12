@@ -1,0 +1,172 @@
+---
+interface Props {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  caption: string;
+  width: number;
+  height: number;
+}
+
+const { id, src, alt, title, caption, width, height } = Astro.props;
+---
+
+<figure class="project-screenshot mt-14" data-project-screenshot>
+  <button
+    type="button"
+    class="screenshot-trigger"
+    aria-label={`Enlarge ${title} screenshot`}
+    aria-haspopup="dialog"
+    aria-controls={id}
+    data-screenshot-open
+  >
+    <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+    <span class="screenshot-expand" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" />
+        <path d="m3 3 6 6m12-6-6 6M3 21l6-6m12 6-6-6" />
+      </svg>
+    </span>
+  </button>
+  <figcaption class="project-body-copy mt-4 text-sm leading-6 text-slate-400">{caption}</figcaption>
+
+  <dialog id={id} class="screenshot-dialog" aria-labelledby={`${id}-title`}>
+    <div class="screenshot-panel">
+      <div class="screenshot-toolbar">
+        <span id={`${id}-title`}>{title}</span>
+        <form method="dialog">
+          <button type="submit" class="screenshot-close" aria-label="Close screenshot" autofocus>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </form>
+      </div>
+      <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+    </div>
+  </dialog>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-project-screenshot]').forEach((figure) => {
+    const trigger = figure.querySelector<HTMLButtonElement>('[data-screenshot-open]');
+    const dialog = figure.querySelector<HTMLDialogElement>('dialog');
+    if (!trigger || !dialog) return;
+
+    trigger.addEventListener('click', () => dialog.showModal());
+    dialog.addEventListener('close', () => trigger.focus({ preventScroll: true }));
+
+    let pressedBackdrop = false;
+    dialog.addEventListener('pointerdown', (event) => {
+      pressedBackdrop = event.target === dialog;
+    });
+    dialog.addEventListener('click', (event) => {
+      if (pressedBackdrop && event.target === dialog) dialog.close();
+      pressedBackdrop = false;
+    });
+  });
+</script>
+
+<style>
+  .screenshot-trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    border-radius: 1rem;
+    background: var(--bg-soft);
+    cursor: zoom-in;
+  }
+
+  .screenshot-trigger img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .screenshot-expand {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.6rem;
+    background: rgba(17, 17, 17, 0.9);
+    color: #f5f7fb;
+  }
+
+  .screenshot-expand svg,
+  .screenshot-close svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .screenshot-dialog {
+    width: min(94vw, 90rem, calc((92dvh - 3.5rem) * 4 / 3));
+    max-width: none;
+    max-height: 92dvh;
+    margin: auto;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+  }
+
+  .screenshot-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(6px);
+  }
+
+  .screenshot-panel {
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.85rem;
+    background: var(--bg-soft);
+    box-shadow: 0 24px 90px rgba(0, 0, 0, 0.4);
+  }
+
+  .screenshot-toolbar {
+    display: flex;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-inline: 1rem 0.4rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .screenshot-close {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border-radius: 0.45rem;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .screenshot-close:hover {
+    background: var(--nav-hover);
+  }
+
+  .screenshot-panel img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: calc(92dvh - 3.5rem);
+    object-fit: contain;
+  }
+
+  :global(html:has(.screenshot-dialog[open])) {
+    overflow: hidden;
+  }
+</style>

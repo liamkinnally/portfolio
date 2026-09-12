@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectHeadings from '../../components/ProjectHeadings.astro';
+import ProjectScreenshot from '../../components/ProjectScreenshot.astro';
+
+const layers = [
+  { name: 'Next.js + TypeScript', detail: 'Pages, interactive timelines, and shareable URL state.' },
+  { name: 'Java + Spring Boot', detail: 'Riot API ingestion, validation, and match calculations.' },
+  { name: 'PostgreSQL', detail: 'Source captures and normalized match records.' },
+];
+---
+
+<BaseLayout title="League Match Analysis — Liam Kinnally" description="A full-stack League of Legends match review app built with Java, Spring Boot, Next.js, TypeScript, and PostgreSQL. Compare recorded timelines and inspect the evidence behind each view.">
+  <article class="project-page container-shell pt-28 pb-24 sm:pt-32">
+    <a href="/projects" class="text-sm font-semibold text-slate-300 transition hover:text-white">← All projects</a>
+    <header class="mt-12 max-w-4xl">
+      <div class="eyebrow">Full-stack development · data visualization · testing</div>
+      <h1 class="scroll-heading-shine gradient-text mt-6 text-5xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="League Match Analysis">League Match Analysis</h1>
+      <p class="project-body-copy mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">I built the ingestion pipeline, match calculations, and interface for reviewing League of Legends matches. Compare two champions’ gold, creep score (CS), and experience over time alongside recorded events.</p>
+      <div class="mobile-initial-highlight-group mt-8 flex flex-wrap gap-2">
+        {['Java', 'Spring Boot', 'TypeScript', 'Next.js / React', 'PostgreSQL', 'Docker', 'Playwright', 'GitHub Actions', 'Vercel / Railway'].map((tag) => <span class="kbd-tag">{tag}</span>)}
+      </div>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="https://lolmatchanalysis.app" target="_blank" rel="noreferrer" class="button-primary">Open demo <span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/liamkinnally/league-match-analysis" target="_blank" rel="noreferrer" class="button-secondary">View source <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="project-body-copy mt-5 max-w-2xl text-sm leading-6 text-slate-400">Look up a player, or choose “Explore sample match” to try the app with synthetic data.</p>
+    </header>
+
+    <ProjectScreenshot
+      id="league-screenshot"
+      src="/images/league-match-analysis.png"
+      title="League Match Analysis"
+      width={1440}
+      height={1080}
+      alt="Synthetic Garen versus Darius match: final team results, a gold-difference timeline, and a selected 8–10 minute interval."
+      caption="The built-in synthetic match, shown in the app’s dark theme. The selected interval compares recorded values at 8 and 10 minutes; missing fields remain unavailable."
+    />
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="From final score to match timeline">From final score to match timeline</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>A final scoreboard tells you how a match ended. The timeline adds a way to inspect when a lead grew or shrank, compare opponents, and see which events were recorded in that interval.</p>
+        <p>The same view brings together team results, player builds, and timestamped kills, objectives, item changes, and ward events. Player, opponent, metric, and interval selections are stored in the URL, so a comparison can be reopened or shared.</p>
+      </div>
+    </section>
+
+    <section class="mt-24">
+      <h2 class="scroll-heading-shine text-3xl font-bold tracking-[-0.035em]" data-scroll-heading data-shine-text="System design">System design</h2>
+      <p class="project-body-copy mt-5 max-w-3xl text-lg leading-8 text-slate-300">The browser talks to Next.js. Server-side requests authenticate to the Spring backend, which retrieves Riot data and stores it in PostgreSQL. API keys and database credentials stay on the server.</p>
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        {layers.map((layer) => (
+          <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet glass-card rounded-xl p-6">
+            <h3 class="font-semibold">{layer.name}</h3>
+            <p class="project-body-copy mt-3 leading-7 text-slate-300">{layer.detail}</p>
+          </div>
+        ))}
+      </div>
+      <p class="project-body-copy mt-6 max-w-3xl leading-7 text-slate-300">Raw provider responses are stored separately from normalized records so calculations can be traced to their source. Flyway manages schema migrations. The frontend is hosted on Vercel, with the backend and database on Railway.</p>
+    </section>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Keeping missing evidence visible">Keeping missing evidence visible</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>A missing observation is different from a recorded zero. The app preserves that distinction in tables and chart gaps, instead of inventing values to make the timeline look complete.</p>
+        <p>Suggested intervals highlight changes in recorded gold difference. They offer places to inspect, without claiming that a nearby event caused a change or that the player made a good or bad decision.</p>
+      </div>
+    </section>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Testing the complete workflow">Testing the complete workflow</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>Backend and frontend tests cover calculations, response handling, and unavailable data. Browser tests exercise comparisons, metric changes, and URL restoration after navigation and reload.</p>
+        <p>The CI workflow also includes production builds, visual regression checks, and a container smoke test against a clean database. The synthetic sample provides a repeatable way to exercise match review without depending on live Riot lookups.</p>
+      </div>
+    </section>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Results and limitations">Results and limitations</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>The app supports live player lookup and a synthetic sample match. Public lookup requests a player’s five most recent NA1 ranked Solo/Duo matches; the interface reports incomplete results and Riot API cooldowns.</p>
+        <p>Timeline samples describe recorded points in time, not continuous game state. Displayed ranks are current queue-specific snapshots, rather than historical ranks or MMR. The app supports reviewing evidence; it does not measure coaching quality or predict future performance.</p>
+      </div>
+    </section>
+
+    <section class="scroll-frame-focus scroll-frame-major mt-24 rounded-2xl border border-blue-200/10 bg-blue-200/[0.035] p-7 sm:p-9">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Explore the app and source">Explore the app and source</h2>
+      <p class="project-body-copy mt-3 max-w-2xl leading-7 text-slate-300">Try the sample match, or read the architecture and development guide in the repository.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="https://lolmatchanalysis.app" target="_blank" rel="noreferrer" class="button-primary">Open demo <span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/liamkinnally/league-match-analysis" target="_blank" rel="noreferrer" class="button-secondary">Open GitHub repository <span aria-hidden="true">↗</span></a>
+        <a href="/projects" class="button-secondary">All projects <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+    <p class="project-body-copy mt-8 text-sm leading-6 text-slate-400">LoL Match Analysis isn’t endorsed by Riot Games. League of Legends and associated properties are trademarks or registered trademarks of Riot Games, Inc. <a href="https://github.com/liamkinnally/league-match-analysis/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer" class="underline underline-offset-4">Third-party notices</a>.</p>
+  </article>
+  <ProjectHeadings />
+</BaseLayout>

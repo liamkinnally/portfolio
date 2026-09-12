@@ -1,69 +1,20 @@
 ---
-const sourceUrl = 'https://raw.githubusercontent.com/liamkinnally/nba-scoring-model/main/reports/data/holdout_predictions.csv';
-const response = await fetch(sourceUrl);
-if (!response.ok) {
-  throw new Error(`Could not load holdout prediction data (${response.status})`);
-}
+import { pointsPredictionQuality } from '../data/predictionQuality';
 
-const csv = await response.text();
-const lines = csv.trim().split(/\r?\n/);
-const header = lines[0].split(',');
-const targetIndex = header.indexOf('target');
-const actualIndex = header.indexOf('actual');
-const predictionIndex = header.indexOf('model_pred');
-
-if ([targetIndex, actualIndex, predictionIndex].some((index) => index < 0)) {
-  throw new Error('Holdout prediction CSV is missing expected columns.');
-}
-
-const points = lines.slice(1).flatMap((line) => {
-  const cells = line.split(',');
-  if (cells[targetIndex] !== 'points') return [];
-  const actual = Number(cells[actualIndex]);
-  const predicted = Number(cells[predictionIndex]);
-  if (!Number.isFinite(actual) || !Number.isFinite(predicted)) return [];
-  return [{ actual, predicted }];
-});
+const { observationCount, maxActual, maxPrediction, axisMax, density } = pointsPredictionQuality;
 
 const width = 760;
 const height = 470;
 const margin = { top: 30, right: 30, bottom: 58, left: 58 };
 const plotWidth = width - margin.left - margin.right;
 const plotHeight = height - margin.top - margin.bottom;
-const observedMax = Math.max(...points.flatMap((point) => [point.actual, point.predicted]));
-const axisMax = Math.max(60, Math.ceil(observedMax / 10) * 10);
 const ticks = Array.from({ length: axisMax / 10 + 1 }, (_, index) => index * 10);
 const binCount = Math.round(axisMax / 2);
 const cellWidth = plotWidth / binCount;
 const cellHeight = plotHeight / binCount;
-const bins = new Map<string, { x: number; y: number; count: number; actualSum: number; predictedSum: number }>();
-
-for (const point of points) {
-  const bx = Math.min(binCount - 1, Math.max(0, Math.floor((point.actual / axisMax) * binCount)));
-  const by = Math.min(binCount - 1, Math.max(0, Math.floor((point.predicted / axisMax) * binCount)));
-  const key = `${bx}:${by}`;
-  const existing = bins.get(key);
-  if (existing) {
-    existing.count += 1;
-    existing.actualSum += point.actual;
-    existing.predictedSum += point.predicted;
-  } else {
-    bins.set(key, {
-      x: bx,
-      y: by,
-      count: 1,
-      actualSum: point.actual,
-      predictedSum: point.predicted,
-    });
-  }
-}
-
-const density = [...bins.values()];
 const maxCount = Math.max(...density.map((bin) => bin.count));
 const x = (value: number) => margin.left + (value / axisMax) * plotWidth;
 const y = (value: number) => margin.top + plotHeight - (value / axisMax) * plotHeight;
-const maxPrediction = Math.max(...points.map((point) => point.predicted));
-const maxActual = Math.max(...points.map((point) => point.actual));
 ---
 
 <div class="chart-shell scroll-frame-focus scroll-frame-quiet scroll-frame-clipped" data-prediction-quality-chart>
@@ -77,7 +28,7 @@ const maxActual = Math.max(...points.map((point) => point.actual));
       >Actual vs. predicted</h3>
     </div>
     <div class="flex flex-wrap gap-2 self-start">
-      <span class="interactive-pill rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5 text-xs font-semibold text-blue-200">{points.length.toLocaleString()} rows</span>
+      <span class="interactive-pill rounded-full border border-blue-300/15 bg-blue-300/[0.06] px-3 py-1.5 text-xs font-semibold text-blue-200">{observationCount.toLocaleString()} rows</span>
       <span class="interactive-pill rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-xs font-semibold text-slate-300">2-point density cells</span>
     </div>
   </div>
@@ -214,6 +165,21 @@ const maxActual = Math.max(...points.map((point) => point.actual));
     <span class="shrink-0 font-semibold text-blue-200">Max: {maxPrediction.toFixed(1)} predicted · {maxActual.toFixed(0)} actual</span>
   </div>
 </div>
+
+<details class="chart-data">
+  <summary>View prediction density data</summary>
+  <p>Each row corresponds to one occupied cell in the chart. Two-point ranges include the lower bound and exclude the upper bound, except the final 58–60 range, which includes 60. Averages describe the observations within that cell.</p>
+  <p class="sm:hidden">Scroll the table sideways to see all columns.</p>
+    <div class="chart-data-region" role="region" aria-label="Prediction density data, scroll to read all rows and columns" tabindex="0">
+    <table>
+      <caption class="sr-only">Actual and predicted points for {observationCount.toLocaleString()} holdout observations.</caption>
+      <thead><tr><th scope="col">Actual range</th><th scope="col">Predicted range</th><th scope="col">Actual avg</th><th scope="col">Predicted avg</th><th scope="col">Observations</th></tr></thead>
+      <tbody>
+        {[...density].sort((a, b) => a.x - b.x || a.y - b.y).map((bin) => <tr><th scope="row">{bin.x * 2}–{(bin.x + 1) * 2}</th><td>{bin.y * 2}–{(bin.y + 1) * 2}</td><td>{(bin.actualSum / bin.count).toFixed(1)}</td><td>{(bin.predictedSum / bin.count).toFixed(1)}</td><td>{bin.count}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+</details>
 
 <script>
   (() => {
