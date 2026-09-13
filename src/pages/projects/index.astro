@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectHeadings from '../../components/ProjectHeadings.astro';
+import RepositoryLink from '../../components/RepositoryLink.astro';
+import { leagueStack, nbaStack } from '../../data/projectStacks';
 
 const projects = [
   {
@@ -8,17 +10,17 @@ const projects = [
     area: 'Full-stack development · data visualization · testing',
     description: 'Reviewing how a League of Legends match developed. Compare two champions’ gold, creep score, and experience over time, then inspect recorded events within a selected interval.',
     detail: 'Explore live match data or try the built-in synthetic sample. Missing source data stays visibly unavailable.',
-    tags: ['Java', 'Spring Boot', 'TypeScript', 'Next.js / React', 'PostgreSQL', 'Docker'],
+    tags: leagueStack,
     href: '/projects/league-match-analysis',
     source: 'https://github.com/liamkinnally/league-match-analysis',
-    demo: 'https://lolmatchanalysis.app',
+    liveApp: 'https://lolmatchanalysis.app',
   },
   {
     title: 'NBA Player Stat Prediction',
     area: 'Machine learning · data engineering · testing',
     description: 'Predicting NBA points, assists, and rebounds from information available before tipoff. A Python pipeline with chronological evaluation, leakage-safe features, and a simple baseline to measure against.',
     detail: 'The points model beat the rolling-average baseline in 23 of 28 trailing seven-day windows, with a small overall improvement.',
-    tags: ['Python', 'pandas', 'scikit-learn', 'SQLAlchemy', 'SQLite', 'pytest'],
+    tags: nbaStack,
     href: '/projects/nba-scoring-model',
     source: 'https://github.com/liamkinnally/nba-scoring-model',
   },
@@ -27,7 +29,8 @@ const projects = [
 
 <BaseLayout title="Projects — Liam Kinnally" description="Software projects by Liam Kinnally: a full-stack League of Legends match analysis app and an NBA prediction pipeline.">
   <div class="project-page container-shell pt-28 pb-24 sm:pt-32">
-    <header class="max-w-3xl">
+    <a href="/" class="text-sm font-semibold text-slate-300 transition hover:text-white">← Back home</a>
+    <header class="mt-12 max-w-3xl">
       <div class="eyebrow">Selected work</div>
       <h1 class="scroll-heading-shine gradient-text mt-6 text-5xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="Projects">Projects</h1>
       <p class="project-body-copy mt-7 text-lg leading-8 text-slate-300 sm:text-xl">Software for exploring sports and game data, with attention to how it is collected, tested, and presented.</p>
@@ -49,8 +52,8 @@ const projects = [
           </div>
           <div class="mt-8 flex flex-wrap items-center gap-5 text-sm font-semibold">
             <a href={project.href} class="button-primary" aria-label={`Explore ${project.title}`}>Explore project <span aria-hidden="true">→</span></a>
-            {project.demo && <a href={project.demo} target="_blank" rel="noreferrer" class="button-secondary" aria-label={`${project.title} live demo`}>Live demo <span aria-hidden="true">↗</span></a>}
-            <a href={project.source} target="_blank" rel="noreferrer" class="text-slate-300 transition hover:text-white" aria-label={`${project.title} source on GitHub`}>Source <span aria-hidden="true">↗</span></a>
+            <RepositoryLink href={project.source} project={project.title} />
+            {project.liveApp && <a href={project.liveApp} target="_blank" rel="noreferrer" class="button-secondary" aria-label={`Live app for ${project.title}`}>Live app <span aria-hidden="true">↗</span></a>}
           </div>
         </article>
       ))}

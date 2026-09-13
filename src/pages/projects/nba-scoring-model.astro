@@ -4,6 +4,8 @@ import MetricCard from '../../components/MetricCard.astro';
 import RollingMaeChart from '../../components/RollingMaeChart.astro';
 import PredictionQualityChart from '../../components/PredictionQualityChart.astro';
 import PermutationImportanceChart from '../../components/PermutationImportanceChart.astro';
+import RepositoryLink from '../../components/RepositoryLink.astro';
+import { nbaStack } from '../../data/projectStacks';
 
 const systemSteps = [
   'ESPN JSON endpoints',
@@ -32,10 +34,10 @@ const systemSteps = [
         Predicting how many points, assists, and rebounds an NBA player will record in his next game, using only what was known before tipoff. An end-to-end Python pipeline covering data collection, feature engineering, model training, and evaluation against a simple baseline on games the model never saw during training.
       </p>
       <div class="mobile-initial-highlight-group mt-8 flex flex-wrap gap-2">
-        <span class="kbd-tag">Python</span><span class="kbd-tag">pandas</span><span class="kbd-tag">scikit-learn</span><span class="kbd-tag">SQLAlchemy</span><span class="kbd-tag">SQLite</span><span class="kbd-tag">Matplotlib</span><span class="kbd-tag">pytest</span><span class="kbd-tag">GitHub Actions</span>
+        {nbaStack.map((tag) => <span class="kbd-tag">{tag}</span>)}
       </div>
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href="https://github.com/liamkinnally/nba-scoring-model" target="_blank" rel="noreferrer" class="button-primary">View source ↗</a>
+        <RepositoryLink href="https://github.com/liamkinnally/nba-scoring-model" project="NBA Player Stat Prediction" />
       </div>
     </header>
 
@@ -190,7 +192,7 @@ const systemSteps = [
         data-shine-text="See the implementation."
       >See the implementation.</h2>
       <p class="project-body-copy mt-3 max-w-2xl leading-7 text-slate-300">The repository contains the data pipeline, feature engineering, model training, automated tests, evaluation CLI, and generated reporting workflow.</p>
-      <a href="https://github.com/liamkinnally/nba-scoring-model" target="_blank" rel="noreferrer" class="button-primary mt-6">Open GitHub repository ↗</a>
+      <RepositoryLink href="https://github.com/liamkinnally/nba-scoring-model" project="NBA Player Stat Prediction" class="mt-6" />
     </section>
   </article>
 

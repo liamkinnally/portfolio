@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectHeadings from '../../components/ProjectHeadings.astro';
 import ProjectScreenshot from '../../components/ProjectScreenshot.astro';
+import RepositoryLink from '../../components/RepositoryLink.astro';
+import { leagueStack } from '../../data/projectStacks';
 
 const layers = [
   { name: 'Next.js + TypeScript', detail: 'Pages, interactive timelines, and shareable URL state.' },
@@ -17,12 +19,12 @@ const layers = [
       <div class="eyebrow">Full-stack development · data visualization · testing</div>
       <h1 class="scroll-heading-shine gradient-text mt-6 text-5xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="League Match Analysis">League Match Analysis</h1>
       <p class="project-body-copy mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">I built the ingestion pipeline, match calculations, and interface for reviewing League of Legends matches. Compare two champions’ gold, creep score (CS), and experience over time alongside recorded events.</p>
-      <div class="mobile-initial-highlight-group mt-8 flex flex-wrap gap-2">
-        {['Java', 'Spring Boot', 'TypeScript', 'Next.js / React', 'PostgreSQL', 'Docker', 'Playwright', 'GitHub Actions', 'Vercel / Railway'].map((tag) => <span class="kbd-tag">{tag}</span>)}
+      <div class="mt-8 flex flex-wrap gap-2">
+        {leagueStack.map((tag) => <span class="kbd-tag">{tag}</span>)}
       </div>
       <div class="mt-8 flex flex-wrap gap-3">
-        <a href="https://lolmatchanalysis.app" target="_blank" rel="noreferrer" class="button-primary">Open demo <span aria-hidden="true">↗</span></a>
-        <a href="https://github.com/liamkinnally/league-match-analysis" target="_blank" rel="noreferrer" class="button-secondary">View source <span aria-hidden="true">↗</span></a>
+        <a href="https://lolmatchanalysis.app" target="_blank" rel="noreferrer" class="button-primary">Live app <span aria-hidden="true">↗</span></a>
+        <RepositoryLink href="https://github.com/liamkinnally/league-match-analysis" project="League Match Analysis" />
       </div>
       <p class="project-body-copy mt-5 max-w-2xl text-sm leading-6 text-slate-400">Look up a player, or choose “Explore sample match” to try the app with synthetic data.</p>
     </header>
@@ -87,9 +89,8 @@ const layers = [
       <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Explore the app and source">Explore the app and source</h2>
       <p class="project-body-copy mt-3 max-w-2xl leading-7 text-slate-300">Try the sample match, or read the architecture and development guide in the repository.</p>
       <div class="mt-6 flex flex-wrap gap-3">
-        <a href="https://lolmatchanalysis.app" target="_blank" rel="noreferrer" class="button-primary">Open demo <span aria-hidden="true">↗</span></a>
-        <a href="https://github.com/liamkinnally/league-match-analysis" target="_blank" rel="noreferrer" class="button-secondary">Open GitHub repository <span aria-hidden="true">↗</span></a>
-        <a href="/projects" class="button-secondary">All projects <span aria-hidden="true">→</span></a>
+        <a href="https://lolmatchanalysis.app" target="_blank" rel="noreferrer" class="button-primary">Live app <span aria-hidden="true">↗</span></a>
+        <RepositoryLink href="https://github.com/liamkinnally/league-match-analysis" project="League Match Analysis" />
       </div>
     </section>
     <p class="project-body-copy mt-8 text-sm leading-6 text-slate-400">LoL Match Analysis isn’t endorsed by Riot Games. League of Legends and associated properties are trademarks or registered trademarks of Riot Games, Inc. <a href="https://github.com/liamkinnally/league-match-analysis/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer" class="underline underline-offset-4">Third-party notices</a>.</p>
