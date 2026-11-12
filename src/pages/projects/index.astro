@@ -2,9 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectHeadings from '../../components/ProjectHeadings.astro';
 import RepositoryLink from '../../components/RepositoryLink.astro';
-import { leagueStack, nbaStack } from '../../data/projectStacks';
+import { aerialStack, leagueStack, nbaStack } from '../../data/projectStacks';
 
 const projects = [
+  {
+    title: 'Aerial Edge Bench',
+    area: 'Computer vision · model optimization · benchmarking',
+    description: 'Training a small computer vision model to find objects in drone photos, then comparing its accuracy, processing time, and file size. A separate video test measures how much data is needed to send a list of detected objects instead of images.',
+    detail: 'On the M4 Pro CPU, the ONNX version handled larger images with a higher detection score in about the same average time as the trained PyTorch version handled smaller ones. It has not been tested on a drone.',
+    tags: aerialStack,
+    href: '/projects/aerial-edge-bench',
+    source: 'https://github.com/liamkinnally/aerial-edge-bench',
+  },
   {
     title: 'League Match Analysis',
     area: 'Full-stack development · data visualization · testing',
@@ -27,13 +36,13 @@ const projects = [
 ];
 ---
 
-<BaseLayout title="Projects — Liam Kinnally" description="Software projects by Liam Kinnally: a full-stack League of Legends match analysis app and an NBA prediction pipeline.">
+<BaseLayout title="Projects — Liam Kinnally" description="Software projects by Liam Kinnally: an aerial object detection benchmark, a League of Legends match analysis app, and an NBA prediction pipeline.">
   <div class="project-page container-shell pt-28 pb-24 sm:pt-32">
     <a href="/" class="text-sm font-semibold text-slate-300 transition hover:text-white">← Back home</a>
     <header class="mt-12 max-w-3xl">
       <div class="eyebrow">Selected work</div>
       <h1 class="scroll-heading-shine gradient-text mt-6 text-5xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="Projects">Projects</h1>
-      <p class="project-body-copy mt-7 text-lg leading-8 text-slate-300 sm:text-xl">Software for exploring sports and game data, with attention to how it is collected, tested, and presented.</p>
+      <p class="project-body-copy mt-7 text-lg leading-8 text-slate-300 sm:text-xl">Computer vision, machine learning, and full-stack projects, with attention to how results are measured, tested, and presented.</p>
     </header>
 
     <div class="mt-14 space-y-6">

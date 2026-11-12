@@ -1,3 +1,8 @@
+export const aerialStack = [
+  'Python', 'Ultralytics YOLO', 'PyTorch', 'ONNX Runtime',
+  'OpenCV', 'NumPy', 'Matplotlib', 'pytest',
+];
+
 export const leagueStack = [
   'Java', 'Spring Boot', 'TypeScript', 'Next.js / React',
   'Tailwind CSS', 'Recharts', 'PostgreSQL', 'Flyway', 'Docker',

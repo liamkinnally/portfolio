@@ -1,0 +1,211 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectHeadings from '../../components/ProjectHeadings.astro';
+import ProjectScreenshot from '../../components/ProjectScreenshot.astro';
+import RepositoryLink from '../../components/RepositoryLink.astro';
+import { aerialStack } from '../../data/projectStacks';
+
+const repository = 'https://github.com/liamkinnally/aerial-edge-bench';
+const stages = [
+  { name: 'Fine-tune', detail: 'Train YOLO26 nano on drone photos for 50 epochs—50 passes through the training data.' },
+  { name: 'Export and quantize', detail: 'Export the trained model to ONNX, then use INT8 quantization to make a smaller version by using less precise numbers for some calculations.' },
+  { name: 'Evaluate', detail: 'Check how well each version finds objects, how long an image takes to process, and how much storage the model needs.' },
+];
+const results = [
+  { format: 'PyTorch FP32', input: '640 × 640', map: '0.169', mean: '22.9', p95: '24.6', size: '5.444' },
+  { format: 'ONNX FP32', input: '640 × 640', map: '0.169', mean: '10.9', p95: '11.6', size: '9.861' },
+  { format: 'ONNX INT8', input: '640 × 640', map: '0.153', mean: '12.2', p95: '13.2', size: '3.045' },
+  { format: 'PyTorch FP32', input: '960 × 960', map: '0.213', mean: '38.5', p95: '39.1', size: '5.444' },
+  { format: 'ONNX FP32', input: '960 × 960', map: '0.213', mean: '22.2', p95: '25.4', size: '10.071' },
+  { format: 'ONNX INT8', input: '960 × 960', map: '0.194', mean: '23.0', p95: '23.9', size: '3.255' },
+];
+---
+
+<BaseLayout title="Aerial Edge Bench — Liam Kinnally" description="Testing an AI model that finds objects in drone photos: how accurate it is, how quickly it runs, and how much data its results need to send.">
+  <article class="project-page container-shell pt-28 pb-24 sm:pt-32">
+    <a href="/projects" class="text-sm font-semibold text-slate-300 transition hover:text-white">← All projects</a>
+    <header class="mt-12 max-w-4xl">
+      <div class="eyebrow">Computer vision · model optimization · benchmarking</div>
+      <h1 class="scroll-heading-shine gradient-text mt-6 text-5xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="Aerial Edge Bench">Aerial Edge Bench</h1>
+      <p class="project-body-copy mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">Adapting a small AI model to find people, vehicles, and other objects in drone photos. The project tests how changes to the model’s format and image size affect accuracy, processing time, and file size. It also compares how much data is needed to send a list of detected objects instead of video.</p>
+      <div class="mt-8 flex flex-wrap gap-2">
+        {aerialStack.map((tag) => <span class="kbd-tag">{tag}</span>)}
+      </div>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <RepositoryLink href={repository} project="Aerial Edge Bench" />
+      </div>
+    </header>
+
+    <ProjectScreenshot
+      id="aerial-screenshot"
+      src="/images/aerial-edge-bench.webp"
+      title="Aerial object detection comparison"
+      width={1280}
+      height={1202}
+      alt="The same drone photo with the original model’s detected objects on the left and the model trained on drone photos on the right."
+      caption="The original model is on the left; the version trained on drone photos is on the right. Both see the same image. This is an example, not an accuracy test: the models recognize different sets of object types, and more boxes do not necessarily mean more correct detections."
+    />
+    <p class="project-body-copy mt-2 text-sm leading-6 text-slate-400">Footage: Jordan Koschei / ConnectHV, CC0. <a href="https://connecthv.com/drone-footage/flying-through-downtown-woodstock" target="_blank" rel="noreferrer" class="underline underline-offset-4">Source footage</a> · <a href={`${repository}/blob/main/data/SOURCES.md`} target="_blank" rel="noreferrer" class="underline underline-offset-4">Provenance and dataset terms</a>.</p>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="The question">The question</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>A small computer connected to a camera has limited processing power and may have a slow wireless connection. Larger images can make small objects easier to see, but take more work to process. Making the model file smaller saves storage, but does not automatically make it faster.</p>
+        <p>This experiment compares three versions of the same trained model at two image sizes. A separate video test asks how much less data would be needed if the computer sent the objects it found and their locations instead of sending every image.</p>
+      </div>
+    </section>
+
+    <section class="mt-24">
+      <h2 class="scroll-heading-shine text-3xl font-bold tracking-[-0.035em]" data-scroll-heading data-shine-text="How the experiment works">How the experiment works</h2>
+      <p class="project-body-copy mt-5 max-w-3xl text-lg leading-8 text-slate-300">The starting point is YOLO26 nano, a small model that finds and labels objects in images. It receives additional training on VisDrone, a collection of labeled drone photos, before being saved in three versions for comparison.</p>
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        {stages.map((stage) => (
+          <div class="stationary-highlight scroll-frame-focus scroll-frame-quiet glass-card rounded-xl p-6">
+            <h3 class="font-semibold">{stage.name}</h3>
+            <p class="project-body-copy mt-3 leading-7 text-slate-300">{stage.detail}</p>
+          </div>
+        ))}
+      </div>
+      <p class="project-body-copy mt-6 max-w-3xl leading-7 text-slate-300">The trained PyTorch model is the starting point for comparison. ONNX is an exported file format, run here with ONNX Runtime. FP32 uses standard 32-bit calculations; INT8 uses less precise numbers for some calculations, which can shrink the file but change accuracy and speed.</p>
+      <p class="project-body-copy mt-5 max-w-3xl leading-7 text-slate-300">Every version comes from the same model trained on 640 × 640-pixel images. Testing at 960 × 960 gives it larger images to analyze; the model was not retrained at that size. A separate script reads the demo video and saves a small message describing the objects found in each frame.</p>
+    </section>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="How it was tested">How it was tested</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>Accuracy was checked on 548 labeled drone photos kept separate from the training images. To measure processing time, each version analyzed the same test image 100 times after 10 untimed warm-up runs on an Apple M4 Pro CPU, the Mac’s main processor.</p>
+        <p>I left reading the image file out of the timer because a camera would deliver images directly to the program. The timer still includes resizing the image, finding objects, cleaning up the results, and checking the setup. It excludes the warm-up runs and printing logs.</p>
+        <p>The program checks that all versions receive images with the same dimensions within each size group. That keeps one version from looking faster simply because it processed a smaller image. Each version also uses the same cleanup step to remove duplicate boxes around an object.</p>
+      </div>
+    </section>
+
+    <section class="mt-24" aria-labelledby="results-title">
+      <h2 id="results-title" class="scroll-heading-shine text-3xl font-bold tracking-[-0.035em]" data-scroll-heading data-shine-text="Measured results">Measured results</h2>
+      <div class="results-scroll mt-8" tabindex="0" role="region" aria-label="Benchmark results, scroll horizontally to view all columns" aria-describedby="results-notes">
+        <table>
+          <caption>Processing time on the Apple M4 Pro CPU, including image preparation and result cleanup</caption>
+          <thead>
+            <tr>
+              <th scope="col">Format</th>
+              <th scope="col">Image size (pixels)</th>
+              <th scope="col">mAP50–95</th>
+              <th scope="col">Mean latency (ms)</th>
+              <th scope="col">p95 latency (ms)</th>
+              <th scope="col">Model file (MB)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((row) => (
+              <tr>
+                <th scope="row">{row.format}</th>
+                <td>{row.input}</td>
+                <td>{row.map}</td>
+                <td>{row.mean}</td>
+                <td>{row.p95}</td>
+                <td>{row.size}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div id="results-notes" class="project-body-copy mt-4 max-w-3xl space-y-3 text-sm leading-6 text-slate-400">
+        <p><strong>mAP50–95:</strong> a score for finding the right objects and placing their boxes correctly. The “50–95” means it averages scores with required box overlap set to 50%, 55%, and so on up to 95%. A 50% match allows a looser fit; 95% requires the predicted box to line up very closely with the labeled box. Higher is better; the score isn’t the percentage of objects found.</p>
+        <p><strong>Latency:</strong> how long it takes to process an image, in milliseconds. Mean is the average; p95 gives a sense of the slower runs—roughly 95% finished within that time. Lower is faster.</p>
+        <p><strong>Model file:</strong> the storage needed for the saved model, in megabytes (MB). Smaller is easier to store or transfer. <a href={`${repository}/blob/main/docs/measurements/benchmarks.csv`} target="_blank" rel="noreferrer" class="underline underline-offset-4">Full measurements (CSV)</a>.</p>
+      </div>
+      <div class="project-body-copy mt-8 max-w-3xl space-y-5 text-lg leading-8 text-slate-300">
+        <p>The ONNX version could handle larger images in about the same average time as the trained PyTorch version handled smaller ones. At 960 × 960, ONNX FP32 scored 0.213 and averaged 22.2 ms per image. PyTorch FP32 at 640 × 640 scored 0.169 and averaged 22.9 ms on the M4 Pro CPU. That is a higher detection score with a similar average processing time in this test, not proof that the two setups are equally fast on every image.</p>
+        <p>At 640 × 640, INT8 made the ONNX file 69.1% smaller, but the detection score dropped from 0.169 to 0.153. It also took longer on average at both image sizes. The file-size comparison uses the ONNX FP32 version because PyTorch stores its model differently.</p>
+      </div>
+    </section>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Sending results instead of video">Sending results instead of video</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>Instead of sending an entire image, the computer could send a short message with each object’s type, location, and the model’s confidence in its prediction. This saves image data, but the receiver no longer gets the full scene.</p>
+        <p>The comparison uses 353 frames, the individual images in a short drone video. At the video’s recorded rate of 24 frames per second, the calculated data amounts are:</p>
+        <ul class="list-disc space-y-3 pl-6">
+          <li><strong>Object messages:</strong> 4.0 kilobytes per second, based on the average message size.</li>
+          <li><strong>Compressed MP4 video:</strong> 63.3 kilobytes per second, based on the video file’s size divided by its duration.</li>
+          <li><strong>Separate JPEG images:</strong> 5,277.5 kilobytes per second, saving each frame as an image at quality setting 95.</li>
+        </ul>
+        <p>In 78 of those frames, the model reported no objects. A short message can therefore reflect something the model missed, so less data is only useful alongside reliable detection. These calculations leave out the extra data needed to send messages over a network. They do not test a wireless connection or show that the model can keep up with live video. <a href={`${repository}/blob/main/docs/measurements/summary.json`} target="_blank" rel="noreferrer" class="underline underline-offset-4">Full data comparison</a>.</p>
+      </div>
+    </section>
+
+    <section class="mt-24 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Results and limitations">Results and limitations</h2>
+      <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
+        <p>These results show how the versions compare on one Mac’s CPU. Repeatedly timing one image does not tell us how quickly a complete live-video system would run. The detection scores use the model library’s evaluation tools rather than the dataset’s official competition tests, and apply to the test photos, not the separate demo video.</p>
+        <p>No computer mounted on a drone or wireless link was tested. Speed, heat, power use, and memory use on that hardware still need to be measured. Next steps include training with larger images, trying a mode without a separate duplicate-box cleanup step, and testing the actual camera and connection. The <a href={`${repository}#limitations`} target="_blank" rel="noreferrer" class="underline underline-offset-4">full method notes</a> explain the technical details.</p>
+      </div>
+    </section>
+
+    <section class="scroll-frame-focus scroll-frame-major mt-24 rounded-2xl border border-blue-200/10 bg-blue-200/[0.035] p-7 sm:p-9">
+      <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Explore the source and results">Explore the source and results</h2>
+      <p class="project-body-copy mt-3 max-w-2xl leading-7 text-slate-300">The repository contains the training and evaluation scripts, saved measurements, decision log, and development details.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <RepositoryLink href={repository} project="Aerial Edge Bench" />
+        <a href={`${repository}/blob/main/docs/REPRODUCE.md`} target="_blank" rel="noreferrer" class="button-secondary">Reproduction guide <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </article>
+  <ProjectHeadings />
+</BaseLayout>
+
+<style>
+  .results-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.75rem;
+    background: var(--bg-soft);
+  }
+
+  .results-scroll:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 43rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  caption {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  th,
+  td {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  th {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  th:first-child {
+    text-align: left;
+  }
+
+  td {
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr:nth-child(4) th,
+  tbody tr:nth-child(4) td {
+    border-top: 2px solid var(--border-strong);
+  }
+</style>
