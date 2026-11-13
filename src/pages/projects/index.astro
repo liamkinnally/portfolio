@@ -6,13 +6,13 @@ import { aerialStack, leagueStack, nbaStack } from '../../data/projectStacks';
 
 const projects = [
   {
-    title: 'Aerial Edge Bench',
-    area: 'Computer vision · model optimization · benchmarking',
-    description: 'Training a small computer vision model to find objects in drone photos, then comparing its accuracy, processing time, and file size. A separate video test measures how much data is needed to send a list of detected objects instead of images.',
+    title: 'Aerial Object Detection and Inference Benchmarking',
+    area: 'Computer vision · CPU inference · benchmarking',
+    description: 'Training a small computer vision model to find objects in drone photos, then comparing its accuracy, processing time on a laptop CPU, and file size. A separate video test measures how much data is needed to send a list of detected objects instead of images.',
     detail: 'On the M4 Pro CPU, the ONNX version handled larger images with a higher detection score in about the same average time as the trained PyTorch version handled smaller ones. It has not been tested on a drone.',
     tags: aerialStack,
-    href: '/projects/aerial-edge-bench',
-    source: 'https://github.com/liamkinnally/aerial-edge-bench',
+    href: '/projects/aerial-inference-bench',
+    source: 'https://github.com/liamkinnally/aerial-inference-bench',
   },
   {
     title: 'League Match Analysis',

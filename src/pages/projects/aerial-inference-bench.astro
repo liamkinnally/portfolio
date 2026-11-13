@@ -5,7 +5,7 @@ import ProjectScreenshot from '../../components/ProjectScreenshot.astro';
 import RepositoryLink from '../../components/RepositoryLink.astro';
 import { aerialStack } from '../../data/projectStacks';
 
-const repository = 'https://github.com/liamkinnally/aerial-edge-bench';
+const repository = 'https://github.com/liamkinnally/aerial-inference-bench';
 const stages = [
   { name: 'Fine-tune', detail: 'Train YOLO26 nano on drone photos for 50 epochs—50 passes through the training data.' },
   { name: 'Export and quantize', detail: 'Export the trained model to ONNX, then use INT8 quantization to make a smaller version by using less precise numbers for some calculations.' },
@@ -21,24 +21,24 @@ const results = [
 ];
 ---
 
-<BaseLayout title="Aerial Edge Bench — Liam Kinnally" description="Testing an AI model that finds objects in drone photos: how accurate it is, how quickly it runs, and how much data its results need to send.">
+<BaseLayout title="Aerial Object Detection and Inference Benchmarking — Liam Kinnally" description="Comparing a computer vision model’s accuracy, CPU processing time, file size, and detection-message payloads on aerial images.">
   <article class="project-page container-shell pt-28 pb-24 sm:pt-32">
     <a href="/projects" class="text-sm font-semibold text-slate-300 transition hover:text-white">← All projects</a>
     <header class="mt-12 max-w-4xl">
-      <div class="eyebrow">Computer vision · model optimization · benchmarking</div>
-      <h1 class="scroll-heading-shine gradient-text mt-6 text-5xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="Aerial Edge Bench">Aerial Edge Bench</h1>
-      <p class="project-body-copy mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">Adapting a small AI model to find people, vehicles, and other objects in drone photos. The project tests how changes to the model’s format and image size affect accuracy, processing time, and file size. It also compares how much data is needed to send a list of detected objects instead of video.</p>
+      <div class="eyebrow">Computer vision · CPU inference · benchmarking</div>
+      <h1 class="scroll-heading-shine gradient-text mt-6 text-4xl font-[780] leading-[1.02] tracking-[-0.05em] sm:text-6xl" data-scroll-heading data-shine-text="Aerial Object Detection and Inference Benchmarking">Aerial Object Detection and Inference Benchmarking</h1>
+      <p class="project-body-copy mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">Adapting a small computer vision model to find people, vehicles, and other objects in drone photos. The project compares how model format and image size affect detection accuracy, processing time on a laptop CPU, and file size. It also compares how much data is needed to send a list of detected objects instead of video.</p>
       <div class="mt-8 flex flex-wrap gap-2">
         {aerialStack.map((tag) => <span class="kbd-tag">{tag}</span>)}
       </div>
       <div class="mt-8 flex flex-wrap gap-3">
-        <RepositoryLink href={repository} project="Aerial Edge Bench" />
+        <RepositoryLink href={repository} project="Aerial Object Detection and Inference Benchmarking" />
       </div>
     </header>
 
     <ProjectScreenshot
       id="aerial-screenshot"
-      src="/images/aerial-edge-bench.webp"
+      src="/images/aerial-inference-bench.webp"
       title="Aerial object detection comparison"
       width={1280}
       height={1202}
@@ -137,15 +137,17 @@ const results = [
       <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Results and limitations">Results and limitations</h2>
       <div class="project-body-copy space-y-5 text-lg leading-8 text-slate-300">
         <p>These results show how the versions compare on one Mac’s CPU. Repeatedly timing one image does not tell us how quickly a complete live-video system would run. The detection scores use the model library’s evaluation tools rather than the dataset’s official competition tests, and apply to the test photos, not the separate demo video.</p>
-        <p>No computer mounted on a drone or wireless link was tested. Speed, heat, power use, and memory use on that hardware still need to be measured. Next steps include training with larger images, trying a mode without a separate duplicate-box cleanup step, and testing the actual camera and connection. The <a href={`${repository}#limitations`} target="_blank" rel="noreferrer" class="underline underline-offset-4">full method notes</a> explain the technical details.</p>
+        <p>No computer mounted on a drone or wireless link was tested. Speed, heat, power use, and memory use on that hardware still need to be measured. The <a href={`${repository}/blob/main/docs/METHODOLOGY.md`} target="_blank" rel="noreferrer" class="underline underline-offset-4">full method notes</a> explain the technical details.</p>
+        <p>The next steps are to time a range of images and check accuracy with VisDrone’s official evaluation tools. After that, I’d try training with larger images, a larger model, and a mode without the separate duplicate-box cleanup step. Testing the actual device, camera, and connection would show how these comparisons hold up outside the laptop experiment.</p>
       </div>
     </section>
 
     <section class="scroll-frame-focus scroll-frame-major mt-24 rounded-2xl border border-blue-200/10 bg-blue-200/[0.035] p-7 sm:p-9">
       <h2 class="scroll-heading-shine text-2xl font-bold tracking-[-0.03em]" data-scroll-heading data-shine-text="Explore the source and results">Explore the source and results</h2>
-      <p class="project-body-copy mt-3 max-w-2xl leading-7 text-slate-300">The repository contains the training and evaluation scripts, saved measurements, decision log, and development details.</p>
+      <p class="project-body-copy mt-3 max-w-2xl leading-7 text-slate-300">The repository contains the training and evaluation scripts, saved measurements, measurement methodology, decision log, and development details.</p>
       <div class="mt-6 flex flex-wrap gap-3">
-        <RepositoryLink href={repository} project="Aerial Edge Bench" />
+        <RepositoryLink href={repository} project="Aerial Object Detection and Inference Benchmarking" />
+        <a href={`${repository}/blob/main/docs/METHODOLOGY.md`} target="_blank" rel="noreferrer" class="button-secondary">Measurement methodology <span aria-hidden="true">↗</span></a>
         <a href={`${repository}/blob/main/docs/REPRODUCE.md`} target="_blank" rel="noreferrer" class="button-secondary">Reproduction guide <span aria-hidden="true">↗</span></a>
       </div>
     </section>
